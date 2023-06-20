@@ -1,3 +1,5 @@
+import { Workout, WorkoutTemplate } from "./workoutTypes";
+
 export const WorkoutActionTypes = {
   ADD_EXERCISE: "ADD_EXERCISE",
   DEL_EXERCISE: "DEL_EXERCISE",
@@ -12,5 +14,17 @@ export type WorkoutAction = {
   payload?: {
     exerciseIndex?: number;
     setIndex?: number;
+  };
+};
+
+// export const WorkoutTemplateActionTypes = {
+
+// }
+
+export type WorkoutTemplateAction = {
+  type: string;
+  payload?: {
+    workout?: WorkoutTemplate;
+    workoutId?: number;
   };
 };

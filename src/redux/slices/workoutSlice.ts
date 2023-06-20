@@ -1,10 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 import { Exercise, Workout, WorkoutSet } from "../../types/workoutTypes";
-import {
-  WorkoutAction,
-  WorkoutActionTypes,
-} from "../../types/workoutActionTypes";
+import { WorkoutAction } from "../../types/workoutActionTypes";
 
 const initialSet: WorkoutSet = {
   setIndex: 0,
@@ -15,19 +12,20 @@ const initialSet: WorkoutSet = {
 
 const initialExercise: Exercise = {
   exerciseIndex: 0,
-  name: "",
+  name: "e",
   timer: 0,
   Sets: [initialSet],
 };
 
 const initialState: Workout = {
-  name: "",
+  id: 0,
+  name: "w",
   Exercises: [initialExercise],
   isLocked: false,
 };
 
 export const workoutsSlice = createSlice({
-  name: "workouts",
+  name: "workout",
   initialState: initialState,
   reducers: {
     addExercise: (state: Workout, action: WorkoutAction) => {
@@ -74,3 +72,7 @@ export const workoutsSlice = createSlice({
     },
   },
 });
+
+export const workoutReducer = workoutsSlice.reducer;
+export const { addExercise, delExercise, addSet, delSet, toggleFinishSet } =
+  workoutsSlice.actions;

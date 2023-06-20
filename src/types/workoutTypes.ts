@@ -14,7 +14,15 @@ export type Exercise = {
 };
 
 export type Workout = {
+  id: number;
   name: string;
   isLocked: boolean;
   Exercises: Exercise[];
+};
+
+export type WorkoutTemplate = {
+  workoutId: number;
+  workoutName: string;
+  exerciseNames: string[];
+  lastPerfromed: string;
 };

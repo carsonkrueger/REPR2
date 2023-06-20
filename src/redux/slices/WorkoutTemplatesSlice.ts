@@ -12,7 +12,7 @@ const initialState: WorkoutTemplate[] = [
   },
 ];
 
-export const workoutsSlice = createSlice({
+export const WorkoutTemplatesSlice = createSlice({
   name: "workout",
   initialState: initialState,
   reducers: {
@@ -33,5 +33,5 @@ export const workoutsSlice = createSlice({
   },
 });
 
-export const workoutReducer = workoutsSlice.reducer;
-export const { addWorkout, delWorkout } = workoutsSlice.actions;
+export const workoutTemplatesReducer = WorkoutTemplatesSlice.reducer;
+export const { addWorkout, delWorkout } = WorkoutTemplatesSlice.actions;

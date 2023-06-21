@@ -1,7 +1,7 @@
 {
   "name": "repr",
   "version": "1.0.0",
-  "main": "app/Home.tsx",
+  "main": "app/index.tsx",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",

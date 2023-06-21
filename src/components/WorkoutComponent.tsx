@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import { Workout } from "../types/workoutTypes";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import ExerciseComponent from "./ExerciseComponent";
 
 export default function WorkoutComponent() {
@@ -10,9 +10,9 @@ export default function WorkoutComponent() {
 
   return (
     <View>
-      {workout.name}
+      <Text>{workout.name}</Text>
       {workout.Exercises.map((_, idx) => (
-        <ExerciseComponent exerciseIndex={idx} />
+        <ExerciseComponent key={idx} exerciseIndex={idx} />
       ))}
     </View>
   );

@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
-import { Exercise, WorkoutSet } from "../types/workoutTypes";
-import { View } from "react-native";
+import { WorkoutSet } from "../types/workoutTypes";
+import { Text } from "react-native";
 
 interface props {
   exerciseIndex: number;
@@ -17,5 +17,5 @@ export default function WorkoutSetComponent({
   );
   const dispatch = useDispatch<AppDispatch>();
 
-  return <View>{workoutSet.setIndex}</View>;
+  return <Text>{workoutSet.setIndex}</Text>;
 }

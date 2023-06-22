@@ -1,22 +1,13 @@
 import { View, Text, StyleSheet } from "react-native";
-import NavIcon from "./NavIcon";
+import NavItem from "./NavItem";
+import tw from "twrnc";
 
 export default function Nav() {
   return (
-    <View style={styles.container}>
-      <NavIcon href="/" name="Home" />
-      <NavIcon href="/workouts" name="Workout" />
-      <NavIcon href="/settings" name="Settings" />
+    <View style={tw`flex-1 flex-row justify-around max-h-14`}>
+      <NavItem href="/" name="Home" />
+      <NavItem href="/workouts" name="Workout" />
+      <NavItem href="/settings" name="Settings" />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    borderTopWidth: 1,
-    flex: 1,
-    flexDirection: "row",
-    maxHeight: 45,
-    justifyContent: "space-around",
-  },
-});

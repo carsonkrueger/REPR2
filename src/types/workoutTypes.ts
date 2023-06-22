@@ -1,5 +1,4 @@
 export type WorkoutSet = {
-  setIndex: number;
   prevSet?: string;
   weight: number;
   reps: number;

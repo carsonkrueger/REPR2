@@ -6,7 +6,7 @@ import { WorkoutTemplateAction } from "../../types/workoutActionTypes";
 const initialState: WorkoutTemplate[] = [
   {
     workoutId: 0,
-    workoutName: "",
+    workoutName: "test",
     exerciseNames: [""],
     lastPerfromed: "",
   },

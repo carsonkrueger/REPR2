@@ -1,5 +1,6 @@
 export type WorkoutSet = {
-  prevSet?: string;
+  prevWeight: number;
+  prevReps: number;
   weight: number;
   reps: number;
   isFinished: boolean;
@@ -8,6 +9,7 @@ export type WorkoutSet = {
 export type Exercise = {
   name: string;
   Sets: WorkoutSet[];
+  timerStartTime?: number;
   timer: number;
 };
 

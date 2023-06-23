@@ -3,12 +3,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, FlatList, TextInput } from "react-native";
 import tw from "../../src/util/tailwind";
 import { useSelector, useDispatch } from "react-redux";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 import ExerciseComponent from "../../src/components/workoutComponents/ExerciseComponent";
 import { Workout } from "../../src/types/workoutTypes";
 import { RootState, AppDispatch } from "../../src/redux/store";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { addExercise } from "../../src/redux/slices/workoutSlice";
+import { addExercise, toggleLock } from "../../src/redux/slices/workoutSlice";
 
 export default function WorkoutScreen() {
   const router = useRouter();
@@ -20,16 +21,24 @@ export default function WorkoutScreen() {
     <SafeAreaView style={tw`flex-1 flex-col`}>
       {/* HEADER */}
       <View
-        style={tw`flex-1 justify-center px-2 bg-white max-h-10 min-h-10 shadow-sm`}
+        style={tw`flex-row justify-center items-center px-1 py-3 z-10 bg-white shadow-md`}
       >
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="md-chevron-back" color={"#60a5fa"} size={30} />
+        </TouchableOpacity>
+
         <TextInput
-          placeholder="Workout Name"
-          style={tw`px-1 text-lg ${
+          style={tw`flex-1 px-2 py-1 mx-1 text-lg ${
             workout.isLocked ? "" : "bg-gray-200"
           } rounded-md`}
+          placeholder="Workout Name"
+          editable={!workout.isLocked}
         >
           {workout.name}
         </TextInput>
+        <TouchableOpacity onPress={() => dispatch(toggleLock())}>
+          <Ionicons name="menu" color={"#60a5fa"} size={30} />
+        </TouchableOpacity>
       </View>
 
       {/* EXERCISE COMPONENTS */}

@@ -1,11 +1,17 @@
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
-import { View, Text, TextInput } from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import tw from "../../util/tailwind";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { Exercise } from "../../types/workoutTypes";
 import WorkoutSetComponent from "./WorkoutSetComponet";
 import { flexWidths } from "./miscWorkoutStyles";
+import {
+  addSet,
+  delSet,
+  setExerciseName,
+} from "../../redux/slices/workoutSlice";
 
 interface props {
   exerciseIndex: number;
@@ -21,12 +27,16 @@ export default function ExerciseComponent({ exerciseIndex }: props) {
   const dispatch = useDispatch<AppDispatch>();
 
   return (
-    <View style={tw`py-3 my-2 mx-2 bg-white rounded-lg shadow-sm`}>
+    <View style={tw`py-3 my-2 mx-2 bg-white rounded-lg shadow-md`}>
       {/* HEADER */}
       <View style={tw`mx-2`}>
         <TextInput
           placeholder="Exercise Name"
           style={tw`text-lg ${isLocked ? "" : "bg-gray-200"} rounded-md px-1`}
+          onChangeText={(name) =>
+            dispatch(setExerciseName([exerciseIndex, name]))
+          }
+          editable={!isLocked}
         >
           {exercise.name}
         </TextInput>
@@ -54,6 +64,16 @@ export default function ExerciseComponent({ exerciseIndex }: props) {
           setIndex={idx}
         />
       ))}
+
+      {/* ADD/DEL SET BUTTONS */}
+      <View style={tw`flex-row justify-evenly px-4 pt-2`}>
+        <TouchableOpacity onPress={() => dispatch(delSet(exerciseIndex))}>
+          <Ionicons name="remove" color={"#60a5fa"} size={25} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => dispatch(addSet(exerciseIndex))}>
+          <Ionicons name="add" color={"#60a5fa"} size={25} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

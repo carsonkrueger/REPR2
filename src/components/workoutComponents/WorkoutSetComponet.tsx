@@ -3,9 +3,14 @@ import { AppDispatch, RootState } from "../../redux/store";
 import { WorkoutSet } from "../../types/workoutTypes";
 import { Text, View, TextInput, TouchableOpacity } from "react-native";
 import tw from "../../util/tailwind";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { flexWidths } from "./miscWorkoutStyles";
-import { toggleFinishSet } from "../../redux/slices/workoutSlice";
+import {
+  toggleFinishSet,
+  setWeight,
+  setReps,
+} from "../../redux/slices/workoutSlice";
 
 interface props {
   exerciseIndex: number;
@@ -22,40 +27,59 @@ export default function WorkoutSetComponent({
   const dispatch = useDispatch<AppDispatch>();
 
   return (
-    <View style={tw`mx-2 my-1 flex-row items-center`}>
-      <Text style={tw`flex-${flexWidths.set} text-center`}>{setIndex}</Text>
-
-      <Text style={tw`flex-${flexWidths.prevVol} text-center`}>
-        {workoutSet.weight * workoutSet.reps}
+    <View
+      style={tw`px-2 flex-row items-center ${
+        workoutSet.isFinished ? "bg-green-200" : ""
+      }`}
+    >
+      <Text style={tw`flex-${flexWidths.set} text-center text-blue-500`}>
+        {setIndex + 1}
       </Text>
 
-      <Text style={tw`flex-${flexWidths.curVol} text-center`}>
+      <Text style={tw`flex-${flexWidths.prevVol} text-center text-blue-500`}>
+        {workoutSet.prevWeight * workoutSet.prevReps}
+      </Text>
+
+      <Text style={tw`flex-${flexWidths.curVol} text-center text-blue-500`}>
         {workoutSet.weight * workoutSet.reps}
       </Text>
 
       <View style={tw`flex-${flexWidths.weight}`}>
         <TextInput
           style={tw`mx-1 text-center bg-gray-200 rounded-md`}
+          keyboardType="number-pad"
           maxLength={4}
+          editable={!workoutSet.isFinished}
+          placeholder={workoutSet.prevWeight.toString()}
+          onChangeText={(weight) =>
+            dispatch(setWeight([exerciseIndex, setIndex, Number(weight)]))
+          }
         >
-          {workoutSet.weight}
+          {workoutSet.weight === 0 ? "" : workoutSet.weight}
         </TextInput>
       </View>
 
       <View style={tw`flex-${flexWidths.reps}`}>
         <TextInput
           style={tw`mx-1 text-center bg-gray-200 rounded-md`}
+          keyboardType="number-pad"
           maxLength={4}
+          editable={!workoutSet.isFinished}
+          placeholder={workoutSet.prevReps.toString()}
+          onChangeText={(reps) =>
+            dispatch(setReps([exerciseIndex, setIndex, Number(reps)]))
+          }
         >
-          {workoutSet.reps}
+          {workoutSet.reps === 0 ? "" : workoutSet.reps}
         </TextInput>
       </View>
 
-      <View style={tw`flex-${flexWidths.check} text-center h-full`}>
+      <View style={tw`flex-${flexWidths.check} justify-center items-center`}>
         <TouchableOpacity
-          style={tw`flex-1  h-full bg-blue-400 rounded-md`}
-          onPress={() => dispatch(toggleFinishSet())}
-        />
+          onPress={() => dispatch(toggleFinishSet([exerciseIndex, setIndex]))}
+        >
+          <Ionicons name="checkbox" color={"#60a5fa"} size={34} />
+        </TouchableOpacity>
       </View>
     </View>
   );

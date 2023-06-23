@@ -22,15 +22,17 @@ export default function WorkoutTemplateComponent({ index }: props) {
 
   return (
     <TouchableOpacity
-      style={tw`flex-1 mx-4 my-4 shadow-md rounded-2xl bg-white max-h-28 min-h-20 p-2`}
+      style={tw`flex-row mx-4 my-4 shadow-md rounded-2xl bg-white max-h-32 min-h-24 p-2`}
       onPress={navigateTo}
     >
-      <View>
+      <View style={tw`flex-9 flex-col justify-evenly`}>
         <Text style={tw`text-lg`}>{template.workoutName}</Text>
         <Text style={tw`text-xs`}>
           Last Performed: {template.lastPerfromed}
         </Text>
       </View>
+
+      <View style={tw`flex-10 flex-col justify-start`}></View>
     </TouchableOpacity>
   );
 }

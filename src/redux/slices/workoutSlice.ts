@@ -1,23 +1,24 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { Exercise, Workout, WorkoutSet } from "../../types/workoutTypes";
-import { WorkoutAction } from "../../types/workoutActionTypes";
 
 const initialSet: WorkoutSet = {
+  prevWeight: 0,
+  prevReps: 0,
   isFinished: false,
   reps: 0,
   weight: 0,
 };
 
 const initialExercise: Exercise = {
-  name: "e",
+  name: "",
   timer: 0,
   Sets: [initialSet],
 };
 
 const initialState: Workout = {
   id: 0,
-  name: "w",
+  name: "",
   Exercises: [initialExercise],
   isLocked: false,
 };
@@ -26,51 +27,73 @@ export const workoutsSlice = createSlice({
   name: "workout",
   initialState: initialState,
   reducers: {
-    addExercise: (state: Workout, action: WorkoutAction) => {
+    addExercise: (state: Workout) => {
       state.Exercises = [...state.Exercises, initialExercise];
     },
-    delExercise: (state: Workout, action: WorkoutAction) => {
-      if (!action.payload?.exerciseIndex)
-        throw Error("Action DEL_EXERCISE requires exercise index payload.");
-      state.Exercises.splice(action.payload?.exerciseIndex, 1);
-      // let newExercises = [...state.Exercises];
-      // newExercises.splice(action.payload?.exerciseIndex, 1);
-      // state.Exercises = newExercises;
+    delExercise: (state: Workout, action: PayloadAction<number>) => {
+      if (state.Exercises.length <= 1)
+        state.Exercises = [{ ...initialExercise }];
+      else state.Exercises.splice(action.payload, 1);
     },
-    addSet: (state: Workout, action: WorkoutAction) => {
-      if (!action.payload?.exerciseIndex)
-        throw Error("Action ADD_SET requires exercise index payload.");
-      state.Exercises[action.payload.exerciseIndex].Sets = [
-        ...state.Exercises[action.payload.exerciseIndex].Sets,
+    addSet: (state: Workout, action: PayloadAction<number>) => {
+      state.Exercises[action.payload].Sets = [
+        ...state.Exercises[action.payload].Sets,
         initialSet,
       ];
     },
-    delSet: (state: Workout, action: WorkoutAction) => {
-      if (!action.payload?.exerciseIndex)
-        throw Error("Action DEL_SET requires exercise index payload.");
-      state.Exercises[action.payload.exerciseIndex].Sets.pop();
-      // let newSets = [...state.Exercises[action.payload.exerciseIndex].Sets];
-      // newSets.pop();
-      // state.Exercises[action.payload.exerciseIndex].Sets = newSets;
+    delSet: (state: Workout, action: PayloadAction<number>) => {
+      if (state.Exercises[action.payload].Sets.length <= 1)
+        state.Exercises[action.payload].Sets = [{ ...initialSet }];
+      else state.Exercises[action.payload].Sets.pop();
     },
-    toggleFinishSet: (state: Workout, action: WorkoutAction) => {
-      if (!action.payload?.exerciseIndex)
-        throw Error(
-          "Action TOGGLE_FINISH_SET requires exercise index payload."
-        );
-      else if (!action.payload?.setIndex)
-        throw Error("Action TOGGLE_FINISH_SET requires set index payload.");
+    toggleFinishSet: (
+      state: Workout,
+      action: PayloadAction<[number, number]>
+    ) => {
       let prevBool =
-        state.Exercises[action.payload.exerciseIndex].Sets[
-          action.payload.setIndex
-        ].isFinished;
-      state.Exercises[action.payload.exerciseIndex].Sets[
-        action.payload.setIndex
-      ].isFinished = !prevBool;
+        state.Exercises[action.payload[0]].Sets[action.payload[1]].isFinished;
+      state.Exercises[action.payload[0]].Sets[action.payload[1]].isFinished =
+        !prevBool;
+    },
+    toggleLock: (state: Workout) => {
+      state.isLocked = !state.isLocked;
+    },
+    setWorkoutName: (state: Workout, action: PayloadAction<string>) => {
+      state.name = action.payload;
+    },
+    setExerciseName: (
+      state: Workout,
+      action: PayloadAction<[number, string]>
+    ) => {
+      state.Exercises[action.payload[0]].name = action.payload[1];
+    },
+    setWeight: (
+      state: Workout,
+      action: PayloadAction<[number, number, number]>
+    ) => {
+      state.Exercises[action.payload[0]].Sets[action.payload[1]].weight =
+        action.payload[2];
+    },
+    setReps: (
+      state: Workout,
+      action: PayloadAction<[number, number, number]>
+    ) => {
+      state.Exercises[action.payload[0]].Sets[action.payload[1]].reps =
+        action.payload[2];
     },
   },
 });
 
 export const workoutReducer = workoutsSlice.reducer;
-export const { addExercise, delExercise, addSet, delSet, toggleFinishSet } =
-  workoutsSlice.actions;
+export const {
+  addExercise,
+  delExercise,
+  addSet,
+  delSet,
+  toggleLock,
+  toggleFinishSet,
+  setWorkoutName,
+  setExerciseName,
+  setWeight,
+  setReps,
+} = workoutsSlice.actions;

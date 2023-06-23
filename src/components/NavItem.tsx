@@ -5,10 +5,10 @@ import tw from "twrnc";
 interface props {
   href: string;
   name: string;
-  icon?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
-export default function NavItem({ href, name, icon }: props) {
+export default function NavItem({ href, name, children }: props) {
   const router = useRouter();
 
   const navigateTo = () => {
@@ -20,6 +20,7 @@ export default function NavItem({ href, name, icon }: props) {
       style={tw`flex-1 flex-col justify-end items-center pb-1`}
       onPress={navigateTo}
     >
+      {children}
       <Text style={tw`text-[${Colors.lightGray}] text-xs`}>{name}</Text>
     </TouchableOpacity>
   );

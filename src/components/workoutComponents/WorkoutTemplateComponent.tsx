@@ -1,9 +1,9 @@
 import { useSelector, useDispatch } from "react-redux";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import tw from "twrnc";
+import tw from "../../util/tailwind";
 
-import { AppDispatch, RootState } from "../redux/store";
+import { AppDispatch, RootState } from "../../redux/store";
 
 interface props {
   index: number;

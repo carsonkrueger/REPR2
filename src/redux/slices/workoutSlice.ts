@@ -4,14 +4,12 @@ import { Exercise, Workout, WorkoutSet } from "../../types/workoutTypes";
 import { WorkoutAction } from "../../types/workoutActionTypes";
 
 const initialSet: WorkoutSet = {
-  setIndex: 0,
   isFinished: false,
   reps: 0,
   weight: 0,
 };
 
 const initialExercise: Exercise = {
-  exerciseIndex: 0,
   name: "e",
   timer: 0,
   Sets: [initialSet],
@@ -29,30 +27,31 @@ export const workoutsSlice = createSlice({
   initialState: initialState,
   reducers: {
     addExercise: (state: Workout, action: WorkoutAction) => {
-      let newExercises = state.Exercises;
-      newExercises.push(initialExercise);
-      return { ...state, Exercises: newExercises };
+      state.Exercises = [...state.Exercises, initialExercise];
     },
     delExercise: (state: Workout, action: WorkoutAction) => {
       if (!action.payload?.exerciseIndex)
         throw Error("Action DEL_EXERCISE requires exercise index payload.");
-      let newExercises = state.Exercises;
-      newExercises.splice(action.payload?.exerciseIndex, 1);
-      return { ...state, Exercises: newExercises };
+      state.Exercises.splice(action.payload?.exerciseIndex, 1);
+      // let newExercises = [...state.Exercises];
+      // newExercises.splice(action.payload?.exerciseIndex, 1);
+      // state.Exercises = newExercises;
     },
     addSet: (state: Workout, action: WorkoutAction) => {
       if (!action.payload?.exerciseIndex)
         throw Error("Action ADD_SET requires exercise index payload.");
-      let newExercises = state.Exercises;
-      newExercises[action.payload.exerciseIndex].Sets.push(initialSet);
-      return { ...state, Exercises: newExercises };
+      state.Exercises[action.payload.exerciseIndex].Sets = [
+        ...state.Exercises[action.payload.exerciseIndex].Sets,
+        initialSet,
+      ];
     },
     delSet: (state: Workout, action: WorkoutAction) => {
       if (!action.payload?.exerciseIndex)
         throw Error("Action DEL_SET requires exercise index payload.");
-      let newExercises = state.Exercises;
-      newExercises[action.payload.exerciseIndex].Sets.pop();
-      return { ...state };
+      state.Exercises[action.payload.exerciseIndex].Sets.pop();
+      // let newSets = [...state.Exercises[action.payload.exerciseIndex].Sets];
+      // newSets.pop();
+      // state.Exercises[action.payload.exerciseIndex].Sets = newSets;
     },
     toggleFinishSet: (state: Workout, action: WorkoutAction) => {
       if (!action.payload?.exerciseIndex)
@@ -61,14 +60,13 @@ export const workoutsSlice = createSlice({
         );
       else if (!action.payload?.setIndex)
         throw Error("Action TOGGLE_FINISH_SET requires set index payload.");
-      let newExercises = state.Exercises;
-      newExercises[action.payload.exerciseIndex].Sets[
-        action.payload.setIndex
-      ].isFinished =
-        !newExercises[action.payload.exerciseIndex].Sets[
+      let prevBool =
+        state.Exercises[action.payload.exerciseIndex].Sets[
           action.payload.setIndex
         ].isFinished;
-      return { ...state, Exercises: newExercises };
+      state.Exercises[action.payload.exerciseIndex].Sets[
+        action.payload.setIndex
+      ].isFinished = !prevBool;
     },
   },
 });

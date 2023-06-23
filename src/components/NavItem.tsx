@@ -17,7 +17,7 @@ export default function NavItem({ href, name, icon }: props) {
 
   return (
     <TouchableOpacity
-      style={tw`flex-1 flex-col justify-end items-center`}
+      style={tw`flex-1 flex-col justify-end items-center pb-1`}
       onPress={navigateTo}
     >
       <Text style={tw`text-[${Colors.lightGray}] text-xs`}>{name}</Text>

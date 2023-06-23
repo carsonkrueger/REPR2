@@ -6,7 +6,6 @@ export type WorkoutSet = {
 };
 
 export type Exercise = {
-  exerciseIndex: number;
   name: string;
   Sets: WorkoutSet[];
   timer: number;

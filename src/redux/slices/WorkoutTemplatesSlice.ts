@@ -2,24 +2,21 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { WorkoutTemplate } from "../../types/workoutTypes";
 
-const initialState: WorkoutTemplate[] = [
-  {
-    workoutId: 0,
-    workoutName: "",
-    exerciseNames: [""],
-    lastPerfromed: "",
-  },
-];
+const initialWorkoutTemplate: WorkoutTemplate = {
+  workoutId: 0,
+  workoutName: "",
+  exerciseNames: [""],
+  lastPerfromed: "",
+};
+
+const initialState: WorkoutTemplate[] = [];
 
 export const WorkoutTemplatesSlice = createSlice({
-  name: "workoutTemplate",
+  name: "workoutTemplates",
   initialState: initialState,
   reducers: {
-    addWorkoutTemplate: (
-      state: WorkoutTemplate[],
-      action: PayloadAction<WorkoutTemplate>
-    ) => {
-      state.push(action.payload);
+    addWorkoutTemplate: (state: WorkoutTemplate[]) => {
+      state.push(initialWorkoutTemplate);
     },
     delWorkoutTemplateById: (
       state: WorkoutTemplate[],

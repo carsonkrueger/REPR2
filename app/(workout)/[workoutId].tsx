@@ -18,7 +18,7 @@ export default function WorkoutScreen() {
   const dispatch = useDispatch<AppDispatch>();
 
   return (
-    <SafeAreaView style={tw`flex-1 flex-col`}>
+    <SafeAreaView style={tw``}>
       {/* HEADER */}
       <View
         style={tw`flex-row justify-center items-center px-1 py-3 z-10 bg-white shadow-md`}
@@ -49,7 +49,7 @@ export default function WorkoutScreen() {
         )}
         ListFooterComponent={
           <TouchableOpacity
-            style={tw`mt-2 mb-32 rounded-full bg-blue-400 self-center`}
+            style={tw`mt-2 mb-52 rounded-full bg-blue-400 self-center`}
             onPress={() => dispatch(addExercise())}
           >
             <Text style={tw`py-2 px-4 self-center text-center text-white`}>

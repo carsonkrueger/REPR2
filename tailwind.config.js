@@ -4,15 +4,19 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        dark: "#343538",
-        primary: "rgb(234,179,8)",
-        secondary: "#686869",
-        secondaryHighlight: "#4a4a4a",
-        secondaryLowlight: "#424242",
-        transparent: "rgba(0,0,0,0)",
+        // light mode
+        primary: "#60a5fa",
+        secondary: "#8fc1ff",
+        back: "#f5f5f5",
+        front: "#fff",
+
+        // dark mode
+        "dark-back": "#343538",
+        "dark-front": "#3e3f42",
       },
       fontFamily: {},
     },
   },
   plugins: [],
+  darkMode: "class",
 };

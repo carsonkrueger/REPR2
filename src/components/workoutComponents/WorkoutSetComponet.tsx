@@ -32,15 +32,15 @@ export default function WorkoutSetComponent({
         workoutSet.isFinished ? "bg-green-200" : ""
       }`}
     >
-      <Text style={tw`flex-${flexWidths.set} text-center text-blue-500`}>
+      <Text style={tw`flex-${flexWidths.set} text-center text-primary`}>
         {setIndex + 1}
       </Text>
 
-      <Text style={tw`flex-${flexWidths.prevVol} text-center text-blue-500`}>
+      <Text style={tw`flex-${flexWidths.prevVol} text-center text-primary`}>
         {workoutSet.prevWeight * workoutSet.prevReps}
       </Text>
 
-      <Text style={tw`flex-${flexWidths.curVol} text-center text-blue-500`}>
+      <Text style={tw`flex-${flexWidths.curVol} text-center text-primary`}>
         {workoutSet.weight * workoutSet.reps}
       </Text>
 

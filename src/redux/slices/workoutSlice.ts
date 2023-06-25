@@ -16,7 +16,7 @@ const initialExercise: Exercise = {
   Sets: [initialSet],
 };
 
-const initialState: Workout = {
+const initialState: Workout | null = {
   id: 0,
   name: "",
   Exercises: [initialExercise],
@@ -80,6 +80,9 @@ export const workoutsSlice = createSlice({
     ) => {
       state.Exercises[action.payload[0]].Sets[action.payload[1]].reps =
         action.payload[2];
+    },
+    clear: (state: Workout | null) => {
+      state = null;
     },
   },
 });

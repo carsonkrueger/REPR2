@@ -29,7 +29,7 @@ export default function WorkoutScreen() {
 
         <TextInput
           style={tw`flex-1 px-2 py-1 mx-1 text-lg ${
-            workout.isLocked ? "" : "bg-gray-200"
+            workout.isLocked ? "" : "bg-back"
           } rounded-md`}
           placeholder="Workout Name"
           editable={!workout.isLocked}

@@ -13,6 +13,12 @@ module.exports = {
         // dark mode
         "dark-back": "#343538",
         "dark-front": "#3e3f42",
+
+        // Misc
+        "light-green": "#ccffde",
+        "dark-green": "#bbf7d0",
+        "extra-dark-green": "#a2e8bb",
+        "dark-finished-green": "#95b89d",
       },
       fontFamily: {},
     },

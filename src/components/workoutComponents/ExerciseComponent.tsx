@@ -29,14 +29,16 @@ export default function ExerciseComponent({ exerciseIndex }: props) {
   return (
     <View style={tw`py-3 my-2 mx-2 bg-white rounded-lg shadow-md`}>
       {/* HEADER */}
-      <View style={tw`mx-2`}>
+      <View style={tw`mx-2 mb-1`}>
         <TextInput
           placeholder="Exercise Name"
-          style={tw`text-lg ${isLocked ? "" : "bg-gray-200"} rounded-md px-1`}
+          style={tw`text-lg ${isLocked ? "" : "bg-back"} rounded-md px-1`}
           onChangeText={(name) =>
             dispatch(setExerciseName([exerciseIndex, name]))
           }
           editable={!isLocked}
+          multiline={true}
+          numberOfLines={1}
         >
           {exercise.name}
         </TextInput>

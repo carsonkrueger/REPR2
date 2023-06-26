@@ -48,14 +48,16 @@ export default function WorkoutScreen() {
           <ExerciseComponent key={index} exerciseIndex={index} />
         )}
         ListFooterComponent={
-          <TouchableOpacity
-            style={tw`mt-2 mb-52 rounded-full bg-blue-400 self-center`}
-            onPress={() => dispatch(addExercise())}
-          >
-            <Text style={tw`py-2 px-4 self-center text-center text-white`}>
-              ADD EXERCISE
-            </Text>
-          </TouchableOpacity>
+          <View style={tw`mt-2 mb-52 items-center`}>
+            <TouchableOpacity
+              style={tw`rounded-full bg-blue-400`}
+              onPress={() => dispatch(addExercise())}
+            >
+              <Text style={tw`py-2 px-4 self-center text-center text-white`}>
+                ADD EXERCISE
+              </Text>
+            </TouchableOpacity>
+          </View>
         }
       />
 

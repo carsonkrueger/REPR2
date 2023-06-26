@@ -18,6 +18,7 @@ export type Workout = {
   name: string;
   isLocked: boolean;
   Exercises: Exercise[];
+  inProgress: boolean;
 };
 
 export type WorkoutTemplate = {

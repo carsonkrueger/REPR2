@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { Provider } from "react-redux";
 
 import { store } from "../src/redux/store";
-import TabNavigator from "../src/components/NavComponents/Nav";
+import TabNavigator from "../src/components/navComponents/Nav";
 // import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Layout() {

@@ -16,11 +16,12 @@ const initialExercise: Exercise = {
   Sets: [initialSet],
 };
 
-const initialState: Workout | null = {
+const initialState: Workout = {
   id: 0,
   name: "",
   Exercises: [initialExercise],
   isLocked: false,
+  inProgress: false,
 };
 
 export const workoutsSlice = createSlice({
@@ -81,8 +82,8 @@ export const workoutsSlice = createSlice({
       state.Exercises[action.payload[0]].Sets[action.payload[1]].reps =
         action.payload[2];
     },
-    clear: (state: Workout | null) => {
-      state = null;
+    reset: (state: Workout | null) => {
+      state = initialState;
     },
   },
 });

@@ -1,6 +1,7 @@
 import { useRouter, useSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, FlatList, TextInput } from "react-native";
+import { useEffect } from "react";
 import tw from "../../src/util/tailwind";
 import { useSelector, useDispatch } from "react-redux";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -9,7 +10,12 @@ import ExerciseComponent from "../../src/components/workoutComponents/ExerciseCo
 import { Workout } from "../../src/types/workoutTypes";
 import { RootState, AppDispatch } from "../../src/redux/store";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { addExercise, toggleLock } from "../../src/redux/slices/workoutSlice";
+import {
+  addExercise,
+  resetWorkout,
+  startWorkout,
+  toggleLock,
+} from "../../src/redux/slices/workoutSlice";
 
 export default function WorkoutScreen() {
   const router = useRouter();
@@ -17,13 +23,22 @@ export default function WorkoutScreen() {
   const workout: Workout = useSelector((state: RootState) => state.workout);
   const dispatch = useDispatch<AppDispatch>();
 
+  useEffect(() => {
+    dispatch(startWorkout());
+  }, []);
+
+  const cancelWorkout = () => {
+    dispatch(resetWorkout());
+    router.back();
+  };
+
   return (
     <SafeAreaView style={tw``}>
       {/* HEADER */}
       <View
         style={tw`flex-row justify-center items-center px-1 py-3 z-10 bg-white shadow-md`}
       >
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={cancelWorkout}>
           <Ionicons name="md-chevron-back" color={"#60a5fa"} size={30} />
         </TouchableOpacity>
 
@@ -49,19 +64,19 @@ export default function WorkoutScreen() {
         )}
         ListFooterComponent={
           <View style={tw`mt-2 mb-52 items-center`}>
-            <TouchableOpacity
-              style={tw`rounded-full bg-blue-400`}
-              onPress={() => dispatch(addExercise())}
-            >
-              <Text style={tw`py-2 px-4 self-center text-center text-white`}>
-                ADD EXERCISE
-              </Text>
-            </TouchableOpacity>
+            {!workout.isLocked && (
+              <TouchableOpacity
+                style={tw`rounded-full bg-blue-400`}
+                onPress={() => dispatch(addExercise())}
+              >
+                <Text style={tw`py-2 px-4 self-center text-center text-white`}>
+                  ADD EXERCISE
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         }
       />
-
-      {/* ADD EXERCISE BUTTON */}
     </SafeAreaView>
   );
 }

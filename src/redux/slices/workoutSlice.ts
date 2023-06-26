@@ -82,8 +82,15 @@ export const workoutsSlice = createSlice({
       state.Exercises[action.payload[0]].Sets[action.payload[1]].reps =
         action.payload[2];
     },
-    reset: (state: Workout | null) => {
-      state = initialState;
+    resetWorkout: (state: Workout) => {
+      state.inProgress = false;
+      state.Exercises = [initialExercise];
+      state.id = -1;
+      state.isLocked = false;
+      state.name = "";
+    },
+    startWorkout: (state: Workout) => {
+      state.inProgress = true;
     },
   },
 });
@@ -100,4 +107,6 @@ export const {
   setExerciseName,
   setWeight,
   setReps,
+  resetWorkout,
+  startWorkout,
 } = workoutsSlice.actions;

@@ -4,7 +4,6 @@ import { Provider } from "react-redux";
 
 import { store } from "../src/redux/store";
 import TabNavigator from "../src/components/navComponents/Nav";
-// import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Layout() {
   return (
@@ -16,12 +15,20 @@ export default function Layout() {
           options={{ title: "Home", headerShown: false }}
         />
         <Stack.Screen
+          name="search"
+          options={{ title: "Search", headerShown: false }}
+        />
+        <Stack.Screen
           name="workouts"
           options={{ title: "Workouts", headerShown: false }}
         />
         <Stack.Screen
           name="settings"
           options={{ title: "Settings", headerShown: false }}
+        />
+        <Stack.Screen
+          name="profile"
+          options={{ title: "Profile", headerShown: false }}
         />
         <Stack.Screen
           name="(workout)/[workoutId]"

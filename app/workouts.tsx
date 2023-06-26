@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../src/redux/store";
 import { FlatList, View, Text } from "react-native";
-import { useEffect } from "react";
 import tw from "../src/util/tailwind";
 import { useRouter } from "expo-router";
 
@@ -19,29 +18,19 @@ export default function Workouts() {
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
 
-  useEffect(() => {
-    if (curWorkout.inProgress) router.push(`(workout)/${curWorkout.id}`);
-  }, []);
-
   return (
     <View style={tw`flex-1 bg-back dark:bg-dark-back`}>
       <SafeAreaView style={tw`z-10`}>
         <View style={tw`py-2 bg-front shadow-md`}>
-          <Text style={tw`text-xl text-center`}>Workouts</Text>
+          <Text
+            style={[tw`text-xl text-center`, { fontFamily: "RobotoCondensed" }]}
+          >
+            Workouts
+          </Text>
         </View>
       </SafeAreaView>
 
       <View style={tw`flex-1 px-4`}>
-        {/* CURRENT WORKOUT */}
-        {curWorkout.inProgress && (
-          <View>
-            <Text style={tw`px-2`}>Current Workout</Text>
-            <WorkoutTemplateComponent
-              template={templateFromWorkout(curWorkout)}
-            />
-          </View>
-        )}
-
         {/* WORKOUT TEMPLATES */}
         <FlatList
           data={templates}

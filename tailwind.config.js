@@ -6,6 +6,7 @@ module.exports = {
       colors: {
         // light mode
         primary: "#60a5fa",
+        "back-primary": "#4a93ed",
         secondary: "#8fc1ff",
         back: "#f5f5f5",
         front: "#fff",
@@ -15,6 +16,8 @@ module.exports = {
         "dark-front": "#3e3f42",
 
         // Misc
+        transparent: "rgba(167, 167, 167, 0.4)",
+        "light-gray": "#c2c2c2",
         "light-green": "#ccffde",
         "dark-green": "#bbf7d0",
         "extra-dark-green": "#a2e8bb",

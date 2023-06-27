@@ -23,7 +23,10 @@ export default function Workouts() {
       <SafeAreaView style={tw`z-10`}>
         <View style={tw`py-2 bg-front shadow-md`}>
           <Text
-            style={[tw`text-xl text-center`, { fontFamily: "RobotoCondensed" }]}
+            style={[
+              tw`text-xl text-center text-primary`,
+              { fontFamily: "RobotoCondensed" },
+            ]}
           >
             Workouts
           </Text>

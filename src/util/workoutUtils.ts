@@ -15,3 +15,7 @@ export function templateFromWorkout(workout: Workout): WorkoutTemplate {
     workoutName: workout.name,
   };
 }
+
+export function cleanNumStr(text: string) {
+  return text.replace(/[^0-9]/g, "");
+}

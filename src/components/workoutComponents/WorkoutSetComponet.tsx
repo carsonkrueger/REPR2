@@ -12,6 +12,7 @@ import {
   setReps,
   selectSetByIndex,
 } from "../../redux/slices/workoutSlice";
+import { cleanNumStr } from "../../util/workoutUtils";
 
 interface props {
   exerciseIndex: number;
@@ -28,12 +29,12 @@ export default function WorkoutSetComponent({
   const dispatch = useDispatch<AppDispatch>();
 
   const onWeightChanged = (weight: string | number) => {
-    if (typeof weight === "string") weight = weight.replace(/[^0-9]/g, "");
+    if (typeof weight === "string") weight = cleanNumStr(weight);
     dispatch(setWeight([exerciseIndex, setIndex, Number(weight)]));
   };
 
   const onRepsChanged = (reps: string | number) => {
-    if (typeof reps === "string") reps = reps.replace(/[^0-9]/g, "");
+    if (typeof reps === "string") reps = cleanNumStr(reps);
     dispatch(setReps([exerciseIndex, setIndex, Number(reps)]));
   };
 

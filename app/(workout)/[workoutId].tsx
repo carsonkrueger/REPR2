@@ -1,10 +1,10 @@
 import { useRouter, useSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, TextInput } from "react-native";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import tw from "../../src/util/tailwind";
 import { useSelector, useDispatch } from "react-redux";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { Ionicons, Entypo } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 
 import ExerciseComponent from "../../src/components/workoutComponents/ExerciseComponent";
@@ -18,31 +18,59 @@ import {
   startWorkout,
   toggleLock,
 } from "../../src/redux/slices/workoutSlice";
+import MyAlert from "../../src/components/MyAlert";
 
 export default function WorkoutScreen() {
   const router = useRouter();
   const { workoutId } = useSearchParams();
+
   const workout: Workout = useSelector((state: RootState) =>
     selectWorkout(state)
   );
   const dispatch = useDispatch<AppDispatch>();
+  const [backPressed, setBackPressed] = useState(false);
 
   useEffect(() => {
     dispatch(startWorkout());
   }, []);
 
-  const cancelWorkout = () => {
+  const backPress = () => {
+    setBackPressed((prev) => !prev);
+  };
+
+  const finishWorkout = () => {
+    // backPress();
     dispatch(resetWorkout());
     router.back();
+    router.replace("/workouts");
+  };
+
+  const cancelWorkout = () => {
+    // backPress();
+    dispatch(resetWorkout());
+    router.back();
+    router.replace("/workouts");
   };
 
   return (
-    <SafeAreaView style={tw`flex-1`}>
+    <SafeAreaView style={tw`flex-1 bg-back`}>
+      {/* BACK ALERT */}
+      {backPressed && (
+        <MyAlert
+          msg="Are you sure you want to finish your workout?"
+          closeAlert={backPress}
+          dangerCommand={cancelWorkout}
+          safeCommand={finishWorkout}
+          dangerText="Cancel Workout"
+          safeText="Finish Workout"
+        />
+      )}
+
       {/* HEADER */}
       <View
-        style={tw`flex-row justify-center items-center px-1 py-3 z-10 bg-white shadow-md`}
+        style={tw`flex-row justify-center items-center px-2 py-3 z-10 bg-white shadow-sm`}
       >
-        <TouchableOpacity onPress={cancelWorkout}>
+        <TouchableOpacity onPress={backPress}>
           <Ionicons name="md-chevron-back" color={"#60a5fa"} size={30} />
         </TouchableOpacity>
 
@@ -56,7 +84,11 @@ export default function WorkoutScreen() {
           {workout.name}
         </TextInput>
         <TouchableOpacity onPress={() => dispatch(toggleLock())}>
-          <Ionicons name="menu" color={"#60a5fa"} size={30} />
+          <Entypo
+            name={`${workout.isLocked ? "lock" : "lock-open"}`}
+            color={"#60a5fa"}
+            size={30}
+          />
         </TouchableOpacity>
       </View>
 
@@ -69,7 +101,7 @@ export default function WorkoutScreen() {
         estimatedItemSize={220}
         ListFooterComponent={
           // ADD EXERCISE BUTTON
-          <View style={tw`mt-2 mb-64 items-center`}>
+          <View style={tw`mt-4 mb-[70%] items-center`}>
             {!workout.isLocked && (
               <TouchableOpacity
                 style={tw`rounded-full bg-blue-400 shadow-md`}

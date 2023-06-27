@@ -7,13 +7,16 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { Workout } from "../../types/workoutTypes";
 import tw from "../../util/tailwind";
+import { selectWorkout } from "../../redux/slices/workoutSlice";
 
 export default function Nav() {
-  const curWorkout: Workout = useSelector((state: RootState) => state.workout);
+  const curWorkout: Workout = useSelector((state: RootState) =>
+    selectWorkout(state)
+  );
   const router = useRouter();
   const [selectedPos, setSelectedPos] = useState(0);
 
-  const navigateTo = (href: string, index: number) => {
+  const replaceNavigateTo = (href: string, index: number) => {
     if (index === selectedPos) return;
     setSelectedPos(index);
     router.replace(href);
@@ -38,17 +41,17 @@ export default function Nav() {
             onPress={
               curWorkout.inProgress
                 ? () => pushNavigateTo(`/(workout)/${curWorkout.id}`, 2)
-                : () => navigateTo("/workouts", 2)
+                : () => replaceNavigateTo("/workouts", 2)
             }
           >
-            <Ionicons name="barbell-sharp" color={"#fff"} size={27} />
+            {/* <Ionicons name="barbell-sharp" color={"#fff"} size={27} /> */}
           </TouchableOpacity>
         </View>
       </View>
 
       <TouchableOpacity
         style={tw`flex-1 flex-col justify-end items-center pb-1`}
-        onPress={() => navigateTo("/", 0)}
+        onPress={() => replaceNavigateTo("/", 0)}
       >
         <Ionicons
           name={`${selectedPos === 0 ? "home" : "home-outline"}`}
@@ -59,7 +62,7 @@ export default function Nav() {
 
       <TouchableOpacity
         style={tw`flex-1 flex-col justify-end items-center pb-1`}
-        onPress={() => navigateTo("/search", 1)}
+        onPress={() => replaceNavigateTo("/search", 1)}
       >
         <Ionicons
           name={`${selectedPos === 1 ? "search" : "search-outline"}`}
@@ -72,7 +75,7 @@ export default function Nav() {
 
       <TouchableOpacity
         style={tw`flex-1 flex-col justify-end items-center pb-1`}
-        onPress={() => navigateTo("/settings", 3)}
+        onPress={() => replaceNavigateTo("/settings", 3)}
       >
         <Ionicons
           name={`${
@@ -85,7 +88,7 @@ export default function Nav() {
 
       <TouchableOpacity
         style={tw`flex-1 flex-col justify-end items-center pb-1`}
-        onPress={() => navigateTo("/profile", 4)}
+        onPress={() => replaceNavigateTo("/profile", 4)}
       >
         <Ionicons
           name={`${selectedPos === 4 ? "person" : "person-outline"}`}

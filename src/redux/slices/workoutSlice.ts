@@ -93,6 +93,14 @@ export const workoutsSlice = createSlice({
     startWorkout: (state: Workout) => {
       state.inProgress = true;
     },
+    toggleTimer: (state: Workout, action: PayloadAction<number>) => {
+      if (state.Exercises[action.payload].timerStartTime)
+        state.Exercises[action.payload].timerStartTime = undefined;
+      else state.Exercises[action.payload].timerStartTime = Date.now() / 1000;
+    },
+    setInitTimer: (state: Workout, action: PayloadAction<[number, number]>) => {
+      state.Exercises[action.payload[0]].timer = action.payload[1];
+    },
   },
 });
 
@@ -110,10 +118,16 @@ export const {
   setReps,
   resetWorkout,
   startWorkout,
+  toggleTimer,
+  setInitTimer,
 } = workoutsSlice.actions;
 
 // SELECTORS
 export const selectWorkout = (state: RootState) => state.workout;
+export const selectIsLocked = createSelector(
+  selectWorkout,
+  (workout: Workout) => workout.isLocked
+);
 export const selectExercises = createSelector(
   selectWorkout,
   (workout: Workout) => workout.Exercises

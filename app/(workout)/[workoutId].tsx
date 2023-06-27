@@ -1,10 +1,11 @@
 import { useRouter, useSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, FlatList, TextInput } from "react-native";
+import { View, Text, TextInput } from "react-native";
 import { useEffect } from "react";
 import tw from "../../src/util/tailwind";
 import { useSelector, useDispatch } from "react-redux";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { FlashList } from "@shopify/flash-list";
 
 import ExerciseComponent from "../../src/components/workoutComponents/ExerciseComponent";
 import { Workout } from "../../src/types/workoutTypes";
@@ -13,6 +14,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import {
   addExercise,
   resetWorkout,
+  selectWorkout,
   startWorkout,
   toggleLock,
 } from "../../src/redux/slices/workoutSlice";
@@ -20,7 +22,9 @@ import {
 export default function WorkoutScreen() {
   const router = useRouter();
   const { workoutId } = useSearchParams();
-  const workout: Workout = useSelector((state: RootState) => state.workout);
+  const workout: Workout = useSelector((state: RootState) =>
+    selectWorkout(state)
+  );
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -33,7 +37,7 @@ export default function WorkoutScreen() {
   };
 
   return (
-    <SafeAreaView style={tw``}>
+    <SafeAreaView style={tw`flex-1`}>
       {/* HEADER */}
       <View
         style={tw`flex-row justify-center items-center px-1 py-3 z-10 bg-white shadow-md`}
@@ -57,16 +61,18 @@ export default function WorkoutScreen() {
       </View>
 
       {/* EXERCISE COMPONENTS */}
-      <FlatList
+      <FlashList
         data={workout.Exercises}
         renderItem={({ item, index }) => (
           <ExerciseComponent key={index} exerciseIndex={index} />
         )}
+        estimatedItemSize={220}
         ListFooterComponent={
-          <View style={tw`mt-2 mb-52 items-center`}>
+          // ADD EXERCISE BUTTON
+          <View style={tw`mt-2 mb-64 items-center`}>
             {!workout.isLocked && (
               <TouchableOpacity
-                style={tw`rounded-full bg-blue-400`}
+                style={tw`rounded-full bg-blue-400 shadow-md`}
                 onPress={() => dispatch(addExercise())}
               >
                 <Text style={tw`py-2 px-4 self-center text-center text-white`}>

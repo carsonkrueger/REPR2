@@ -10,6 +10,7 @@ import { flexWidths } from "./miscWorkoutStyles";
 import {
   addSet,
   delSet,
+  selectExerciseByIndex,
   setExerciseName,
 } from "../../redux/slices/workoutSlice";
 
@@ -21,8 +22,8 @@ export default function ExerciseComponent({ exerciseIndex }: props) {
   const isLocked: boolean = useSelector(
     (state: RootState) => state.workout.isLocked
   );
-  const exercise: Exercise = useSelector(
-    (state: RootState) => state.workout.Exercises[exerciseIndex]
+  const exercise: Exercise = useSelector((state: RootState) =>
+    selectExerciseByIndex(state, exerciseIndex)
   );
   const dispatch = useDispatch<AppDispatch>();
 

@@ -1,6 +1,7 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { Exercise, Workout, WorkoutSet } from "../../types/workoutTypes";
+import { RootState } from "../store";
 
 const initialSet: WorkoutSet = {
   prevWeight: 0,
@@ -110,3 +111,22 @@ export const {
   resetWorkout,
   startWorkout,
 } = workoutsSlice.actions;
+
+// SELECTORS
+export const selectWorkout = (state: RootState) => state.workout;
+export const selectExercises = createSelector(
+  selectWorkout,
+  (workout: Workout) => workout.Exercises
+);
+export const selectExerciseByIndex = createSelector(
+  [selectExercises, (_, exerciseIndex: number) => exerciseIndex],
+  (exercises: Exercise[], exerciseIndex) => exercises[exerciseIndex]
+);
+export const selectSetByIndex = createSelector(
+  [
+    selectExercises,
+    (_, exerciseIndex: number, setIndex: number) => [exerciseIndex, setIndex],
+  ],
+  (exercises: Exercise[], [exerciseIndex, setIndex]) =>
+    exercises[exerciseIndex].Sets[setIndex]
+);

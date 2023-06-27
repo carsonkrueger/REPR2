@@ -1,14 +1,14 @@
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../src/redux/store";
-import { FlatList, View, Text } from "react-native";
+import { View, Text } from "react-native";
 import tw from "../src/util/tailwind";
 import { useRouter } from "expo-router";
+import { FlashList } from "@shopify/flash-list";
 
 import WorkoutTemplateComponent from "../src/components/workoutComponents/WorkoutTemplateComponent";
 import { Workout, WorkoutTemplate } from "../src/types/workoutTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WorkoutTemplateHeaderComponent from "../src/components/workoutComponents/WorkoutTemplateHeaderComponent";
-import { templateFromWorkout } from "../src/util/workoutUtils";
 
 export default function Workouts() {
   const curWorkout: Workout = useSelector((state: RootState) => state.workout);
@@ -32,13 +32,13 @@ export default function Workouts() {
 
       <View style={tw`flex-1 px-4`}>
         {/* WORKOUT TEMPLATES */}
-        <FlatList
+        <FlashList
           data={templates}
           ListHeaderComponent={WorkoutTemplateHeaderComponent}
           renderItem={({ item, index }) => (
             <WorkoutTemplateComponent key={index} template={item} />
           )}
-          style={tw`flex-1 flex-col`}
+          estimatedItemSize={110}
           ListFooterComponent={<View style={tw`mb-52`} />}
         />
       </View>

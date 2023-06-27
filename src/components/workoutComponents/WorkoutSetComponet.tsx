@@ -10,6 +10,7 @@ import {
   toggleFinishSet,
   setWeight,
   setReps,
+  selectSetByIndex,
 } from "../../redux/slices/workoutSlice";
 
 interface props {
@@ -21,8 +22,8 @@ export default function WorkoutSetComponent({
   exerciseIndex,
   setIndex,
 }: props) {
-  const workoutSet: WorkoutSet = useSelector(
-    (state: RootState) => state.workout.Exercises[exerciseIndex].Sets[setIndex]
+  const workoutSet: WorkoutSet = useSelector((state: RootState) =>
+    selectSetByIndex(state, exerciseIndex, setIndex)
   );
   const dispatch = useDispatch<AppDispatch>();
 

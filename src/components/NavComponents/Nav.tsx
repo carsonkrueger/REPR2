@@ -14,11 +14,13 @@ export default function Nav() {
   const [selectedPos, setSelectedPos] = useState(0);
 
   const navigateTo = (href: string, index: number) => {
+    if (index === selectedPos) return;
     setSelectedPos(index);
     router.replace(href);
   };
 
   const pushNavigateTo = (href: string, index: number) => {
+    if (index === selectedPos) return;
     setSelectedPos(index);
     router.push(href);
   };

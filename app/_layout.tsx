@@ -15,6 +15,10 @@ export default function Layout() {
           options={{ title: "Home", headerShown: false }}
         />
         <Stack.Screen
+          name="login"
+          options={{ title: "Login", headerShown: false }}
+        />
+        <Stack.Screen
           name="search"
           options={{ title: "Search", headerShown: false }}
         />

@@ -1,7 +1,7 @@
 import { TextInput, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { Ionicons } from "@expo/vector-icons";
 
 import tw from "../../util/tailwind";
 import { AppDispatch, RootState } from "../../redux/store";
@@ -63,7 +63,7 @@ const Clock = ({ exerciseIndex }: props) => {
   return (
     <TouchableOpacity
       onPress={onClockPress}
-      style={tw`shadow-md rounded-3xl py-1 px-2 flex-row items-center ${
+      style={tw`shadow-md rounded-3xl py-1 px-2 flex-row items-center h-9 ${
         exercise.timerStartTime ? "bg-primary" : "bg-white"
       }`}
     >

@@ -13,15 +13,26 @@ interface props {
   onTap: () => void;
   useToggle?: boolean;
   toggleState?: boolean;
+  lastItem?: boolean;
 }
 
-const SettingsItem = ({ itemName, onTap, useToggle, toggleState }: props) => {
+const SettingsItem = ({
+  itemName,
+  onTap,
+  useToggle,
+  toggleState,
+  lastItem,
+}: props) => {
   return (
     <TouchableOpacity onPress={onTap}>
       <View
-        style={tw`flex-row justify-between items-center h-12 px-2 mx-2 border-b-[1px] border-b-back`}
+        style={tw`flex-row justify-between items-center h-12 px-2 mx-2 border-b-back ${
+          lastItem ? "" : "border-b-[1px]"
+        }`}
       >
-        <Text style={tw`text-light-gray`}>{itemName}</Text>
+        <Text style={[tw`text-dark-gray`, { fontFamily: "RobotoCondensed" }]}>
+          {itemName}
+        </Text>
 
         <View>
           {useToggle ? (

@@ -20,29 +20,15 @@ export default function Settings() {
             { fontFamily: "RobotoCondensed" },
           ]}
         >
-          Settings
+          SETTINGS
         </Text>
       </View>
 
       <SettingsGroup headerName="Account">
-        <SettingsItem
-          itemName="Dark Mode"
-          onTap={() => dispatch(toggleDarkMode())}
-          useToggle={true}
-          toggleState={settings.isDarkMode}
-        />
-        <SettingsItem
-          itemName="Dark Mode"
-          onTap={() => dispatch(toggleDarkMode())}
-          useToggle={true}
-          toggleState={settings.isDarkMode}
-        />
-        <SettingsItem
-          itemName="Dark Mode"
-          onTap={() => dispatch(toggleDarkMode())}
-          useToggle={true}
-          toggleState={settings.isDarkMode}
-        />
+        <SettingsItem itemName="Email" onTap={() => {}} />
+        <SettingsItem itemName="Reset Password" onTap={() => {}} />
+        <SettingsItem itemName="Premium" onTap={() => {}} />
+        <SettingsItem itemName="Logout" onTap={() => {}} lastItem={true} />
       </SettingsGroup>
 
       <SettingsGroup headerName="Appearance">
@@ -63,6 +49,7 @@ export default function Settings() {
           onTap={() => dispatch(toggleDarkMode())}
           useToggle={true}
           toggleState={settings.isDarkMode}
+          lastItem={true}
         />
       </SettingsGroup>
     </SafeAreaView>

@@ -21,19 +21,19 @@ export default function Workouts() {
   return (
     <View style={tw`flex-1 bg-back dark:bg-dark-back`}>
       <SafeAreaView style={tw`z-10`}>
-        <View style={tw`py-2 bg-front shadow-md`}>
+        <View style={tw`py-2 bg-front shadow-sm`}>
           <Text
             style={[
               tw`text-xl text-center text-primary`,
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            Workouts
+            WORKOUTS
           </Text>
         </View>
       </SafeAreaView>
 
-      <View style={tw`flex-1 px-4`}>
+      <View style={tw`flex-1 px-2`}>
         {/* WORKOUT TEMPLATES */}
         <FlashList
           data={templates}

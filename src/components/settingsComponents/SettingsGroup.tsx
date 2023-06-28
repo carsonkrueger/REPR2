@@ -11,7 +11,7 @@ const SettingsGroup = ({ headerName, children }: props) => {
     <View style={tw`mx-2 mt-2`}>
       <Text
         style={[
-          tw`pb-2 pl-2 pt-2 text-light-gray`,
+          tw`pb-2 pl-2 pt-2 text-dark-gray`,
           { fontFamily: "RobotoCondensed" },
         ]}
       >

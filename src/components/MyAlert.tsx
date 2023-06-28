@@ -34,7 +34,7 @@ const MyAlert = ({
           >
             <Text
               style={[
-                tw`text-primary text-lg text-center`,
+                tw`text-light-gray text-xl text-center`,
                 { fontFamily: "RobotoCondensed" },
               ]}
             >
@@ -48,7 +48,7 @@ const MyAlert = ({
               >
                 <Text
                   style={[
-                    tw`text-red-400 text-center`,
+                    tw`text-red-400 text-center text-base`,
                     { fontFamily: "RobotoCondensed" },
                   ]}
                 >
@@ -62,7 +62,7 @@ const MyAlert = ({
               >
                 <Text
                   style={[
-                    tw`text-white text-center`,
+                    tw`text-white text-center text-base`,
                     { fontFamily: "RobotoCondensed" },
                   ]}
                 >

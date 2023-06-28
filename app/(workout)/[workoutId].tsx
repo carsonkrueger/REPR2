@@ -75,14 +75,19 @@ export default function WorkoutScreen() {
         </TouchableOpacity>
 
         <TextInput
-          style={tw`flex-1 px-2 py-1 mx-1 text-lg ${
-            workout.isLocked ? "" : "bg-back"
-          } rounded-md`}
+          style={[
+            tw`flex-1 px-2 py-1 mx-1 text-xl rounded-md text-primary ${
+              workout.isLocked ? "" : "bg-back"
+            } `,
+            { fontFamily: "RobotoCondensed" },
+          ]}
           placeholder="Workout Name"
+          placeholderTextColor={"#c2c2c2"}
           editable={!workout.isLocked}
         >
           {workout.name}
         </TextInput>
+
         <TouchableOpacity onPress={() => dispatch(toggleLock())}>
           <Entypo
             name={`${workout.isLocked ? "lock" : "lock-open"}`}

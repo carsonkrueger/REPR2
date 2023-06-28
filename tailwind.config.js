@@ -18,6 +18,7 @@ module.exports = {
         // Misc
         transparent: "rgba(167, 167, 167, 0.4)",
         "light-gray": "#c2c2c2",
+        "dark-gray": "#969696",
         "light-green": "#ccffde",
         "dark-green": "#bbf7d0",
         "extra-dark-green": "#a2e8bb",

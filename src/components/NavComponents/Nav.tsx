@@ -44,7 +44,7 @@ export default function Nav() {
                 : () => replaceNavigateTo("/workouts", 2)
             }
           >
-            {/* <Ionicons name="barbell-sharp" color={"#fff"} size={27} /> */}
+            <Ionicons name="barbell-sharp" color={"#fff"} size={27} />
           </TouchableOpacity>
         </View>
       </View>

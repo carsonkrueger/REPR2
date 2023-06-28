@@ -85,7 +85,7 @@ export default function WorkoutSetComponent({
           maxLength={4}
           editable={!workoutSet.isFinished}
           placeholder={workoutSet.prevWeight.toString()}
-          placeholderTextColor={"#d7d9db"}
+          placeholderTextColor={"#c2c2c2"}
           onChangeText={(weight) => onWeightChanged(weight)}
           multiline={true}
           numberOfLines={1}
@@ -103,7 +103,7 @@ export default function WorkoutSetComponent({
           maxLength={4}
           editable={!workoutSet.isFinished}
           placeholder={workoutSet.prevReps.toString()}
-          placeholderTextColor={"#d7d9db"}
+          placeholderTextColor={"#c2c2c2"}
           onChangeText={(reps) => onRepsChanged(reps)}
           multiline={true}
           numberOfLines={1}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 
 import { RootState } from "../../redux/store";
@@ -30,10 +30,10 @@ export default function Nav() {
 
   return (
     <View
-      style={tw`absolute flex-1 flex-row items-center bottom-0 right-0 left-0 m-3 px-1 py-2 bg-front rounded-full shadow-md`}
+      style={tw`absolute flex-1 flex-row items-center bottom-0 right-0 left-0 m-3 px-1 py-2 bg-front rounded-full shadow-md z-50`}
     >
       <View
-        style={tw`absolute left-0 right-0 justify-center items-center pb-10`}
+        style={tw`absolute left-0 right-0 justify-center items-center pb-8`}
       >
         <View style={tw`bg-front rounded-full overflow-hidden`}>
           <TouchableOpacity
@@ -51,11 +51,11 @@ export default function Nav() {
 
       <TouchableOpacity
         style={tw`flex-1 flex-col justify-end items-center pb-1`}
-        onPress={() => replaceNavigateTo("/", 0)}
+        onPress={() => replaceNavigateTo("/home", 0)}
       >
         <Ionicons
           name={`${selectedPos === 0 ? "home" : "home-outline"}`}
-          color={"#60a5fa"}
+          color={"#3b83f5"}
           size={27}
         />
       </TouchableOpacity>
@@ -66,7 +66,7 @@ export default function Nav() {
       >
         <Ionicons
           name={`${selectedPos === 1 ? "search" : "search-outline"}`}
-          color={"#60a5fa"}
+          color={"#3b83f5"}
           size={27}
         />
       </TouchableOpacity>
@@ -81,7 +81,7 @@ export default function Nav() {
           name={`${
             selectedPos === 3 ? "md-settings-sharp" : "md-settings-outline"
           }`}
-          color={"#60a5fa"}
+          color={"#3b83f5"}
           size={27}
         />
       </TouchableOpacity>
@@ -92,7 +92,7 @@ export default function Nav() {
       >
         <Ionicons
           name={`${selectedPos === 4 ? "person" : "person-outline"}`}
-          color={"#60a5fa"}
+          color={"#3b83f5"}
           size={27}
         />
       </TouchableOpacity>

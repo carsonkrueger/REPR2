@@ -9,14 +9,14 @@ export default function Layout() {
   return (
     <Provider store={store}>
       <StatusBar backgroundColor="#fff" style="dark" />
-      <Stack>
+      <Stack screenOptions={{ animation: "fade" }}>
         <Stack.Screen
           name="index"
-          options={{ title: "Home", headerShown: false }}
+          options={{ title: "Login", headerShown: false }}
         />
         <Stack.Screen
-          name="login"
-          options={{ title: "Login", headerShown: false }}
+          name="home"
+          options={{ title: "Home", headerShown: false }}
         />
         <Stack.Screen
           name="search"

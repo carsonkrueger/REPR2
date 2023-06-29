@@ -16,6 +16,7 @@ import WorkoutSetComponent from "./WorkoutSetComponet";
 import { flexWidths } from "./miscWorkoutStyles";
 import {
   addSet,
+  delExercise,
   delSet,
   selectExerciseByIndex,
   selectIsLocked,
@@ -43,8 +44,31 @@ export default function ExerciseComponent({ exerciseIndex }: props) {
     setIsSelected((prev) => !prev);
   };
 
+  const swapExerciseUp = () => {
+    dispatch(swapExerciseWithBelow(exerciseIndex - 1));
+    setIsSelected(false);
+  };
+
+  const swapExerciseDown = () => {
+    dispatch(swapExerciseWithBelow(exerciseIndex));
+    setIsSelected(false);
+  };
+
+  const deleteExercise = () => {
+    dispatch(delExercise(exerciseIndex));
+    setIsSelected(false);
+  };
+
+  const addSetToEnd = () => {
+    dispatch(addSet(exerciseIndex));
+  };
+
+  const delSetFromEnd = () => {
+    dispatch(delSet(exerciseIndex));
+  };
+
   return (
-    <View style={tw`py-3 mt-4 mx-2 bg-front rounded-lg shadow-sm z-0`}>
+    <View style={tw`py-3 mt-4 mx-2 bg-front rounded-lg shadow-sm`}>
       {/* HEADER */}
       <View
         style={tw`mx-2 mb-1 flex-row justify-between items-center ${
@@ -140,7 +164,7 @@ export default function ExerciseComponent({ exerciseIndex }: props) {
             style={tw`absolute top-4 right-1 h-8 w-6 mx-1 justify-center items-center z-50`}
           >
             <TouchableOpacity onPress={toggleIsSelected}>
-              <Feather name="more-vertical" size={24} color={"#60a5fa"} />
+              <Feather name="more-vertical" size={24} color={"#3b83f5"} />
             </TouchableOpacity>
 
             {isSelected && (
@@ -150,33 +174,25 @@ export default function ExerciseComponent({ exerciseIndex }: props) {
                   { zIndex: 10 },
                 ]}
               >
-                <TouchableOpacity
-                  style={tw`py-[1px]`}
-                  onPress={() => {
-                    dispatch(swapExerciseWithBelow(exerciseIndex - 1));
-                    setIsSelected(false);
-                  }}
-                >
+                <TouchableOpacity style={tw`py-[1px]`} onPress={swapExerciseUp}>
                   <Feather name="arrow-up" size={25} color={"#60a5fa"} />
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={tw`py-[1px]`}
-                  onPress={() => dispatch(delSet(exerciseIndex))}
-                >
+
+                <TouchableOpacity style={tw`py-[1px]`} onPress={delSetFromEnd}>
                   <Feather name="minus" size={25} color={"#60a5fa"} />
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={tw`py-[1px]`}
-                  onPress={() => dispatch(addSet(exerciseIndex))}
-                >
+
+                <TouchableOpacity style={tw`py-[1px]`} onPress={deleteExercise}>
+                  <Feather name="trash" size={22} color={"#ff5c5c"} />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={tw`py-[1px]`} onPress={addSetToEnd}>
                   <Feather name="plus" size={25} color={"#60a5fa"} />
                 </TouchableOpacity>
+
                 <TouchableOpacity
                   style={tw`py-[1px]`}
-                  onPress={() => {
-                    dispatch(swapExerciseWithBelow(exerciseIndex));
-                    setIsSelected(false);
-                  }}
+                  onPress={swapExerciseDown}
                 >
                   <Feather name="arrow-down" size={25} color={"#60a5fa"} />
                 </TouchableOpacity>

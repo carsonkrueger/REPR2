@@ -119,7 +119,7 @@ export default function WorkoutSetComponent({
         <TouchableOpacity onPress={onToggleFinish}>
           <Ionicons
             name="checkbox"
-            color={`${workoutSet.isFinished ? "#a2e8bb" : "#60a5fa"}`}
+            color={`${workoutSet.isFinished ? "#a2e8bb" : "#3b83f5"}`}
             size={34}
           />
         </TouchableOpacity>

@@ -69,7 +69,7 @@ const Clock = ({ exerciseIndex }: props) => {
     >
       <Ionicons
         name="time-outline"
-        color={`${exercise.timerStartTime ? "#fff" : "#60a5fa"}`}
+        color={`${exercise.timerStartTime ? "#fff" : "#3b83f5"}`}
         size={22}
       />
       <TextInput

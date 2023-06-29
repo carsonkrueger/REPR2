@@ -1,6 +1,6 @@
-import { useRouter, useSearchParams } from "expo-router";
+import { useNavigation, useRouter, useSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, TextInput } from "react-native";
+import { View, Text, TextInput, BackHandler } from "react-native";
 import { useEffect, useState } from "react";
 import tw from "../../src/util/tailwind";
 import { useSelector, useDispatch } from "react-redux";
@@ -19,9 +19,11 @@ import {
   toggleLock,
 } from "../../src/redux/slices/workoutSlice";
 import MyAlert from "../../src/components/MyAlert";
+import { StatusBar } from "expo-status-bar";
 
 export default function WorkoutScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
   const { workoutId } = useSearchParams();
 
   const workout: Workout = useSelector((state: RootState) =>
@@ -32,6 +34,18 @@ export default function WorkoutScreen() {
 
   useEffect(() => {
     dispatch(startWorkout());
+
+    const backAction = () => {
+      backPress();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
   }, []);
 
   const backPress = () => {
@@ -68,10 +82,10 @@ export default function WorkoutScreen() {
 
       {/* HEADER */}
       <View
-        style={tw`flex-row justify-center items-center px-2 py-3 bg-white shadow-sm`}
+        style={tw`flex-row justify-center items-center px-2 py-3 bg-front shadow-sm z-10`}
       >
         <TouchableOpacity onPress={backPress}>
-          <Ionicons name="md-chevron-back" color={"#60a5fa"} size={30} />
+          <Ionicons name="md-chevron-back" color={"#3b83f5"} size={30} />
         </TouchableOpacity>
 
         <TextInput
@@ -91,7 +105,7 @@ export default function WorkoutScreen() {
         <TouchableOpacity onPress={() => dispatch(toggleLock())}>
           <Entypo
             name={`${workout.isLocked ? "lock" : "lock-open"}`}
-            color={"#60a5fa"}
+            color={"#3b83f5"}
             size={30}
           />
         </TouchableOpacity>
@@ -111,7 +125,7 @@ export default function WorkoutScreen() {
           <View style={tw`mt-4 mb-[70%] items-center`}>
             {!workout.isLocked && (
               <TouchableOpacity
-                style={tw`rounded-full bg-blue-400 shadow-md`}
+                style={tw`rounded-full bg-primary shadow-md`}
                 onPress={() => dispatch(addExercise())}
               >
                 <Text style={tw`py-2 px-4 self-center text-center text-white`}>

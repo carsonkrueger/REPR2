@@ -101,6 +101,13 @@ export const workoutsSlice = createSlice({
     setInitTimer: (state: Workout, action: PayloadAction<[number, number]>) => {
       state.Exercises[action.payload[0]].timer = action.payload[1];
     },
+    swapExerciseWithBelow: (state: Workout, action: PayloadAction<number>) => {
+      if (action.payload <= -1 || action.payload >= state.Exercises.length - 1)
+        return;
+      const temp = state.Exercises[action.payload];
+      state.Exercises[action.payload] = state.Exercises[action.payload + 1];
+      state.Exercises[action.payload + 1] = temp;
+    },
   },
 });
 
@@ -120,6 +127,7 @@ export const {
   startWorkout,
   toggleTimer,
   setInitTimer,
+  swapExerciseWithBelow,
 } = workoutsSlice.actions;
 
 // SELECTORS

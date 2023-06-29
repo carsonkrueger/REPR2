@@ -16,7 +16,7 @@ module.exports = {
         "dark-front": "#3e3f42",
 
         // Misc
-        transparent: "rgba(167, 167, 167, 0.4)",
+        transparent: "rgba(167, 167, 167, 0.5)",
         "light-gray": "#c2c2c2",
         "dark-gray": "#969696",
         "light-green": "#ccffde",

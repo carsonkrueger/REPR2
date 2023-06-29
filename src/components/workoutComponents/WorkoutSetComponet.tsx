@@ -48,9 +48,12 @@ export default function WorkoutSetComponent({
 
   return (
     <View
-      style={tw`px-2 flex-row items-center ${
-        workoutSet.isFinished ? "bg-light-green" : ""
-      }`}
+      style={[
+        tw`px-2 flex-row items-center ${
+          workoutSet.isFinished ? "bg-light-green" : ""
+        }`,
+        { elevation: 0 },
+      ]}
     >
       <Text
         style={tw`flex-${flexWidths.set} text-center ${

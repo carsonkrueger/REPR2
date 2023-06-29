@@ -1,10 +1,17 @@
 import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "../../redux/store";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import tw from "../../util/tailwind";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from "react-native";
+import { useState } from "react";
+import { Feather } from "@expo/vector-icons";
 
+import tw from "../../util/tailwind";
 import { Exercise } from "../../types/workoutTypes";
+import { AppDispatch, RootState } from "../../redux/store";
 import WorkoutSetComponent from "./WorkoutSetComponet";
 import { flexWidths } from "./miscWorkoutStyles";
 import {
@@ -13,9 +20,9 @@ import {
   selectExerciseByIndex,
   selectIsLocked,
   setExerciseName,
+  swapExerciseWithBelow,
 } from "../../redux/slices/workoutSlice";
 import Clock from "./ClockComponent";
-import ExerciseMenu from "./exerciseMenu";
 
 interface props {
   exerciseIndex: number;
@@ -30,10 +37,20 @@ export default function ExerciseComponent({ exerciseIndex }: props) {
   );
   const dispatch = useDispatch<AppDispatch>();
 
+  const [isSelected, setIsSelected] = useState<boolean>(false);
+
+  const toggleIsSelected = () => {
+    setIsSelected((prev) => !prev);
+  };
+
   return (
-    <View style={tw`py-3 mt-3 mx-2 bg-white rounded-lg shadow-sm z-0`}>
+    <View style={tw`py-3 mt-4 mx-2 bg-front rounded-lg shadow-sm z-0`}>
       {/* HEADER */}
-      <View style={tw`mx-2 mb-1 flex-row justify-between items-center`}>
+      <View
+        style={tw`mx-2 mb-1 flex-row justify-between items-center ${
+          isLocked ? "" : "mr-9"
+        }`}
+      >
         {/* EXERCISE NAME */}
         <TextInput
           style={[
@@ -55,8 +72,6 @@ export default function ExerciseComponent({ exerciseIndex }: props) {
         </TextInput>
 
         <Clock exerciseIndex={exerciseIndex} />
-
-        {!isLocked && <ExerciseMenu exerciseIndex={exerciseIndex} />}
       </View>
 
       {/* SETS HEADER */}
@@ -113,16 +128,62 @@ export default function ExerciseComponent({ exerciseIndex }: props) {
         />
       ))}
 
-      {/* ADD/DEL SET BUTTONS */}
+      {/* EXERCISE MENU (ADD SET / DEL SET / SWAP) */}
       {!isLocked && (
-        <View style={tw`flex-row justify-evenly px-4 pt-2`}>
-          <TouchableOpacity onPress={() => dispatch(delSet(exerciseIndex))}>
-            <Ionicons name="remove" color={"#60a5fa"} size={25} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => dispatch(addSet(exerciseIndex))}>
-            <Ionicons name="add" color={"#60a5fa"} size={25} />
-          </TouchableOpacity>
-        </View>
+        <>
+          {isSelected && (
+            <TouchableWithoutFeedback onPress={toggleIsSelected}>
+              <View style={tw`absolute top-0 right-0 bottom-0 left-0`} />
+            </TouchableWithoutFeedback>
+          )}
+          <View
+            style={tw`absolute top-4 right-1 h-8 w-6 mx-1 justify-center items-center z-50`}
+          >
+            <TouchableOpacity onPress={toggleIsSelected}>
+              <Feather name="more-vertical" size={24} color={"#60a5fa"} />
+            </TouchableOpacity>
+
+            {isSelected && (
+              <View
+                style={[
+                  tw`absolute flex-row right-0 mr-7 bg-front w-40 justify-evenly items-center py-2 rounded-full shadow-md z-50`,
+                  { zIndex: 10 },
+                ]}
+              >
+                <TouchableOpacity
+                  style={tw`py-[1px]`}
+                  onPress={() => {
+                    dispatch(swapExerciseWithBelow(exerciseIndex - 1));
+                    setIsSelected(false);
+                  }}
+                >
+                  <Feather name="arrow-up" size={25} color={"#60a5fa"} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={tw`py-[1px]`}
+                  onPress={() => dispatch(delSet(exerciseIndex))}
+                >
+                  <Feather name="minus" size={25} color={"#60a5fa"} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={tw`py-[1px]`}
+                  onPress={() => dispatch(addSet(exerciseIndex))}
+                >
+                  <Feather name="plus" size={25} color={"#60a5fa"} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={tw`py-[1px]`}
+                  onPress={() => {
+                    dispatch(swapExerciseWithBelow(exerciseIndex));
+                    setIsSelected(false);
+                  }}
+                >
+                  <Feather name="arrow-down" size={25} color={"#60a5fa"} />
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        </>
       )}
     </View>
   );

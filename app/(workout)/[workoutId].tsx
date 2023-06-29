@@ -53,7 +53,7 @@ export default function WorkoutScreen() {
   };
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-back`}>
+    <SafeAreaView style={[tw`flex-1 bg-back z-0`, { elevation: 0 }]}>
       {/* BACK ALERT */}
       {backPressed && (
         <MyAlert
@@ -68,7 +68,7 @@ export default function WorkoutScreen() {
 
       {/* HEADER */}
       <View
-        style={tw`flex-row justify-center items-center px-2 py-3 z-10 bg-white shadow-sm`}
+        style={tw`flex-row justify-center items-center px-2 py-3 bg-white shadow-sm`}
       >
         <TouchableOpacity onPress={backPress}>
           <Ionicons name="md-chevron-back" color={"#60a5fa"} size={30} />
@@ -100,7 +100,9 @@ export default function WorkoutScreen() {
       {/* EXERCISE COMPONENTS */}
       <FlashList
         data={workout.Exercises}
-        renderItem={({ item, index }) => (
+        // removeClippedSubviews={false}
+        // CellRendererComponent={({ children }) => children}
+        renderItem={({ index }) => (
           <ExerciseComponent key={index} exerciseIndex={index} />
         )}
         estimatedItemSize={220}

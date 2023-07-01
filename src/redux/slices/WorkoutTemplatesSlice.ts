@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { Workout, WorkoutTemplate } from "../../types/workoutTypes";
+import { WorkoutState, WorkoutTemplate } from "../../types/workoutTypes";
 import { templateFromWorkout } from "../../util/workoutUtils";
 
 const initialWorkoutTemplate: WorkoutTemplate = {
@@ -29,7 +29,7 @@ export const WorkoutTemplatesSlice = createSlice({
     },
     updateWorkoutTemplate: (
       state: WorkoutTemplate[],
-      action: PayloadAction<Workout>
+      action: PayloadAction<WorkoutState>
     ) => {
       const templateIndex = state.findIndex(
         (template) => template.workoutId === action.payload.id

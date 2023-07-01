@@ -4,42 +4,43 @@ import { WorkoutSet } from "../../types/workoutTypes";
 import { Text, View, TextInput, TouchableOpacity } from "react-native";
 import tw from "../../util/tailwind";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { EntityId } from "@reduxjs/toolkit";
 
 import { flexWidths } from "./miscWorkoutStyles";
 import {
   toggleFinishSet,
   setWeight,
   setReps,
-  selectSetByIndex,
+  selectSetById,
 } from "../../redux/slices/workoutSlice";
 import { cleanNumStr } from "../../util/workoutUtils";
 
 interface props {
-  exerciseIndex: number;
-  setIndex: number;
+  setId: EntityId;
+  relativeSetIndex: number;
 }
 
 export default function WorkoutSetComponent({
-  exerciseIndex,
-  setIndex,
+  setId,
+  relativeSetIndex,
 }: props) {
   const workoutSet: WorkoutSet = useSelector((state: RootState) =>
-    selectSetByIndex(state, exerciseIndex, setIndex)
+    selectSetById(state, setId)
   );
   const dispatch = useDispatch<AppDispatch>();
 
   const onWeightChanged = (weight: string | number) => {
     if (typeof weight === "string") weight = cleanNumStr(weight);
-    dispatch(setWeight([exerciseIndex, setIndex, Number(weight)]));
+    dispatch(setWeight({ setId: setId, weight: Number(weight) }));
   };
 
   const onRepsChanged = (reps: string | number) => {
     if (typeof reps === "string") reps = cleanNumStr(reps);
-    dispatch(setReps([exerciseIndex, setIndex, Number(reps)]));
+    dispatch(setReps({ setId: setId, reps: Number(reps) }));
   };
 
   const onToggleFinish = () => {
-    dispatch(toggleFinishSet([exerciseIndex, setIndex]));
+    dispatch(toggleFinishSet({ setId: setId }));
     if (workoutSet.weight === 0 && workoutSet.prevWeight !== 0)
       onWeightChanged(workoutSet.prevWeight);
     if (workoutSet.reps === 0 && workoutSet.prevReps !== 0)
@@ -60,7 +61,7 @@ export default function WorkoutSetComponent({
           workoutSet.isFinished ? "text-dark-finished-green" : "text-primary"
         }`}
       >
-        {setIndex + 1}
+        {relativeSetIndex + 1}
       </Text>
 
       <Text

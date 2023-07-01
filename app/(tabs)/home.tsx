@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 import tw from "../../src/util/tailwind";
+import CustomColors from "../../src/util/customColors";
 
 export default function Home() {
   return (
@@ -15,7 +16,11 @@ export default function Home() {
         </Text>
 
         <TouchableOpacity>
-          <Ionicons name="chatbubble-outline" color={"#60a5fa"} size={27} />
+          <Ionicons
+            name="chatbubble-outline"
+            color={CustomColors.primary}
+            size={27}
+          />
         </TouchableOpacity>
       </View>
     </SafeAreaView>

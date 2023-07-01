@@ -19,12 +19,11 @@ export default function Login() {
 
   const login = () => {
     router.replace("/(tabs)/home");
-    console.log(CustomColors["back-primary"]);
   };
 
   return (
     <SafeAreaView style={tw`flex-1 bg-front`}>
-      {/* <StatusBar backgroundColor="#60a5fa" /> */}
+      {/* <StatusBar backgroundColor={CustomColors.primary} /> */}
       <View style={tw`py-3 flex-row justify-between px-5`}>
         <Ionicons name="barbell-sharp" color={"#fff"} size={27} />
         <Text
@@ -50,7 +49,12 @@ export default function Login() {
             placeholder="Email"
             placeholderTextColor={"#a8cfff"}
           />
-          <Feather name="mail" color={"#60a5fa"} size={20} style={tw`pr-2`} />
+          <Feather
+            name="mail"
+            color={CustomColors.primary}
+            size={20}
+            style={tw`pr-2`}
+          />
         </View>
 
         <View
@@ -65,7 +69,12 @@ export default function Login() {
             placeholder="Password"
             placeholderTextColor={"#a8cfff"}
           />
-          <Feather name="lock" color={"#60a5fa"} size={20} style={tw`pr-2`} />
+          <Feather
+            name="lock"
+            color={CustomColors.primary}
+            size={20}
+            style={tw`pr-2`}
+          />
         </View>
 
         <TouchableOpacity onPress={login}>

@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import tw from "../../src/util/tailwind";
+import CustomColors from "../../src/util/customColors";
 
 export default function Search() {
   return (
@@ -15,7 +16,11 @@ export default function Search() {
           placeholder="Search"
         />
         <TouchableOpacity>
-          <Ionicons name={"search-outline"} color={"#60a5fa"} size={27} />
+          <Ionicons
+            name={"search-outline"}
+            color={CustomColors.primary}
+            size={27}
+          />
         </TouchableOpacity>
       </View>
     </SafeAreaView>

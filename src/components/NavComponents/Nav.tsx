@@ -5,12 +5,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 
 import { RootState } from "../../redux/store";
-import { Workout } from "../../types/workoutTypes";
+import { WorkoutState } from "../../types/workoutTypes";
 import tw from "../../util/tailwind";
 import { selectWorkout } from "../../redux/slices/workoutSlice";
 
 export default function Nav() {
-  const curWorkout: Workout = useSelector((state: RootState) =>
+  const curWorkout: WorkoutState = useSelector((state: RootState) =>
     selectWorkout(state)
   );
   const router = useRouter();

@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { Feather } from "@expo/vector-icons";
+import { EntityId } from "@reduxjs/toolkit";
 
 import tw from "../../util/tailwind";
 import { Exercise } from "../../types/workoutTypes";
@@ -18,16 +19,18 @@ import {
   addSet,
   delExercise,
   delSet,
-  selectExerciseByIndex,
+  selectExerciseById,
   selectIsLocked,
   selectWorkout,
   setExerciseName,
+  swapExerciseWithAbove,
   swapExerciseWithBelow,
 } from "../../redux/slices/workoutSlice";
 import Clock from "./ClockComponent";
+import CustomColors from "../../util/customColors";
 
 interface props {
-  exerciseId: number;
+  exerciseId: EntityId;
 }
 
 export default function ExerciseComponent({ exerciseId }: props) {
@@ -36,7 +39,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
     selectIsLocked(state)
   );
   const exercise = useSelector((state: RootState) =>
-    selectExerciseByIndex(state, exerciseId)
+    selectExerciseById(state, exerciseId)
   );
   const dispatch = useDispatch<AppDispatch>();
 
@@ -47,7 +50,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
   };
 
   const swapExerciseUp = () => {
-    dispatch(swapExerciseWithBelow({ id: exerciseId - 1 }));
+    dispatch(swapExerciseWithAbove({ id: exerciseId }));
     setIsSelected(false);
   };
 
@@ -66,13 +69,12 @@ export default function ExerciseComponent({ exerciseId }: props) {
   };
 
   const delSetFromEnd = () => {
-    if (exercise)
-      dispatch(
-        delSet({
-          exerciseId: exerciseId,
-          setId: exercise.Sets[exercise.Sets.length - 1],
-        })
-      );
+    dispatch(
+      delSet({
+        exerciseId: exerciseId,
+        setId: exercise.Sets[exercise.Sets.length - 1],
+      })
+    );
   };
 
   return (
@@ -152,8 +154,12 @@ export default function ExerciseComponent({ exerciseId }: props) {
       </View>
 
       {/* SETS */}
-      {exercise?.Sets.map((_, idx) => (
-        <WorkoutSetComponent key={idx} exerciseId={exerciseId} setIndex={idx} />
+      {exercise.Sets.map((id, idx) => (
+        <WorkoutSetComponent
+          key={"set" + id}
+          setId={id}
+          relativeSetIndex={idx}
+        />
       ))}
 
       {/* EXERCISE MENU (ADD SET / DEL SET / SWAP) */}
@@ -168,7 +174,11 @@ export default function ExerciseComponent({ exerciseId }: props) {
             style={tw`absolute top-4 right-1 h-8 w-6 mx-1 justify-center items-center z-50`}
           >
             <TouchableOpacity onPress={toggleIsSelected}>
-              <Feather name="more-vertical" size={24} color={"#3b83f5"} />
+              <Feather
+                name="more-vertical"
+                size={24}
+                color={CustomColors.primary}
+              />
             </TouchableOpacity>
 
             {isSelected && (
@@ -179,11 +189,19 @@ export default function ExerciseComponent({ exerciseId }: props) {
                 ]}
               >
                 <TouchableOpacity style={tw`py-[1px]`} onPress={swapExerciseUp}>
-                  <Feather name="arrow-up" size={25} color={"#60a5fa"} />
+                  <Feather
+                    name="arrow-up"
+                    size={25}
+                    color={CustomColors.primary}
+                  />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={tw`py-[1px]`} onPress={delSetFromEnd}>
-                  <Feather name="minus" size={25} color={"#60a5fa"} />
+                  <Feather
+                    name="minus"
+                    size={25}
+                    color={CustomColors.primary}
+                  />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={tw`py-[1px]`} onPress={deleteExercise}>
@@ -191,14 +209,18 @@ export default function ExerciseComponent({ exerciseId }: props) {
                 </TouchableOpacity>
 
                 <TouchableOpacity style={tw`py-[1px]`} onPress={addSetToEnd}>
-                  <Feather name="plus" size={25} color={"#60a5fa"} />
+                  <Feather name="plus" size={25} color={CustomColors.primary} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={tw`py-[1px]`}
                   onPress={swapExerciseDown}
                 >
-                  <Feather name="arrow-down" size={25} color={"#60a5fa"} />
+                  <Feather
+                    name="arrow-down"
+                    size={25}
+                    color={CustomColors.primary}
+                  />
                 </TouchableOpacity>
               </View>
             )}

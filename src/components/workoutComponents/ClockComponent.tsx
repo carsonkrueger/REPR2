@@ -6,7 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import tw from "../../util/tailwind";
 import { AppDispatch, RootState } from "../../redux/store";
 import {
-  selectExerciseByIndex,
+  selectExerciseById,
   selectIsLocked,
   setInitTimer,
   toggleTimer,
@@ -14,9 +14,10 @@ import {
 import { Exercise } from "../../types/workoutTypes";
 import { useSelector } from "react-redux";
 import { cleanNumStr } from "../../util/workoutUtils";
+import { EntityId } from "@reduxjs/toolkit";
 
 interface props {
-  exerciseId: number;
+  exerciseId: EntityId;
 }
 
 const Clock = ({ exerciseId }: props) => {
@@ -24,7 +25,7 @@ const Clock = ({ exerciseId }: props) => {
     selectIsLocked(state)
   );
   const exercise: Exercise = useSelector((state) =>
-    selectExerciseByIndex(state, exerciseId)
+    selectExerciseById(state, exerciseId)
   );
   const dispatch: AppDispatch = useDispatch();
 

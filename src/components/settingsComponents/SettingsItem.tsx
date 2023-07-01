@@ -7,6 +7,7 @@ import {
 import tw from "../../util/tailwind";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import CustomColors from "../../util/customColors";
 
 interface props {
   itemName: string;
@@ -44,7 +45,11 @@ const SettingsItem = ({
               <View style={tw`w-5 h-5 rounded-full bg-white`} />
             </View>
           ) : (
-            <Ionicons name="md-chevron-forward" color={"#60a5fa"} size={25} />
+            <Ionicons
+              name="md-chevron-forward"
+              color={CustomColors.primary}
+              size={25}
+            />
           )}
         </View>
       </View>

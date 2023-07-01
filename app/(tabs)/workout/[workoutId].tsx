@@ -123,8 +123,8 @@ export default function WorkoutScreen() {
         data={exerciseIds}
         // removeClippedSubviews={false}
         // CellRendererComponent={({ children }) => children}
-        renderItem={({ index }) => (
-          <ExerciseComponent key={index} exerciseIndex={index} />
+        renderItem={({ item }) => (
+          <ExerciseComponent key={"exercise" + item} exerciseId={item} />
         )}
         estimatedItemSize={220}
         ListFooterComponent={
@@ -133,7 +133,14 @@ export default function WorkoutScreen() {
             {!workout.isLocked && (
               <TouchableOpacity
                 style={tw`rounded-full bg-primary shadow-md`}
-                onPress={() => dispatch(addExercise())}
+                onPress={() =>
+                  dispatch(
+                    addExercise({
+                      nextExerciseId: workout.nextExerciseId,
+                      nextSetId: workout.nextSetId,
+                    })
+                  )
+                }
               >
                 <Text style={tw`py-2 px-4 self-center text-center text-white`}>
                   ADD EXERCISE

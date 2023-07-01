@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 
 import { AppDispatch, RootState } from "../../redux/store";
 import { addWorkoutTemplate } from "../../redux/slices/WorkoutTemplatesSlice";
+import CustomColors from "../../util/customColors";
 
 const WorkoutTemplateHeaderComponent = () => {
   const router = useRouter();
@@ -26,8 +27,7 @@ const WorkoutTemplateHeaderComponent = () => {
         // style={tw`shadow-sm justify-center items-center h-8 w-8 bg-primary rounded-full`}
         onPress={onAddWorkout}
       >
-        {/* #60a5fa */}
-        <Ionicons name="add" color={"#60a5fa"} size={28} />
+        <Ionicons name="add" color={CustomColors.primary} size={28} />
       </TouchableOpacity>
     </View>
   );

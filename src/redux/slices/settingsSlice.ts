@@ -3,6 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import { Settings } from "../../types/settingsTypes";
 
 const initialSettings: Settings = {
+  username: "",
+  isPremium: false,
   isDarkMode: false,
 };
 

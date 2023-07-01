@@ -22,7 +22,8 @@ export interface WorkoutState {
   name: string;
   isLocked: boolean;
   inProgress: boolean;
-  nextSetId: number;
+  nextSetId: EntityId;
+  nextExerciseId: EntityId;
   // Exercises: EntityState<Exercise>;
   // Sets: EntityState<WorkoutSet>;
 }

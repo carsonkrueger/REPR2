@@ -45,6 +45,7 @@ const initialWorkout: WorkoutState = {
   isLocked: false,
   inProgress: false,
   nextSetId: 1,
+  nextExerciseId: 1,
 };
 
 export const workoutSetSlice = createSlice({
@@ -66,7 +67,7 @@ export const workoutSetSlice = createSlice({
     ) {
       workoutSetAdapter.removeOne(state, action.payload.setId);
     },
-    toggleFinishSet(state, action: PayloadAction<{ setId: number }>) {
+    toggleFinishSet(state, action: PayloadAction<{ setId: EntityId }>) {
       const prevBool = state.entities[action.payload.setId]?.isFinished;
       workoutSetAdapter.updateOne(state, {
         id: action.payload.setId,
@@ -89,14 +90,29 @@ export const workoutSetSlice = createSlice({
       });
     },
   },
+  extraReducers(builder) {
+    builder.addCase(exercisesSlice.actions.addExercise, (state, action) => {
+      workoutSetAdapter.addOne(state, {
+        ...initialSet,
+        id: action.payload.nextSetId,
+      });
+    });
+  },
 });
 
 export const exercisesSlice = createSlice({
   name: "exercises",
   initialState: exerciseAdapterInitialState,
   reducers: {
-    addExercise(state) {
-      exerciseAdapter.addOne(state, initialExercise);
+    addExercise(
+      state,
+      action: PayloadAction<{ nextExerciseId: EntityId; nextSetId: EntityId }>
+    ) {
+      exerciseAdapter.addOne(state, {
+        ...initialExercise,
+        id: action.payload.nextExerciseId,
+        Sets: [action.payload.nextSetId],
+      });
     },
     delExercise(state, action: PayloadAction<{ id: EntityId }>) {
       if (state.ids.length <= 1)
@@ -138,10 +154,17 @@ export const exercisesSlice = createSlice({
       const pos = state.ids.findIndex(
         (entityId) => entityId === action.payload.id
       );
-      if (pos < state.ids.length - 1 || pos > -1) {
-        state.ids[pos] = state.ids[pos + 1];
-        state.ids[pos + 1] = action.payload.id;
-      }
+      if (pos >= state.ids.length - 1 || pos <= -1) return;
+      state.ids[pos] = state.ids[pos + 1];
+      state.ids[pos + 1] = action.payload.id;
+    },
+    swapExerciseWithAbove(state, action: PayloadAction<{ id: EntityId }>) {
+      const pos = state.ids.findIndex(
+        (entityId) => entityId === action.payload.id
+      );
+      if (pos > state.ids.length || pos <= 0) return;
+      state.ids[pos] = state.ids[pos - 1];
+      state.ids[pos - 1] = action.payload.id;
     },
   },
   extraReducers(builder) {
@@ -174,6 +197,21 @@ const workoutSlice = createSlice({
       state.inProgress = true;
     },
   },
+  extraReducers(builder) {
+    builder
+      .addCase(exercisesSlice.actions.addExercise, (state) => {
+        if (
+          typeof state.nextExerciseId === "number" &&
+          typeof state.nextSetId === "number"
+        ) {
+          state.nextExerciseId += 1;
+          state.nextSetId += 1;
+        }
+      })
+      .addCase(workoutSetSlice.actions.addSet, (state) => {
+        if (typeof state.nextSetId === "number") state.nextSetId += 1;
+      });
+  },
 });
 
 export const workoutSetReducer = workoutSetSlice.reducer;
@@ -188,6 +226,7 @@ export const {
   setInitTimer,
   toggleTimer,
   swapExerciseWithBelow,
+  swapExerciseWithAbove,
 } = exercisesSlice.actions;
 
 export const workoutReducer = workoutSlice.reducer;
@@ -197,14 +236,14 @@ export const { resetWorkout, setName, toggleLock, startWorkout } =
 // SELECTORS
 export const selectSets = (state: RootState) => state.workoutSets;
 export const selectSetById = createSelector(
-  [selectSets, (_, setId: number) => setId],
-  (setsState, setId) => setsState.entities[setId]
+  [selectSets, (_, setId: EntityId) => setId],
+  (setsState, setId) => setsState.entities[setId] ?? initialSet
 );
 
 export const selectExercises = (state: RootState) => state.exercises;
-export const selectExerciseByIndex = createSelector(
-  [selectExercises, (_, exerciseId: number) => exerciseId],
-  (exercises, exerciseId) => exercises.entities[exerciseId]
+export const selectExerciseById = createSelector(
+  [selectExercises, (_, exerciseId: EntityId) => exerciseId],
+  (exercises, exerciseId) => exercises.entities[exerciseId] ?? initialExercise
 );
 
 export const selectWorkout = (state: RootState) => state.workout;

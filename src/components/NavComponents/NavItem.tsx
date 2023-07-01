@@ -2,6 +2,7 @@ import { Text, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import tw from "../../util/tailwind";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import CustomColors from "../../util/customColors";
 
 interface props {
   index: number;
@@ -31,7 +32,7 @@ export default function NavItem({
     >
       <Ionicons
         name={`${selectedPos === 0 ? "home" : "home-outline"}`}
-        color={"#60a5fa"}
+        color={CustomColors.primary}
         size={27}
       />
     </TouchableOpacity>

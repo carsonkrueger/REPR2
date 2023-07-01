@@ -17,7 +17,7 @@ export default function WorkoutTemplateComponent({ template }: props) {
   const dispatch: AppDispatch = useDispatch();
 
   const navigateTo = () => {
-    router.push(`(workout)/${template.workoutId}`);
+    router.push(`workout/${template.workoutId}`);
   };
 
   return (

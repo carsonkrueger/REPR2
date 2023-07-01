@@ -1,35 +1,42 @@
-import { useNavigation, useRouter, useSearchParams } from "expo-router";
+import { useRouter, useSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, TextInput, BackHandler } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  BackHandler,
+  TouchableOpacity,
+} from "react-native";
 import { useEffect, useState } from "react";
-import tw from "../../src/util/tailwind";
 import { useSelector, useDispatch } from "react-redux";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 
-import ExerciseComponent from "../../src/components/workoutComponents/ExerciseComponent";
-import { Workout } from "../../src/types/workoutTypes";
-import { RootState, AppDispatch } from "../../src/redux/store";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import ExerciseComponent from "../../../src/components/workoutComponents/ExerciseComponent";
+import { WorkoutState } from "../../../src/types/workoutTypes";
+import { RootState, AppDispatch } from "../../../src/redux/store";
 import {
   addExercise,
   resetWorkout,
+  selectExercises,
   selectWorkout,
   startWorkout,
   toggleLock,
-} from "../../src/redux/slices/workoutSlice";
-import MyAlert from "../../src/components/MyAlert";
-import { StatusBar } from "expo-status-bar";
+} from "../../../src/redux/slices/workoutSlice";
+import MyAlert from "../../../src/components/MyAlert";
+import tw from "../../../src/util/tailwind";
 
 export default function WorkoutScreen() {
   const router = useRouter();
-  const navigation = useNavigation();
   const { workoutId } = useSearchParams();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const workout: Workout = useSelector((state: RootState) =>
+  const workout: WorkoutState = useSelector((state: RootState) =>
     selectWorkout(state)
   );
-  const dispatch = useDispatch<AppDispatch>();
+  const exerciseIds = useSelector((state: RootState) =>
+    selectExercises(state)
+  ).ids;
   const [backPressed, setBackPressed] = useState(false);
 
   useEffect(() => {
@@ -113,7 +120,7 @@ export default function WorkoutScreen() {
 
       {/* EXERCISE COMPONENTS */}
       <FlashList
-        data={workout.Exercises}
+        data={exerciseIds}
         // removeClippedSubviews={false}
         // CellRendererComponent={({ children }) => children}
         renderItem={({ index }) => (

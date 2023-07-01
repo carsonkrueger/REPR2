@@ -13,7 +13,7 @@ const WorkoutTemplateHeaderComponent = () => {
   const dispatch: AppDispatch = useDispatch();
 
   const onAddWorkout = () => {
-    router.push(`(workout)/${-1}`);
+    router.push(`workout/${-1}`);
     dispatch(addWorkoutTemplate());
   };
 

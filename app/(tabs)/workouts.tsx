@@ -1,17 +1,16 @@
 import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "../src/redux/store";
+import { AppDispatch, RootState } from "../../src/redux/store";
 import { View, Text } from "react-native";
-import tw from "../src/util/tailwind";
+import tw from "../../src/util/tailwind";
 import { useRouter } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
 
-import WorkoutTemplateComponent from "../src/components/workoutComponents/WorkoutTemplateComponent";
-import { Workout, WorkoutTemplate } from "../src/types/workoutTypes";
+import WorkoutTemplateComponent from "../../src/components/workoutComponents/WorkoutTemplateComponent";
+import { WorkoutState, WorkoutTemplate } from "../../src/types/workoutTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
-import WorkoutTemplateHeaderComponent from "../src/components/workoutComponents/WorkoutTemplateHeaderComponent";
+import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponents/WorkoutTemplateHeaderComponent";
 
 export default function Workouts() {
-  const curWorkout: Workout = useSelector((state: RootState) => state.workout);
   const templates: WorkoutTemplate[] = useSelector(
     (state: RootState) => state.workoutTemplates
   );

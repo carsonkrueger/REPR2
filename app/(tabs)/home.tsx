@@ -1,10 +1,8 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
-import { RootState } from "../src/redux/store";
-import tw from "../src/util/tailwind";
+import tw from "../../src/util/tailwind";
 
 export default function Home() {
   return (

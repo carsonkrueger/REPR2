@@ -33,7 +33,7 @@ export default function ExerciseComponent({ exerciseIndex }: props) {
   const isLocked: boolean = useSelector((state: RootState) =>
     selectIsLocked(state)
   );
-  const exercise: Exercise = useSelector((state: RootState) =>
+  const exercise = useSelector((state: RootState) =>
     selectExerciseByIndex(state, exerciseIndex)
   );
   const dispatch = useDispatch<AppDispatch>();

@@ -2,7 +2,7 @@ import { TouchableOpacity, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import tw from "../src/util/tailwind";
+import tw from "../../src/util/tailwind";
 
 export default function Search() {
   return (

@@ -28,6 +28,30 @@ export default function Nav() {
     router.push(href);
   };
 
+  function navigateHome() {
+    replaceNavigateTo("home", 0);
+  }
+
+  function navigateSearch() {
+    replaceNavigateTo("search", 1);
+  }
+
+  function navigateWorkouts() {
+    replaceNavigateTo("workouts", 2);
+  }
+
+  function navigateStartWorkout() {
+    pushNavigateTo(`/workout/${curWorkout.id}`, 2);
+  }
+
+  function navigateSettings() {
+    replaceNavigateTo("settings", 3);
+  }
+
+  function navigateProfile() {
+    replaceNavigateTo("profile", 4);
+  }
+
   return (
     <View
       style={tw`absolute flex-1 flex-row items-center bottom-0 right-0 left-0 m-3 px-1 py-2 bg-front rounded-full shadow-md z-50`}
@@ -39,9 +63,7 @@ export default function Nav() {
           <TouchableOpacity
             style={tw`p-3 justify-center items-center bg-primary`}
             onPress={
-              curWorkout.inProgress
-                ? () => pushNavigateTo(`/(workout)/${curWorkout.id}`, 2)
-                : () => replaceNavigateTo("/workouts", 2)
+              curWorkout.inProgress ? navigateStartWorkout : navigateWorkouts
             }
           >
             <Ionicons name="barbell-sharp" color={"#fff"} size={27} />
@@ -51,7 +73,7 @@ export default function Nav() {
 
       <TouchableOpacity
         style={tw`flex-1 flex-col justify-end items-center pb-1`}
-        onPress={() => replaceNavigateTo("/home", 0)}
+        onPress={navigateHome}
       >
         <Ionicons
           name={`${selectedPos === 0 ? "home" : "home-outline"}`}
@@ -62,7 +84,7 @@ export default function Nav() {
 
       <TouchableOpacity
         style={tw`flex-1 flex-col justify-end items-center pb-1`}
-        onPress={() => replaceNavigateTo("/search", 1)}
+        onPress={navigateSearch}
       >
         <Ionicons
           name={`${selectedPos === 1 ? "search" : "search-outline"}`}
@@ -75,7 +97,7 @@ export default function Nav() {
 
       <TouchableOpacity
         style={tw`flex-1 flex-col justify-end items-center pb-1`}
-        onPress={() => replaceNavigateTo("/settings", 3)}
+        onPress={navigateSettings}
       >
         <Ionicons
           name={`${
@@ -88,7 +110,7 @@ export default function Nav() {
 
       <TouchableOpacity
         style={tw`flex-1 flex-col justify-end items-center pb-1`}
-        onPress={() => replaceNavigateTo("/profile", 4)}
+        onPress={navigateProfile}
       >
         <Ionicons
           name={`${selectedPos === 4 ? "person" : "person-outline"}`}

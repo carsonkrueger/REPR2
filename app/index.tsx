@@ -5,10 +5,9 @@ import { Ionicons, Feather } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
 
 import tw from "../src/util/tailwind";
-import { StatusBar } from "expo-status-bar";
 import { TextInput } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
-import colors from "../tailwind.config";
+import CustomColors from "../src/util/customColors";
 
 export default function Login() {
   const router = useRouter();
@@ -18,10 +17,9 @@ export default function Login() {
 
   if (!fontsLoaded) return null;
 
-  console.log(colors["back-primary"]);
-
   const login = () => {
-    router.replace("/home");
+    router.replace("/(tabs)/home");
+    console.log(CustomColors["back-primary"]);
   };
 
   return (

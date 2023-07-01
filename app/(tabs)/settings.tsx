@@ -1,13 +1,13 @@
 import { useSelector, useDispatch } from "react-redux";
-import { AppDispatch, RootState } from "../src/redux/store";
+import { AppDispatch, RootState } from "../../src/redux/store";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
-import tw from "../src/util/tailwind";
-import SettingsItem from "../src/components/settingsComponents/SettingsItem";
-import SettingsGroup from "../src/components/settingsComponents/SettingsGroup";
-import { toggleDarkMode } from "../src/redux/slices/settingsSlice";
+import tw from "../../src/util/tailwind";
+import SettingsItem from "../../src/components/settingsComponents/SettingsItem";
+import SettingsGroup from "../../src/components/settingsComponents/SettingsGroup";
+import { toggleDarkMode } from "../../src/redux/slices/settingsSlice";
 
 export default function Settings() {
   const router = useRouter();

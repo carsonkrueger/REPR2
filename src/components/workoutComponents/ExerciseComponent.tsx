@@ -20,21 +20,23 @@ import {
   delSet,
   selectExerciseByIndex,
   selectIsLocked,
+  selectWorkout,
   setExerciseName,
   swapExerciseWithBelow,
 } from "../../redux/slices/workoutSlice";
 import Clock from "./ClockComponent";
 
 interface props {
-  exerciseIndex: number;
+  exerciseId: number;
 }
 
-export default function ExerciseComponent({ exerciseIndex }: props) {
+export default function ExerciseComponent({ exerciseId }: props) {
+  const workout = useSelector((state: RootState) => selectWorkout(state));
   const isLocked: boolean = useSelector((state: RootState) =>
     selectIsLocked(state)
   );
   const exercise = useSelector((state: RootState) =>
-    selectExerciseByIndex(state, exerciseIndex)
+    selectExerciseByIndex(state, exerciseId)
   );
   const dispatch = useDispatch<AppDispatch>();
 
@@ -45,26 +47,32 @@ export default function ExerciseComponent({ exerciseIndex }: props) {
   };
 
   const swapExerciseUp = () => {
-    dispatch(swapExerciseWithBelow(exerciseIndex - 1));
+    dispatch(swapExerciseWithBelow({ id: exerciseId - 1 }));
     setIsSelected(false);
   };
 
   const swapExerciseDown = () => {
-    dispatch(swapExerciseWithBelow(exerciseIndex));
+    dispatch(swapExerciseWithBelow({ id: exerciseId }));
     setIsSelected(false);
   };
 
   const deleteExercise = () => {
-    dispatch(delExercise(exerciseIndex));
+    dispatch(delExercise({ id: exerciseId }));
     setIsSelected(false);
   };
 
   const addSetToEnd = () => {
-    dispatch(addSet(exerciseIndex));
+    dispatch(addSet({ exerciseId: exerciseId, nextSetId: workout.nextSetId }));
   };
 
   const delSetFromEnd = () => {
-    dispatch(delSet(exerciseIndex));
+    if (exercise)
+      dispatch(
+        delSet({
+          exerciseId: exerciseId,
+          setId: exercise.Sets[exercise.Sets.length - 1],
+        })
+      );
   };
 
   return (
@@ -85,17 +93,17 @@ export default function ExerciseComponent({ exerciseIndex }: props) {
           ]}
           placeholder="Exercise Name"
           placeholderTextColor={"#c2c2c2"}
-          onChangeText={(name) =>
-            dispatch(setExerciseName([exerciseIndex, name]))
+          onChangeText={(newName) =>
+            dispatch(setExerciseName({ id: exerciseId, name: newName }))
           }
           editable={!isLocked}
           multiline={true}
           numberOfLines={2}
         >
-          {exercise.name}
+          {exercise?.name}
         </TextInput>
 
-        <Clock exerciseIndex={exerciseIndex} />
+        <Clock exerciseId={exerciseId} />
       </View>
 
       {/* SETS HEADER */}
@@ -144,12 +152,8 @@ export default function ExerciseComponent({ exerciseIndex }: props) {
       </View>
 
       {/* SETS */}
-      {exercise.Sets.map((_, idx) => (
-        <WorkoutSetComponent
-          key={idx}
-          exerciseIndex={exerciseIndex}
-          setIndex={idx}
-        />
+      {exercise?.Sets.map((_, idx) => (
+        <WorkoutSetComponent key={idx} exerciseId={exerciseId} setIndex={idx} />
       ))}
 
       {/* EXERCISE MENU (ADD SET / DEL SET / SWAP) */}

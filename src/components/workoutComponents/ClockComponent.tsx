@@ -16,15 +16,15 @@ import { useSelector } from "react-redux";
 import { cleanNumStr } from "../../util/workoutUtils";
 
 interface props {
-  exerciseIndex: number;
+  exerciseId: number;
 }
 
-const Clock = ({ exerciseIndex }: props) => {
+const Clock = ({ exerciseId }: props) => {
   const isLocked: boolean = useSelector((state: RootState) =>
     selectIsLocked(state)
   );
   const exercise: Exercise = useSelector((state) =>
-    selectExerciseByIndex(state, exerciseIndex)
+    selectExerciseByIndex(state, exerciseId)
   );
   const dispatch: AppDispatch = useDispatch();
 
@@ -35,7 +35,7 @@ const Clock = ({ exerciseIndex }: props) => {
   useEffect(() => {
     if (exercise.timerStartTime) {
       const interval = setInterval(() => {
-        if (curTime <= -999) dispatch(toggleTimer(exerciseIndex));
+        if (curTime <= -999) dispatch(toggleTimer({ exerciseId: exerciseId }));
         setCurTime(exercise.timer - calcTimeDif());
       }, 1000);
       return () => clearInterval(interval);
@@ -51,13 +51,13 @@ const Clock = ({ exerciseIndex }: props) => {
   }
 
   const onClockPress = () => {
-    dispatch(toggleTimer(exerciseIndex));
+    dispatch(toggleTimer({ exerciseId: exerciseId }));
   };
 
   const onClockTextChange = (text: string) => {
     const num = Number(cleanNumStr(text));
     setCurTime(num);
-    dispatch(setInitTimer([exerciseIndex, num]));
+    dispatch(setInitTimer({ id: exerciseId, timer: num }));
   };
 
   return (

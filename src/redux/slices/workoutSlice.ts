@@ -2,7 +2,7 @@ import {
   createEntityAdapter,
   createSelector,
   createSlice,
-  EntityState,
+  EntityId,
   PayloadAction,
 } from "@reduxjs/toolkit";
 
@@ -32,7 +32,7 @@ const initialExercise: Exercise = {
   Sets: [0],
 };
 export const exerciseAdapter = createEntityAdapter<Exercise>({
-  selectId: (workout: Exercise) => workout.id,
+  selectId: (exercise: Exercise) => exercise.id,
 });
 const exerciseAdapterInitialState = exerciseAdapter.addOne(
   exerciseAdapter.getInitialState(),
@@ -44,6 +44,7 @@ const initialWorkout: WorkoutState = {
   name: "",
   isLocked: false,
   inProgress: false,
+  nextSetId: 1,
 };
 
 export const workoutSetSlice = createSlice({
@@ -52,7 +53,7 @@ export const workoutSetSlice = createSlice({
   reducers: {
     addSet(
       state,
-      action: PayloadAction<{ exerciseId: number; nextSetId: number }>
+      action: PayloadAction<{ exerciseId: EntityId; nextSetId: EntityId }>
     ) {
       workoutSetAdapter.addOne(state, {
         ...initialSet,
@@ -61,7 +62,7 @@ export const workoutSetSlice = createSlice({
     },
     delSet(
       state,
-      action: PayloadAction<{ exerciseId: number; setId: number }>
+      action: PayloadAction<{ exerciseId: EntityId; setId: EntityId }>
     ) {
       workoutSetAdapter.removeOne(state, action.payload.setId);
     },
@@ -72,13 +73,16 @@ export const workoutSetSlice = createSlice({
         changes: { isFinished: !prevBool },
       });
     },
-    setReps(state, action: PayloadAction<{ setId: number; reps: number }>) {
+    setReps(state, action: PayloadAction<{ setId: EntityId; reps: number }>) {
       workoutSetAdapter.updateOne(state, {
         id: action.payload.setId,
         changes: { reps: action.payload.reps },
       });
     },
-    setWeight(state, action: PayloadAction<{ setId: number; weight: number }>) {
+    setWeight(
+      state,
+      action: PayloadAction<{ setId: EntityId; weight: number }>
+    ) {
       workoutSetAdapter.updateOne(state, {
         id: action.payload.setId,
         changes: { weight: action.payload.weight },
@@ -94,7 +98,7 @@ export const exercisesSlice = createSlice({
     addExercise(state) {
       exerciseAdapter.addOne(state, initialExercise);
     },
-    delExercise(state, action: PayloadAction<{ id: number }>) {
+    delExercise(state, action: PayloadAction<{ id: EntityId }>) {
       if (state.ids.length <= 1)
         exerciseAdapter.updateOne(state, {
           id: action.payload.id,
@@ -102,20 +106,42 @@ export const exercisesSlice = createSlice({
         });
       else exerciseAdapter.removeOne(state, action.payload.id);
     },
-    setInitTimer(state, action: PayloadAction<{ id: number; timer: number }>) {
+    setInitTimer(
+      state,
+      action: PayloadAction<{ id: EntityId; timer: number }>
+    ) {
       exerciseAdapter.updateOne(state, {
         id: action.payload.id,
         changes: { timer: action.payload.timer },
       });
     },
+    toggleTimer(state, action: PayloadAction<{ exerciseId: EntityId }>) {
+      const newStartTime = state.entities[action.payload.exerciseId]
+        ?.timerStartTime
+        ? undefined
+        : Date.now() / 1000;
+      exerciseAdapter.updateOne(state, {
+        id: action.payload.exerciseId,
+        changes: { timerStartTime: newStartTime },
+      });
+    },
     setExerciseName(
       state,
-      action: PayloadAction<{ id: number; name: string }>
+      action: PayloadAction<{ id: EntityId; name: string }>
     ) {
       exerciseAdapter.updateOne(state, {
         id: action.payload.id,
         changes: { name: action.payload.name },
       });
+    },
+    swapExerciseWithBelow(state, action: PayloadAction<{ id: EntityId }>) {
+      const pos = state.ids.findIndex(
+        (entityId) => entityId === action.payload.id
+      );
+      if (pos < state.ids.length - 1 || pos > -1) {
+        state.ids[pos] = state.ids[pos + 1];
+        state.ids[pos + 1] = action.payload.id;
+      }
     },
   },
   extraReducers(builder) {
@@ -155,8 +181,14 @@ export const { addSet, delSet, setReps, setWeight, toggleFinishSet } =
   workoutSetSlice.actions;
 
 export const exerciseReducer = exercisesSlice.reducer;
-export const { addExercise, delExercise, setExerciseName, setInitTimer } =
-  exercisesSlice.actions;
+export const {
+  addExercise,
+  delExercise,
+  setExerciseName,
+  setInitTimer,
+  toggleTimer,
+  swapExerciseWithBelow,
+} = exercisesSlice.actions;
 
 export const workoutReducer = workoutSlice.reducer;
 export const { resetWorkout, setName, toggleLock, startWorkout } =

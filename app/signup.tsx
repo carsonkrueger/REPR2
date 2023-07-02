@@ -1,5 +1,3 @@
-import "expo-router/entry";
-
 import { View, Text, TouchableOpacity, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather } from "@expo/vector-icons";
@@ -11,26 +9,25 @@ import tw from "../src/util/tailwind";
 import CustomColors from "../src/util/customColors";
 import { supabase } from "../src/types/supabaseClient";
 
-export default function Login() {
+export default function SignUp() {
   const router = useRouter();
-  const [fontsLoaded] = useFonts({
-    RobotoCondensed: require("../assets/fonts/RobotoCondensed-Regular.ttf"),
-  });
 
   const [loading, setLoading] = useState(true);
   const [isValidInput, setIsValidInput] = useState(true);
+
+  const [userName, setUserName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  if (!fontsLoaded) return null;
-
-  const login = async () => {
+  const signUp = async () => {
     if (!email.includes("@") || password.length < 8) {
       setIsValidInput(false);
       return;
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signUp({
       email: email,
       password: password,
     });
@@ -76,6 +73,15 @@ export default function Login() {
           style={tw`py-1 px-2 flex-row rounded-full items-center bg-front shadow-sm overflow-hidden `}
         >
           <TextInput
+            style={[
+              tw`flex-1 px-2 py-2 text-lg text-primary selection:bg-primary`,
+              { fontFamily: "RobotoCondensed" },
+            ]}
+            placeholder="User Name"
+            placeholderTextColor={"#a8cfff"}
+            onChangeText={setEmail}
+          />
+          <TextInput
             inputMode="email"
             style={[
               tw`flex-1 px-2 py-2 text-lg text-primary selection:bg-primary`,
@@ -115,7 +121,7 @@ export default function Login() {
           />
         </View>
 
-        <TouchableOpacity onPress={login}>
+        <TouchableOpacity onPress={() => {}}>
           <View
             style={tw`mt-7 bg-[#3b83f5] h-12 rounded-full justify-center items-center`}
           >
@@ -132,9 +138,11 @@ export default function Login() {
       </View>
 
       <View style={tw`flex-row pb-3 justify-center`}>
-        <Text style={tw`text-light-gray py-1 pr-2`}>New user?</Text>
-        <TouchableOpacity onPress={() => router.replace("signup")}>
-          <Text style={tw`text-primary py-1`}>Sign Up</Text>
+        <Text style={tw`text-light-gray py-1 pr-2`}>
+          Already have an account?
+        </Text>
+        <TouchableOpacity>
+          <Text style={tw`text-primary py-1`}>Login In</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

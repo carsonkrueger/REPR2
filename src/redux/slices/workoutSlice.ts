@@ -63,9 +63,18 @@ export const workoutSetSlice = createSlice({
     },
     delSet(
       state,
-      action: PayloadAction<{ exerciseId: EntityId; setId: EntityId }>
+      action: PayloadAction<{
+        exerciseId: EntityId;
+        setId: EntityId;
+        numSets: number;
+      }>
     ) {
-      workoutSetAdapter.removeOne(state, action.payload.setId);
+      if (action.payload.numSets <= 1)
+        workoutSetAdapter.updateOne(state, {
+          id: action.payload.setId,
+          changes: { ...initialSet, id: action.payload.setId },
+        });
+      else workoutSetAdapter.removeOne(state, action.payload.setId);
     },
     toggleFinishSet(state, action: PayloadAction<{ setId: EntityId }>) {
       const prevBool = state.entities[action.payload.setId]?.isFinished;
@@ -91,12 +100,19 @@ export const workoutSetSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(exercisesSlice.actions.addExercise, (state, action) => {
-      workoutSetAdapter.addOne(state, {
-        ...initialSet,
-        id: action.payload.nextSetId,
+    builder
+      .addCase(exercisesSlice.actions.addExercise, (state, action) => {
+        workoutSetAdapter.addOne(state, {
+          ...initialSet,
+          id: action.payload.nextSetId,
+        });
+      })
+      .addCase(workoutSlice.actions.resetWorkout, (state) => {
+        workoutSetAdapter.removeAll(state);
+        workoutSetAdapter.addOne(state, {
+          ...initialSet,
+        });
       });
-    });
   },
 });
 
@@ -175,7 +191,14 @@ export const exercisesSlice = createSlice({
         );
       })
       .addCase(workoutSetSlice.actions.delSet, (state, action) => {
-        state.entities[action.payload.exerciseId]?.Sets.pop();
+        if (action.payload.numSets > 1)
+          state.entities[action.payload.exerciseId]?.Sets.pop();
+      })
+      .addCase(workoutSlice.actions.resetWorkout, (state) => {
+        exerciseAdapter.removeAll(state);
+        exerciseAdapter.addOne(state, {
+          ...initialExercise,
+        });
       });
   },
 });
@@ -190,8 +213,8 @@ const workoutSlice = createSlice({
     toggleLock(state) {
       state.isLocked = !state.isLocked;
     },
-    resetWorkout() {
-      return initialWorkout;
+    resetWorkout(state) {
+      state = { ...initialWorkout };
     },
     startWorkout(state) {
       state.inProgress = true;

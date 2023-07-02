@@ -7,11 +7,11 @@ import { useRouter } from "expo-router";
 import tw from "../../src/util/tailwind";
 import SettingsItem from "../../src/components/settingsComponents/SettingsItem";
 import SettingsGroup from "../../src/components/settingsComponents/SettingsGroup";
-import { toggleDarkMode } from "../../src/redux/slices/settingsSlice";
+import { toggleDarkMode } from "../../src/redux/slices/profileSlice";
 
 export default function Settings() {
   const router = useRouter();
-  const settings = useSelector((state: RootState) => state.settings);
+  const profile = useSelector((state: RootState) => state.profile);
   const dispatch: AppDispatch = useDispatch();
 
   const logout = () => {
@@ -43,19 +43,19 @@ export default function Settings() {
           itemName="Dark Mode"
           onTap={() => dispatch(toggleDarkMode())}
           useToggle={true}
-          toggleState={settings.isDarkMode}
+          toggleState={profile.isDarkMode}
         />
         <SettingsItem
           itemName="Dark Mode"
           onTap={() => dispatch(toggleDarkMode())}
           useToggle={true}
-          toggleState={settings.isDarkMode}
+          toggleState={profile.isDarkMode}
         />
         <SettingsItem
           itemName="Dark Mode"
           onTap={() => dispatch(toggleDarkMode())}
           useToggle={true}
-          toggleState={settings.isDarkMode}
+          toggleState={profile.isDarkMode}
           lastItem={true}
         />
       </SettingsGroup>

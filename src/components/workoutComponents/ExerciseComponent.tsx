@@ -14,7 +14,7 @@ import tw from "../../util/tailwind";
 import { Exercise } from "../../types/workoutTypes";
 import { AppDispatch, RootState } from "../../redux/store";
 import WorkoutSetComponent from "./WorkoutSetComponet";
-import { flexWidths } from "./miscWorkoutStyles";
+import flexWidths from "../../util/exerciseHeaderFlexWidths";
 import {
   addSet,
   delExercise,
@@ -38,7 +38,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
   const isLocked: boolean = useSelector((state: RootState) =>
     selectIsLocked(state)
   );
-  const exercise = useSelector((state: RootState) =>
+  const exercise: Exercise = useSelector((state: RootState) =>
     selectExerciseById(state, exerciseId)
   );
   const dispatch = useDispatch<AppDispatch>();
@@ -73,6 +73,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
       delSet({
         exerciseId: exerciseId,
         setId: exercise.Sets[exercise.Sets.length - 1],
+        numSets: exercise.Sets.length,
       })
     );
   };
@@ -88,7 +89,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
         {/* EXERCISE NAME */}
         <TextInput
           style={[
-            tw`flex-1 mr-2 text-base text-primary rounded-md px-1 ${
+            tw`flex-1 mr-2 text-base text-primary rounded-md px-1 max-h-12 ${
               isLocked ? "" : "bg-back"
             }`,
             { fontFamily: "RobotoCondensed" },

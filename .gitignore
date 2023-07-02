@@ -10,6 +10,7 @@ npm-debug.*
 *.orig.*
 web-build/
 *.prettierignore
+*.env
 
 # macOS
 .DS_Store

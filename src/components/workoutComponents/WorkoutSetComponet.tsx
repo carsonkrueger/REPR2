@@ -6,7 +6,7 @@ import tw from "../../util/tailwind";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { EntityId } from "@reduxjs/toolkit";
 
-import { flexWidths } from "./miscWorkoutStyles";
+import flexWidths from "../../util/exerciseHeaderFlexWidths";
 import {
   toggleFinishSet,
   setWeight,

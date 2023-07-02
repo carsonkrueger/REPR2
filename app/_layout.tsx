@@ -10,7 +10,7 @@ export default function Layout() {
       <StatusBar backgroundColor="#fff" style="dark" />
       <Stack screenOptions={{ animation: "fade" }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="singup" options={{ headerShown: false }} />
+        <Stack.Screen name="signup" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </Provider>

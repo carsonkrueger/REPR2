@@ -23,7 +23,7 @@ import {
   startWorkout,
   toggleLock,
 } from "../../../src/redux/slices/workoutSlice";
-import MyAlert from "../../../src/components/MyAlert";
+import MyAlert from "../../../src/components/MyDangerAlert";
 import tw from "../../../src/util/tailwind";
 
 export default function WorkoutScreen() {

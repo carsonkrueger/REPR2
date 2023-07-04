@@ -17,16 +17,37 @@ export default function Login() {
     RobotoCondensed: require("../assets/fonts/RobotoCondensed-Regular.ttf"),
   });
 
-  const [loading, setLoading] = useState(true);
-  const [isValidInput, setIsValidInput] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   if (!fontsLoaded) return null;
 
+  function displayError(msg: string) {
+    setErrorMsg(msg);
+    setIsLoading(false);
+    throw Error("Input validation error: " + msg);
+  }
+
   const login = async () => {
-    if (!email.includes("@") || password.length < 8) {
-      setIsValidInput(false);
+    setIsLoading(true);
+    try {
+      // Check input validation
+      if (email.length > 256) {
+        displayError("Invalid email or password");
+      } else if (
+        !/^[a-zA-Z0-9.!#$%&`*+/=?^_{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+          email
+        )
+      ) {
+        displayError("Invalid email or password");
+      } else if (password.length < 8) {
+        displayError("Invalid email or password");
+      } else if (password.length > 64) {
+        displayError("Invalid email or password");
+      }
+    } catch (error) {
       return;
     }
 
@@ -36,9 +57,11 @@ export default function Login() {
     });
 
     if (error) {
-      console.log(error.message);
-      setIsValidInput(false);
-      return;
+      try {
+        displayError(error.message);
+      } catch (error) {
+        return;
+      }
     }
 
     router.replace("/(tabs)/home");
@@ -46,9 +69,6 @@ export default function Login() {
 
   return (
     <SafeAreaView style={tw`flex-1 bg-front`}>
-      {/* import supabase-js from cdn */}
-      {/* <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script> */}
-
       <View style={tw`py-3 flex-row justify-between px-5`}>
         <Ionicons name="barbell-sharp" color={CustomColors.primary} size={27} />
         <Text
@@ -62,16 +82,15 @@ export default function Login() {
       </View>
 
       <View style={tw`px-8 my-auto justify-center max-w-md`}>
-        {!isValidInput && (
-          <Text
-            style={[
-              tw`text-danger text-center pb-2`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
-          >
-            Invalid Email or Password
-          </Text>
-        )}
+        <Text
+          style={[
+            tw`text-danger text-center pb-2`,
+            { fontFamily: "RobotoCondensed" },
+          ]}
+        >
+          {errorMsg}
+        </Text>
+
         <View
           style={tw`py-1 px-2 flex-row rounded-full items-center bg-front shadow-sm overflow-hidden `}
         >
@@ -84,6 +103,7 @@ export default function Login() {
             placeholder="Email"
             placeholderTextColor={"#a8cfff"}
             onChangeText={setEmail}
+            editable={!isLoading}
           />
           <Feather
             name="mail"
@@ -106,6 +126,7 @@ export default function Login() {
             placeholderTextColor={"#a8cfff"}
             onChangeText={setPassword}
             autoCapitalize="none"
+            editable={!isLoading}
           />
           <Feather
             name="lock"
@@ -115,7 +136,7 @@ export default function Login() {
           />
         </View>
 
-        <TouchableOpacity onPress={login}>
+        <TouchableOpacity onPress={login} disabled={isLoading}>
           <View
             style={tw`mt-7 bg-[#3b83f5] h-12 rounded-full justify-center items-center`}
           >

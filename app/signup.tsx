@@ -1,19 +1,20 @@
 import { View, Text, TouchableOpacity, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons, Feather } from "@expo/vector-icons";
-import { useFonts } from "expo-font";
+import { Ionicons, Feather, FontAwesome } from "@expo/vector-icons";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 
 import tw from "../src/util/tailwind";
 import CustomColors from "../src/util/customColors";
 import { supabase } from "../src/types/supabaseClient";
+import MySafeAlert from "../src/components/MySafeAlert";
 
 export default function SignUp() {
   const router = useRouter();
 
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [displayEmailAlert, setDisplayEmailAlert] = useState(false);
 
   const [userName, setUserName] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -24,10 +25,12 @@ export default function SignUp() {
 
   function displayError(msg: string) {
     setErrorMsg(msg);
+    setIsLoading(false);
     throw Error("Input validation error: " + msg);
   }
 
   const signUp = async () => {
+    setIsLoading(true);
     try {
       // Check input validation
       if (userName.length < 3) {
@@ -79,7 +82,6 @@ export default function SignUp() {
 
     if (error) {
       try {
-        console.log(error);
         displayError(error.message);
       } catch (error) {
         return;
@@ -103,6 +105,36 @@ export default function SignUp() {
           REPR
         </Text>
       </View>
+
+      {/* EMAIL ALERT */}
+      {!displayEmailAlert && (
+        <MySafeAlert
+          children={
+            <>
+              <View
+                style={tw`justify-center items-center pr-2 bg-primary rounded-full h-14 w-14`}
+              >
+                <FontAwesome
+                  name="paper-plane"
+                  color={CustomColors.front}
+                  size={35}
+                />
+              </View>
+              <Text style={tw`text-primary py-3`}>
+                Email verification sent!
+              </Text>
+            </>
+          }
+          closeAlert={() => {
+            router.replace("/");
+          }}
+          safeCommand={() => {
+            router.replace("/");
+          }}
+          safeText="OK"
+          key={"safeEmailAlert"}
+        />
+      )}
 
       <View style={tw`px-8 my-auto justify-center max-w-md`}>
         {errorMsg !== "" && (
@@ -128,6 +160,7 @@ export default function SignUp() {
             placeholder="User Name"
             placeholderTextColor={"#a8cfff"}
             onChangeText={(text) => setUserName(text.trim())}
+            editable={!isLoading}
           />
         </View>
 
@@ -144,6 +177,7 @@ export default function SignUp() {
               placeholder="First Name"
               placeholderTextColor={"#a8cfff"}
               onChangeText={(text) => setFirstName(text.trim())}
+              editable={!isLoading}
             />
           </View>
 
@@ -158,6 +192,7 @@ export default function SignUp() {
               placeholder="Last Name"
               placeholderTextColor={"#a8cfff"}
               onChangeText={(text) => setLastName(text.trim())}
+              editable={!isLoading}
             />
           </View>
         </View>
@@ -175,6 +210,7 @@ export default function SignUp() {
             placeholder="Email"
             placeholderTextColor={"#a8cfff"}
             onChangeText={(text) => setEmail(text.trim())}
+            editable={!isLoading}
           />
           <Feather
             name="mail"
@@ -198,6 +234,7 @@ export default function SignUp() {
             placeholderTextColor={"#a8cfff"}
             onChangeText={(text) => setPassword(text.trim())}
             autoCapitalize="none"
+            editable={!isLoading}
           />
           <Feather
             name="lock"
@@ -221,6 +258,7 @@ export default function SignUp() {
             placeholderTextColor={"#a8cfff"}
             onChangeText={(text) => setConfirmPassword(text.trim())}
             autoCapitalize="none"
+            editable={!isLoading}
           />
           <Feather
             name="lock"
@@ -230,7 +268,7 @@ export default function SignUp() {
           />
         </View>
 
-        <TouchableOpacity onPress={signUp}>
+        <TouchableOpacity onPress={signUp} disabled={isLoading}>
           <View
             style={tw`mt-4 bg-[#3b83f5] h-12 rounded-full justify-center items-center`}
           >

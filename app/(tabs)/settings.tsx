@@ -8,6 +8,7 @@ import tw from "../../src/util/tailwind";
 import SettingsItem from "../../src/components/settingsComponents/SettingsItem";
 import SettingsGroup from "../../src/components/settingsComponents/SettingsGroup";
 import { toggleDarkMode } from "../../src/redux/slices/profileSlice";
+import { supabase } from "../../src/types/supabaseClient";
 
 export default function Settings() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function Settings() {
   const dispatch: AppDispatch = useDispatch();
 
   const logout = () => {
+    supabase.auth.signOut();
     router.replace("/");
   };
 

@@ -24,53 +24,69 @@ export default function SignUp() {
 
   function displayError(msg: string) {
     setErrorMsg(msg);
+    throw Error("Input validation error: " + msg);
   }
 
   const signUp = async () => {
-    if (userName.length < 5) {
-      displayError("User name is too short");
-      return;
-    } else if (!/^[a-zA-Z0-9_]*$/.test(userName)) {
-      displayError(
-        "User name can only contain letters, numbers and underscores"
-      );
-      return;
-    } else if (
-      !/^(?!\s)([a-z ,.'-]+)$/i.test(firstName) ||
-      !/^(?!\s)([a-z ,.'-]+)$/i.test(lastName)
-    ) {
-      displayError("Invalid first or last name");
-      return;
-    } else if (
-      !/^[a-zA-Z0-9.!#$%&`*+/=?^_{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-        email
-      )
-    ) {
-      displayError("Invalid email");
-      return;
-    } else if (password !== confirmPassword) {
-      displayError("Passwords do not match");
-      return;
-    } else if (password.length < 8) {
-      displayError("Password must be 8 or more characters long");
+    try {
+      // Check input validation
+      if (userName.length < 3) {
+        displayError("User name is too short");
+      } else if (userName.length > 25) {
+        displayError("User name is too long");
+      } else if (!/^[a-zA-Z0-9_]+$/.test(userName)) {
+        displayError(
+          "User name can only contain letters, numbers and underscores"
+        );
+      } else if (firstName.length > 20 || firstName.length > 20) {
+        displayError("First or last name is too long");
+      } else if (
+        !/^(?!\s)([a-z ,.'-]+)$/i.test(firstName) ||
+        !/^(?!\s)([a-z ,.'-]+)$/i.test(lastName)
+      ) {
+        displayError("Invalid first or last name");
+      } else if (email.length > 256) {
+        displayError("Email is too long");
+      } else if (
+        !/^[a-zA-Z0-9.!#$%&`*+/=?^_{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+          email
+        )
+      ) {
+        displayError("Invalid email");
+      } else if (password !== confirmPassword) {
+        displayError("Passwords do not match");
+      } else if (password.length < 8) {
+        displayError("Password must be 8 or more characters");
+      } else if (password.length > 64) {
+        displayError("Password must be less than 65 characters");
+      }
+    } catch (error) {
+      console.log(error);
       return;
     }
 
-    // const { error } = await supabase.auth.signUp({
-    //   email: email,
-    //   password: password,
-    //   options: {
-    //     data: { user_name: userName },
-    //   },
-    // });
+    const { error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: {
+          user_name: userName,
+          first_name: firstName,
+          last_name: lastName,
+        },
+      },
+    });
 
-    // if (error) {
-    //   console.log(error.message);
-    //   displayError("User name or Email has already been taken.");
-    //   return;
-    // }
+    if (error) {
+      try {
+        console.log(error);
+        displayError(error.message);
+      } catch (error) {
+        return;
+      }
+    }
 
-    router.replace("/(tabs)/home");
+    router.replace("/");
   };
 
   return (

@@ -1,8 +1,9 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import { Profile } from "../../types/profileType";
 import { supabase } from "../../types/supabaseClient";
 import { profilesTable } from "../../types/dbTables";
+import { Session } from "@supabase/supabase-js";
 
 const initialSettings: Profile = {
   userId: 0,
@@ -35,6 +36,9 @@ export const profileSlice = createSlice({
     toggleDarkMode(state) {
       state.isDarkMode = !state.isDarkMode;
     },
+    setSession(state, action: PayloadAction<{ session: Session }>) {
+      state.session = action.payload.session;
+    },
   },
   extraReducers(builder) {
     builder
@@ -54,4 +58,4 @@ export const profileSlice = createSlice({
 });
 
 export const profileReducer = profileSlice.reducer;
-export const { toggleDarkMode } = profileSlice.actions;
+export const { toggleDarkMode, setSession } = profileSlice.actions;

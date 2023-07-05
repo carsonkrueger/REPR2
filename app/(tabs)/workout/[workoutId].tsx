@@ -79,7 +79,7 @@ export default function WorkoutScreen() {
       {backPressed && (
         <MyAlert
           msg="Are you sure you want to finish your workout?"
-          closeAlert={backPress}
+          onOutOfBoundsClick={backPress}
           dangerCommand={cancelWorkout}
           safeCommand={finishWorkout}
           dangerText="Cancel Workout"

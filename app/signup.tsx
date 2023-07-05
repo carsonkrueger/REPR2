@@ -14,7 +14,7 @@ export default function SignUp() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [displayEmailAlert, setDisplayEmailAlert] = useState(false);
+  const [doEmailAlert, setDoEmailAlert] = useState(false);
 
   const [userName, setUserName] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -88,7 +88,7 @@ export default function SignUp() {
       }
     }
 
-    router.replace("/");
+    setDoEmailAlert(true);
   };
 
   return (
@@ -107,7 +107,7 @@ export default function SignUp() {
       </View>
 
       {/* EMAIL ALERT */}
-      {!displayEmailAlert && (
+      {doEmailAlert && (
         <MySafeAlert
           children={
             <>
@@ -125,10 +125,8 @@ export default function SignUp() {
               </Text>
             </>
           }
-          closeAlert={() => {
-            router.replace("/");
-          }}
           safeCommand={() => {
+            setDoEmailAlert(false);
             router.replace("/");
           }}
           safeText="OK"
@@ -154,7 +152,7 @@ export default function SignUp() {
         >
           <TextInput
             style={[
-              tw`flex-1 px-2 py-2 text-lg text-primary selection:bg-primary`,
+              tw`flex-1 px-2 py-1 text-lg text-primary selection:bg-primary`,
               { fontFamily: "RobotoCondensed" },
             ]}
             placeholder="User Name"
@@ -171,7 +169,7 @@ export default function SignUp() {
           >
             <TextInput
               style={[
-                tw`flex-1 px-2 py-2 text-lg text-primary selection:bg-primary`,
+                tw`flex-1 px-2 py-1 text-lg text-primary selection:bg-primary`,
                 { fontFamily: "RobotoCondensed" },
               ]}
               placeholder="First Name"
@@ -186,7 +184,7 @@ export default function SignUp() {
           >
             <TextInput
               style={[
-                tw`flex-1 px-2 py-2 text-lg text-primary selection:bg-primary`,
+                tw`flex-1 px-2 py-1 text-lg text-primary selection:bg-primary`,
                 { fontFamily: "RobotoCondensed" },
               ]}
               placeholder="Last Name"
@@ -204,7 +202,7 @@ export default function SignUp() {
           <TextInput
             inputMode="email"
             style={[
-              tw`flex-1 px-2 py-2 text-lg text-primary selection:bg-primary`,
+              tw`flex-1 px-2 py-1 text-lg text-primary selection:bg-primary`,
               { fontFamily: "RobotoCondensed" },
             ]}
             placeholder="Email"
@@ -226,7 +224,7 @@ export default function SignUp() {
         >
           <TextInput
             style={[
-              tw`flex-1 px-2 py-2 text-lg text-primary`,
+              tw`flex-1 px-2 py-1 text-lg text-primary`,
               { fontFamily: "RobotoCondensed" },
             ]}
             secureTextEntry={true}
@@ -250,7 +248,7 @@ export default function SignUp() {
         >
           <TextInput
             style={[
-              tw`flex-1 px-2 py-2 text-lg text-primary`,
+              tw`flex-1 px-2 py-1 text-lg text-primary`,
               { fontFamily: "RobotoCondensed" },
             ]}
             secureTextEntry={true}

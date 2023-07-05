@@ -54,7 +54,7 @@ export default function Nav() {
 
   return (
     <View
-      style={tw`absolute flex-1 flex-row items-center bottom-0 right-0 left-0 m-3 px-1 py-2 bg-front rounded-full shadow-md z-50`}
+      style={tw`absolute flex-1 flex-row items-center bottom-0 right-0 left-0 mx-3 mb-4 px-1 py-2 bg-front rounded-full shadow-md z-50`}
     >
       <View
         style={tw`absolute left-0 right-0 justify-center items-center pb-8`}

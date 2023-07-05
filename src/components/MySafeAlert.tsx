@@ -7,15 +7,20 @@ import {
 import tw from "../util/tailwind";
 
 interface props {
-  closeAlert: () => void;
+  onOutOfBoundsClick?: () => void;
   safeCommand: () => void;
   safeText: string;
   children: React.ReactNode;
 }
 
-const MyAlert = ({ closeAlert, safeCommand, safeText, children }: props) => {
+const MyAlert = ({
+  onOutOfBoundsClick,
+  safeCommand,
+  safeText,
+  children,
+}: props) => {
   return (
-    <TouchableWithoutFeedback onPress={closeAlert}>
+    <TouchableWithoutFeedback onPress={onOutOfBoundsClick}>
       <View
         style={tw`z-100 absolute top-0 right-0 bottom-0 left-0 bg-transparent justify-center items-center`}
       >

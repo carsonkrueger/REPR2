@@ -89,7 +89,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
         {/* EXERCISE NAME */}
         <TextInput
           style={[
-            tw`flex-1 mr-2 text-base text-primary rounded-md px-1 max-h-12 ${
+            tw`flex-1 mr-2 text-base text-primary rounded-md px-1 max-h-12 h-9 ${
               isLocked ? "" : "bg-back"
             }`,
             { fontFamily: "RobotoCondensed" },

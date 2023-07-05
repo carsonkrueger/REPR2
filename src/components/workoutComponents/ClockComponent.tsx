@@ -75,7 +75,7 @@ const Clock = ({ exerciseId }: props) => {
       />
       <TextInput
         editable={!isLocked && !exercise.timerStartTime}
-        style={tw` text-center rounded-lg w-8 ${
+        style={tw` text-center rounded-lg w-8 h-7 ${
           isLocked || exercise.timerStartTime ? "" : "bg-back"
         }
         ${exercise.timerStartTime ? "text-white" : "text-back-primary"}`}

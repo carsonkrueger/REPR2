@@ -4,15 +4,19 @@ import { View, Text, TouchableOpacity, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 
 import tw from "../src/util/tailwind";
 import CustomColors from "../src/util/customColors";
 import { supabase } from "../src/types/supabaseClient";
+import { useDispatch } from "react-redux";
+import { setSession } from "../src/redux/slices/profileSlice";
+import { Session } from "@supabase/supabase-js";
 
 export default function Login() {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [fontsLoaded] = useFonts({
     RobotoCondensed: require("../assets/fonts/RobotoCondensed-Regular.ttf"),
   });
@@ -21,6 +25,18 @@ export default function Login() {
   const [errorMsg, setErrorMsg] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const getSession = async () => {
+      const session = (await supabase.auth.getSession()).data.session;
+
+      if (session) {
+        dispatch(setSession({ session: session }));
+        router.replace("home");
+      }
+    };
+    getSession();
+  }, []);
 
   if (!fontsLoaded) return null;
 
@@ -51,7 +67,7 @@ export default function Login() {
       return;
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error, data } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     });
@@ -64,6 +80,7 @@ export default function Login() {
       }
     }
 
+    if (data.session) dispatch(setSession({ session: data.session }));
     router.replace("/(tabs)/home");
   };
 

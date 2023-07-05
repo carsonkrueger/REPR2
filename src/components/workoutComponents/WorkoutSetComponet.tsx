@@ -82,7 +82,7 @@ export default function WorkoutSetComponent({
 
       <View style={tw`flex-${flexWidths.weight}`}>
         <TextInput
-          style={tw`mx-1 text-center ${
+          style={tw`mx-1 text-center h-7 ${
             workoutSet.isFinished ? "text-black" : "bg-back"
           }  rounded-md`}
           keyboardType="number-pad"
@@ -100,7 +100,7 @@ export default function WorkoutSetComponent({
 
       <View style={tw`flex-${flexWidths.reps}`}>
         <TextInput
-          style={tw`mx-1 text-center rounded-md ${
+          style={tw`mx-1 text-center rounded-md h-7 ${
             workoutSet.isFinished ? "text-black" : "bg-back"
           } `}
           keyboardType="number-pad"

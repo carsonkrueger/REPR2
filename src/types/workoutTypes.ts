@@ -24,8 +24,6 @@ export interface WorkoutState {
   inProgress: boolean;
   nextSetId: EntityId;
   nextExerciseId: EntityId;
-  // Exercises: EntityState<Exercise>;
-  // Sets: EntityState<WorkoutSet>;
 }
 
 export interface WorkoutTemplate {

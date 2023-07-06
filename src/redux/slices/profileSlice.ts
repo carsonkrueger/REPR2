@@ -2,7 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import { Profile } from "../../types/profileType";
 import { supabase } from "../../types/supabaseClient";
-import { profilesTable } from "../../types/dbTables";
+import { profilesTable } from "../../types/remoteDBTables";
 import { Session } from "@supabase/supabase-js";
 
 const initialSettings: Profile = {

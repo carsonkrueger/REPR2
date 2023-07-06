@@ -8,9 +8,18 @@ export default function Layout() {
   return (
     <Provider store={store}>
       <StatusBar backgroundColor="#fff" style="dark" />
-      <Stack screenOptions={{ animation: "fade" }}>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="signup" options={{ headerShown: false }} />
+      <Stack>
+        <Stack.Screen
+          name="login"
+          options={{
+            headerShown: false,
+            animation: "slide_from_left",
+          }}
+        />
+        <Stack.Screen
+          name="signup"
+          options={{ headerShown: false, animation: "slide_from_right" }}
+        />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </Provider>

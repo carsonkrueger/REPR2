@@ -17,7 +17,7 @@ export default function Settings() {
 
   const logout = () => {
     supabase.auth.signOut();
-    router.replace("/");
+    router.replace("login");
   };
 
   return (

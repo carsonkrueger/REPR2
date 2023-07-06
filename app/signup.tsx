@@ -127,7 +127,7 @@ export default function SignUp() {
           }
           safeCommand={() => {
             setDoEmailAlert(false);
-            router.replace("/");
+            router.back();
           }}
           safeText="OK"
           key={"safeEmailAlert"}
@@ -286,7 +286,7 @@ export default function SignUp() {
         <Text style={tw`text-light-gray py-1 pr-2`}>
           Already have an account?
         </Text>
-        <TouchableOpacity onPress={() => router.replace("/")}>
+        <TouchableOpacity onPress={() => router.replace("login")}>
           <Text style={tw`text-primary py-1`}>Log In</Text>
         </TouchableOpacity>
       </View>

@@ -1,10 +1,7 @@
-import "expo-router/entry";
-
 import { View, Text, TouchableOpacity, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, Feather } from "@expo/vector-icons";
-import { useFonts } from "expo-font";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "expo-router";
 
 import tw from "../src/util/tailwind";
@@ -12,33 +9,15 @@ import CustomColors from "../src/util/customColors";
 import { supabase } from "../src/types/supabaseClient";
 import { useDispatch } from "react-redux";
 import { setSession } from "../src/redux/slices/profileSlice";
-import { Session } from "@supabase/supabase-js";
 
 export default function Login() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const [fontsLoaded] = useFonts({
-    RobotoCondensed: require("../assets/fonts/RobotoCondensed-Regular.ttf"),
-  });
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    const getSession = async () => {
-      const session = (await supabase.auth.getSession()).data.session;
-
-      if (session) {
-        dispatch(setSession({ session: session }));
-        router.replace("home");
-      }
-    };
-    getSession();
-  }, []);
-
-  if (!fontsLoaded) return null;
 
   function displayError(msg: string) {
     setErrorMsg(msg);
@@ -81,11 +60,12 @@ export default function Login() {
     }
 
     if (data.session) dispatch(setSession({ session: data.session }));
-    router.replace("/(tabs)/home");
+    router.back();
   };
 
   return (
     <SafeAreaView style={tw`flex-1 bg-front`}>
+      {/* onLayout={onLayoutRootView} */}
       <View style={tw`py-3 flex-row justify-between px-5`}>
         <Ionicons name="barbell-sharp" color={CustomColors.primary} size={27} />
         <Text

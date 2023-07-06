@@ -29,7 +29,7 @@ export default function Nav() {
   };
 
   function navigateHome() {
-    replaceNavigateTo("home", 0);
+    replaceNavigateTo("/", 0);
   }
 
   function navigateSearch() {

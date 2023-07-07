@@ -3,7 +3,7 @@ import { workoutsTableRow } from "../types/localDBTables";
 import { Exercise, WorkoutSet, WorkoutState } from "../types/workoutTypes";
 import { EntityState } from "@reduxjs/toolkit";
 
-const db = SQLite.openDatabase("workouts.db");
+const db = SQLite.openDatabase("repr_local");
 
 export const initWorkoutTemplatesTable = () => {
   db.transaction((tx) =>
@@ -73,7 +73,29 @@ export const printAllTemplatesByDateDESC = () => {
   );
 };
 
-export const upsertWorkoutTemplate = (
+export const insertNewWorkoutTemplate = (
+  workoutState: WorkoutState,
+  exercises: EntityState<Exercise>,
+  sets: EntityState<WorkoutSet>
+) => {
+  db.transaction((tx) =>
+    tx.executeSql(
+      "INSERT INTO workout_templates (workout_state, exercises, sets, last_performed) VALUES (?, ?, ?, date('now'));",
+      [
+        JSON.stringify(workoutState),
+        JSON.stringify(exercises),
+        JSON.stringify(sets),
+      ],
+      undefined,
+      (_, error) => {
+        console.log("Error inserting new workout template: ", error);
+        return true;
+      }
+    )
+  );
+};
+
+export const updateWorkoutTemplate = (
   workoutId: number,
   workoutState: WorkoutState,
   exercises: EntityState<Exercise>,
@@ -81,7 +103,7 @@ export const upsertWorkoutTemplate = (
 ) => {
   db.transaction((tx) =>
     tx.executeSql(
-      "INSERT OR REPLACE INTO workout_templates (workout_state, exercises, sets, last_performed) VALUES (?, ?, ?, ?, date('now'));",
+      "INSERT OR REPLACE INTO workout_templates (workout_id, workout_state, exercises, sets, last_performed) VALUES (?, ?, ?, ?, date('now'));",
       [
         workoutId,
         JSON.stringify(workoutState),
@@ -90,7 +112,7 @@ export const upsertWorkoutTemplate = (
       ],
       undefined,
       (_, error) => {
-        console.log("Error inserting workout template all templates: ", error);
+        console.log("Error updating workout template: ", error);
         return true;
       }
     )

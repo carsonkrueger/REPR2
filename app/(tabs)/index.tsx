@@ -1,5 +1,7 @@
 import "expo-router/entry";
 
+import { useDispatch } from "react-redux";
+import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -9,10 +11,8 @@ import CustomColors from "../../src/util/customColors";
 import { useFonts } from "expo-font";
 import { useCallback, useEffect } from "react";
 import { supabase } from "../../src/types/supabaseClient";
-import { useDispatch } from "react-redux";
 import { setSession } from "../../src/redux/slices/profileSlice";
-import { useRouter } from "expo-router";
-import { upsertWorkoutTemplate } from "../../src/sqlite/queries";
+import { initWorkoutTemplatesTable } from "../../src/sqlite/queries";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -23,7 +23,7 @@ export default function Home() {
   });
 
   useEffect(() => {
-    upsertWorkoutTemplate();
+    initWorkoutTemplatesTable();
   }, []);
 
   const onLayoutRootView = useCallback(async () => {

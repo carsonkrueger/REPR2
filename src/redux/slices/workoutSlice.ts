@@ -214,9 +214,9 @@ const workoutSlice = createSlice({
       state.isLocked = !state.isLocked;
     },
     resetWorkout(state) {
-      state = { ...initialWorkout };
+      state = { ...initialWorkout, inProgress: false };
     },
-    startWorkout(state) {
+    startInProgress(state) {
       state.inProgress = true;
     },
   },
@@ -253,7 +253,7 @@ export const {
 } = exercisesSlice.actions;
 
 export const workoutReducer = workoutSlice.reducer;
-export const { resetWorkout, setName, toggleLock, startWorkout } =
+export const { resetWorkout, setName, toggleLock, startInProgress } =
   workoutSlice.actions;
 
 // SELECTORS

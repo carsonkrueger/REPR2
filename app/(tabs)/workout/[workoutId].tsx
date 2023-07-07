@@ -19,28 +19,35 @@ import {
   addExercise,
   resetWorkout,
   selectExercises,
+  selectSets,
   selectWorkout,
-  startWorkout,
+  startInProgress,
   toggleLock,
 } from "../../../src/redux/slices/workoutSlice";
 import MyAlert from "../../../src/components/MyDangerAlert";
 import tw from "../../../src/util/tailwind";
+import {
+  insertCurrentWorkoutTemplate,
+  selectWorkoutInfoById,
+  updateWorkoutTemplate,
+} from "../../../src/sqlite/queries";
+import { addWorkoutTemplate } from "../../../src/redux/slices/WorkoutTemplatesSlice";
+import { templateFromCurrentWorkout } from "../../../src/util/workoutUtils";
 
 export default function WorkoutScreen() {
   const router = useRouter();
-  const { workoutId } = useSearchParams();
+  const { paramWorkoutId } = useSearchParams();
   const dispatch = useDispatch<AppDispatch>();
 
   const workout: WorkoutState = useSelector((state: RootState) =>
     selectWorkout(state)
   );
-  const exerciseIds = useSelector((state: RootState) =>
-    selectExercises(state)
-  ).ids;
+  const exercises = useSelector((state: RootState) => selectExercises(state));
+  const sets = useSelector((state: RootState) => selectSets(state));
   const [backPressed, setBackPressed] = useState(false);
 
   useEffect(() => {
-    dispatch(startWorkout());
+    startWorkout();
 
     const backAction = () => {
       backPress();
@@ -59,9 +66,20 @@ export default function WorkoutScreen() {
     setBackPressed((prev) => !prev);
   };
 
+  const startWorkout = () => {
+    dispatch(startInProgress());
+  };
+
   const finishWorkout = () => {
-    // backPress();
+    if (Number(paramWorkoutId) === -1) {
+      insertCurrentWorkoutTemplate(workout, exercises, sets);
+      dispatch(
+        addWorkoutTemplate(templateFromCurrentWorkout(workout, exercises))
+      );
+    } else updateWorkoutTemplate(workout, exercises, sets);
+
     dispatch(resetWorkout());
+
     router.back();
     router.replace("/workouts");
   };
@@ -120,7 +138,7 @@ export default function WorkoutScreen() {
 
       {/* EXERCISE COMPONENTS */}
       <FlashList
-        data={exerciseIds}
+        data={exercises.ids}
         // removeClippedSubviews={false}
         // CellRendererComponent={({ children }) => children}
         renderItem={({ item }) => (

@@ -1,5 +1,4 @@
 import * as SQLite from "expo-sqlite";
-import { workoutsTableRow } from "../types/localDBTables";
 import { Exercise, WorkoutSet, WorkoutState } from "../types/workoutTypes";
 import { EntityState } from "@reduxjs/toolkit";
 
@@ -25,7 +24,7 @@ export const selectAllTemplatesByDateDESC = ():
   let selection = undefined;
   db.transaction((tx) =>
     tx.executeSql(
-      "SELECT * FROM workout_templates ORDERY BY last_performed DESC;",
+      "SELECT * FROM workout_templates ORDER BY last_performed DESC;",
       undefined,
       (_, result) => {
         selection = result;
@@ -39,16 +38,18 @@ export const selectAllTemplatesByDateDESC = ():
   return selection;
 };
 
-export const selectTemplateById = (
+export const selectWorkoutInfoById = (
   id: number
 ): SQLite.SQLResultSet | undefined => {
-  let selection: SQLite.SQLResultSet | undefined = undefined;
+  let selection = undefined;
+
   db.transaction((tx) =>
     tx.executeSql(
       "SELECT * FROM workout_templates WHERE workout_id = ?;",
       [id],
       (_, result) => {
-        selection = result;
+        console.log(result.rows._array);
+        selection = result.rows._array[0];
       },
       (_, error) => {
         console.log("Error selecting template: ", error);
@@ -56,6 +57,10 @@ export const selectTemplateById = (
       }
     )
   );
+
+  // return {
+  //   workoutState: selection?.
+  // };
   return selection;
 };
 
@@ -73,7 +78,7 @@ export const printAllTemplatesByDateDESC = () => {
   );
 };
 
-export const insertNewWorkoutTemplate = (
+export const insertCurrentWorkoutTemplate = (
   workoutState: WorkoutState,
   exercises: EntityState<Exercise>,
   sets: EntityState<WorkoutSet>
@@ -96,7 +101,6 @@ export const insertNewWorkoutTemplate = (
 };
 
 export const updateWorkoutTemplate = (
-  workoutId: number,
   workoutState: WorkoutState,
   exercises: EntityState<Exercise>,
   sets: EntityState<WorkoutSet>
@@ -105,7 +109,7 @@ export const updateWorkoutTemplate = (
     tx.executeSql(
       "INSERT OR REPLACE INTO workout_templates (workout_id, workout_state, exercises, sets, last_performed) VALUES (?, ?, ?, ?, date('now'));",
       [
-        workoutId,
+        workoutState.id,
         JSON.stringify(workoutState),
         JSON.stringify(exercises),
         JSON.stringify(sets),

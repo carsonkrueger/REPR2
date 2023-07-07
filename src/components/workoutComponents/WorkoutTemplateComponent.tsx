@@ -6,6 +6,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { AppDispatch, RootState } from "../../redux/store";
 import { WorkoutTemplate } from "../../types/workoutTypes";
+import { selectWorkoutInfoById } from "../../sqlite/queries";
 
 interface props {
   template: WorkoutTemplate;
@@ -17,6 +18,8 @@ export default function WorkoutTemplateComponent({ template }: props) {
   const dispatch: AppDispatch = useDispatch();
 
   const navigateTo = () => {
+    const workoutTemplate = selectWorkoutInfoById(template.workoutId);
+
     router.push(`workout/${template.workoutId}`);
   };
 

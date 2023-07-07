@@ -9,6 +9,8 @@ import WorkoutTemplateComponent from "../../src/components/workoutComponents/Wor
 import { WorkoutState, WorkoutTemplate } from "../../src/types/workoutTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponents/WorkoutTemplateHeaderComponent";
+import { useEffect } from "react";
+import { selectAllTemplatesByDateDESC } from "../../src/sqlite/queries";
 
 export default function Workouts() {
   const templates: WorkoutTemplate[] = useSelector(
@@ -16,6 +18,12 @@ export default function Workouts() {
   );
   const dispatch: AppDispatch = useDispatch();
   const router = useRouter();
+
+  useEffect(() => {
+    const allTemplates = selectAllTemplatesByDateDESC();
+
+    console.log(allTemplates?.rows._array);
+  });
 
   return (
     <View style={tw`flex-1 bg-back dark:bg-dark-back`}>

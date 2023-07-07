@@ -1,5 +1,7 @@
 import * as SQLite from "expo-sqlite";
 import { workoutsTableRow } from "../types/localDBTables";
+import { Exercise, WorkoutSet, WorkoutState } from "../types/workoutTypes";
+import { EntityState } from "@reduxjs/toolkit";
 
 const db = SQLite.openDatabase("workouts.db");
 
@@ -40,7 +42,7 @@ export const selectAllTemplatesByDateDESC = ():
 export const selectTemplateById = (
   id: number
 ): SQLite.SQLResultSet | undefined => {
-  let selection = undefined;
+  let selection: SQLite.SQLResultSet | undefined = undefined;
   db.transaction((tx) =>
     tx.executeSql(
       "SELECT * FROM workout_templates WHERE workout_id = ?;",
@@ -65,6 +67,30 @@ export const printAllTemplatesByDateDESC = () => {
       (_, result) => console.log(result.rows._array),
       (_, error) => {
         console.log("Error printing all templates: ", error);
+        return true;
+      }
+    )
+  );
+};
+
+export const upsertWorkoutTemplate = (
+  workoutId: number,
+  workoutState: WorkoutState,
+  exercises: EntityState<Exercise>,
+  sets: EntityState<WorkoutSet>
+) => {
+  db.transaction((tx) =>
+    tx.executeSql(
+      "INSERT OR REPLACE INTO workout_templates (workout_state, exercises, sets, last_performed) VALUES (?, ?, ?, ?, date('now'));",
+      [
+        workoutId,
+        JSON.stringify(workoutState),
+        JSON.stringify(exercises),
+        JSON.stringify(sets),
+      ],
+      undefined,
+      (_, error) => {
+        console.log("Error inserting workout template all templates: ", error);
         return true;
       }
     )

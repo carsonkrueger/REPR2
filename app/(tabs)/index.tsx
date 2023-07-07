@@ -12,6 +12,7 @@ import { supabase } from "../../src/types/supabaseClient";
 import { useDispatch } from "react-redux";
 import { setSession } from "../../src/redux/slices/profileSlice";
 import { useRouter } from "expo-router";
+import { upsertWorkoutTemplate } from "../../src/sqlite/queries";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -20,6 +21,10 @@ export default function Home() {
   const [fontsLoaded] = useFonts({
     RobotoCondensed: require("../../assets/fonts/RobotoCondensed-Regular.ttf"),
   });
+
+  useEffect(() => {
+    upsertWorkoutTemplate();
+  }, []);
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {

@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { WorkoutState, WorkoutTemplate } from "../../types/workoutTypes";
-import { templateFromWorkout } from "../../util/workoutUtils";
+import { WorkoutTemplate } from "../../types/workoutTypes";
 
 const initialWorkoutTemplate: WorkoutTemplate = {
   workoutId: -1,
@@ -16,7 +15,10 @@ export const WorkoutTemplatesSlice = createSlice({
   name: "workoutTemplates",
   initialState: initialState,
   reducers: {
-    addWorkoutTemplate: (state: WorkoutTemplate[]) => {
+    addWorkoutTemplate: (
+      state: WorkoutTemplate[],
+      action: PayloadAction<WorkoutTemplate>
+    ) => {
       state.unshift(initialWorkoutTemplate);
     },
     delWorkoutTemplateById: (
@@ -29,14 +31,14 @@ export const WorkoutTemplatesSlice = createSlice({
     },
     updateWorkoutTemplate: (
       state: WorkoutTemplate[],
-      action: PayloadAction<WorkoutState>
+      action: PayloadAction<WorkoutTemplate>
     ) => {
       const templateIndex = state.findIndex(
-        (template) => template.workoutId === action.payload.id
+        (template) => template.workoutId === action.payload.workoutId
       );
       if (templateIndex === -1)
         throw Error("Cannot update template, workout Id does not exist");
-      state[templateIndex] = templateFromWorkout(action.payload);
+      state[templateIndex] = action.payload;
     },
   },
 });

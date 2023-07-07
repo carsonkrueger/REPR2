@@ -1,21 +1,16 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import tw from "../../util/tailwind";
-import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "expo-router";
 
-import { AppDispatch, RootState } from "../../redux/store";
-import { addWorkoutTemplate } from "../../redux/slices/WorkoutTemplatesSlice";
 import CustomColors from "../../util/customColors";
 
 const WorkoutTemplateHeaderComponent = () => {
   const router = useRouter();
-  const templates = useSelector((state: RootState) => state.workoutTemplates);
-  const dispatch: AppDispatch = useDispatch();
 
-  const onAddWorkout = () => {
+  const onCreateWorkout = () => {
     router.push(`workout/${-1}`);
-    dispatch(addWorkoutTemplate());
+    // dispatch(addWorkoutTemplate());
   };
 
   return (
@@ -25,7 +20,7 @@ const WorkoutTemplateHeaderComponent = () => {
       </Text>
       <TouchableOpacity
         // style={tw`shadow-sm justify-center items-center h-8 w-8 bg-primary rounded-full`}
-        onPress={onAddWorkout}
+        onPress={onCreateWorkout}
       >
         <Ionicons name="add" color={CustomColors.primary} size={28} />
       </TouchableOpacity>

@@ -1,4 +1,4 @@
-import { useRouter, useSearchParams } from "expo-router";
+import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   View,
@@ -22,6 +22,7 @@ import {
   selectSets,
   selectWorkout,
   setWorkoutId,
+  setWorkoutName,
   startInProgress,
   toggleLock,
 } from "../../../src/redux/slices/workoutSlice";
@@ -29,10 +30,9 @@ import MyAlert from "../../../src/components/MyDangerAlert";
 import tw from "../../../src/util/tailwind";
 import {
   insertCurrentWorkoutTemplate,
-  selectWorkoutInfoById,
   updateWorkoutTemplate,
 } from "../../../src/sqlite/queries";
-import { addWorkoutTemplate } from "../../../src/redux/slices/WorkoutTemplatesSlice";
+import { addWorkoutTemplateToFront } from "../../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromCurrentWorkout } from "../../../src/util/workoutUtils";
 
 export default function WorkoutScreen() {
@@ -71,12 +71,17 @@ export default function WorkoutScreen() {
   };
 
   const finishWorkout = () => {
-    console.log("finishing workout, param workout id:", workout.id);
     if (Number(workout.id) === -1) {
-      const insertId = insertCurrentWorkoutTemplate(workout, exercises, sets);
-      dispatch(setWorkoutId({ id: insertId }));
+      insertCurrentWorkoutTemplate(workout, exercises, sets)
+        .then((insertId) => dispatch(setWorkoutId({ id: insertId })))
+        .catch((reason) =>
+          console.log("error inserting workout template", reason)
+        );
+
       dispatch(
-        addWorkoutTemplate(templateFromCurrentWorkout(workout, exercises))
+        addWorkoutTemplateToFront(
+          templateFromCurrentWorkout(workout, exercises)
+        )
       );
     } else updateWorkoutTemplate(workout, exercises, sets);
 
@@ -124,6 +129,7 @@ export default function WorkoutScreen() {
           ]}
           placeholder="Workout Name"
           placeholderTextColor={"#c2c2c2"}
+          onChangeText={(text) => dispatch(setWorkoutName({ name: text }))}
           editable={!workout.isLocked}
         >
           {workout.name}

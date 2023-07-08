@@ -7,18 +7,34 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { AppDispatch, RootState } from "../../redux/store";
 import { WorkoutTemplate } from "../../types/workoutTypes";
 import { selectWorkoutInfoById } from "../../sqlite/queries";
+import {
+  setExercises,
+  setSets,
+  setWorkout,
+} from "../../redux/slices/workoutSlice";
+import { selectTemplateById } from "../../redux/slices/WorkoutTemplatesSlice";
+import { parsedWorkoutsTableRow } from "../../types/localDBTables";
 
 interface props {
-  template: WorkoutTemplate;
-  // index: number;
+  templateId: number;
 }
 
-export default function WorkoutTemplateComponent({ template }: props) {
+export default function WorkoutTemplateComponent({ templateId }: props) {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
+  const template: WorkoutTemplate = useSelector((state: RootState) =>
+    selectTemplateById(state, templateId)
+  );
 
   const onTemplatePress = () => {
-    const workoutTemplate = selectWorkoutInfoById(template.workoutId);
+    selectWorkoutInfoById(template.workoutId)
+      .then((template: parsedWorkoutsTableRow) => {
+        template.workout_state.id = template.workout_id; // id may not match
+        dispatch(setWorkout(template.workout_state));
+        dispatch(setExercises(template.exercises));
+        dispatch(setSets(template.sets));
+      })
+      .catch((reason) => console.log("error fetching workout", reason));
 
     router.push(`workout/${template.workoutId}`);
   };

@@ -3,6 +3,7 @@ import {
   createSelector,
   createSlice,
   EntityId,
+  EntityState,
   PayloadAction,
 } from "@reduxjs/toolkit";
 
@@ -98,6 +99,10 @@ export const workoutSetSlice = createSlice({
         changes: { weight: action.payload.weight },
       });
     },
+    setSets(state, action: PayloadAction<EntityState<WorkoutSet>>) {
+      state.entities = action.payload.entities;
+      state.ids = action.payload.ids;
+    },
   },
   extraReducers(builder) {
     builder
@@ -182,6 +187,10 @@ export const exercisesSlice = createSlice({
       state.ids[pos] = state.ids[pos - 1];
       state.ids[pos - 1] = action.payload.id;
     },
+    setExercises(state, action: PayloadAction<EntityState<Exercise>>) {
+      state.entities = action.payload.entities;
+      state.ids = action.payload.ids;
+    },
   },
   extraReducers(builder) {
     builder
@@ -207,7 +216,7 @@ const workoutSlice = createSlice({
   name: "workout",
   initialState: initialWorkout,
   reducers: {
-    setName(state, action: PayloadAction<{ name: string }>) {
+    setWorkoutName(state, action: PayloadAction<{ name: string }>) {
       state.name = action.payload.name;
     },
     setWorkoutId(state, action: PayloadAction<{ id: number }>) {
@@ -226,6 +235,14 @@ const workoutSlice = createSlice({
     },
     startInProgress(state) {
       state.inProgress = true;
+    },
+    setWorkout(state, action: PayloadAction<WorkoutState>) {
+      state.id = action.payload.id;
+      state.inProgress = action.payload.inProgress;
+      state.isLocked = action.payload.isLocked;
+      state.name = action.payload.name;
+      state.nextExerciseId = action.payload.nextExerciseId;
+      state.nextSetId = action.payload.nextSetId;
     },
   },
   extraReducers(builder) {
@@ -246,7 +263,7 @@ const workoutSlice = createSlice({
 });
 
 export const workoutSetReducer = workoutSetSlice.reducer;
-export const { addSet, delSet, setReps, setWeight, toggleFinishSet } =
+export const { addSet, delSet, setReps, setWeight, toggleFinishSet, setSets } =
   workoutSetSlice.actions;
 
 export const exerciseReducer = exercisesSlice.reducer;
@@ -258,15 +275,17 @@ export const {
   toggleTimer,
   swapExerciseWithBelow,
   swapExerciseWithAbove,
+  setExercises,
 } = exercisesSlice.actions;
 
 export const workoutReducer = workoutSlice.reducer;
 export const {
   resetWorkout,
-  setName,
+  setWorkoutName,
   toggleLock,
   startInProgress,
   setWorkoutId,
+  setWorkout,
 } = workoutSlice.actions;
 
 // SELECTORS

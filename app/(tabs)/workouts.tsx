@@ -10,9 +10,15 @@ import { WorkoutState, WorkoutTemplate } from "../../src/types/workoutTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponents/WorkoutTemplateHeaderComponent";
 import { useEffect } from "react";
-import { selectAllTemplatesByDateDESC } from "../../src/sqlite/queries";
+import {
+  deleteAllWorkoutRows,
+  selectAllTemplatesByDateDESC,
+} from "../../src/sqlite/queries";
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
-import { addWorkoutTemplate } from "../../src/redux/slices/WorkoutTemplatesSlice";
+import {
+  addWorkoutTemplateToBack,
+  addWorkoutTemplateToFront,
+} from "../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromParseWorkoutTableRow } from "../../src/util/workoutUtils";
 
 export default function Workouts() {
@@ -23,13 +29,14 @@ export default function Workouts() {
   const router = useRouter();
 
   useEffect(() => {
+    // deleteAllWorkoutRows();
     // only get templates from sqlite db on first render
     if (templates.length <= 0)
       selectAllTemplatesByDateDESC()
         .then((templates: parsedWorkoutsTableRow[]) => {
           for (let i = 0; i < templates.length; i++) {
             const template = templateFromParseWorkoutTableRow(templates[i]);
-            dispatch(addWorkoutTemplate(template));
+            dispatch(addWorkoutTemplateToBack(template));
           }
         })
         .catch((reason) => {
@@ -57,8 +64,11 @@ export default function Workouts() {
         <FlashList
           data={templates}
           ListHeaderComponent={WorkoutTemplateHeaderComponent}
-          renderItem={({ item, index }) => (
-            <WorkoutTemplateComponent key={index} template={item} />
+          renderItem={({ item }) => (
+            <WorkoutTemplateComponent
+              key={"template" + item.workoutId}
+              templateId={item.workoutId}
+            />
           )}
           estimatedItemSize={110}
           ListFooterComponent={<View style={tw`mb-52`} />}

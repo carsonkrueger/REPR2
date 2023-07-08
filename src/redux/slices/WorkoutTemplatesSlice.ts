@@ -1,10 +1,11 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { WorkoutTemplate } from "../../types/workoutTypes";
+import { RootState } from "../store";
 
 const initialWorkoutTemplate: WorkoutTemplate = {
   workoutId: -1,
-  workoutName: "New Workout",
+  workoutName: "",
   exerciseNames: [""],
   lastPerfromed: "",
 };
@@ -15,11 +16,17 @@ export const WorkoutTemplatesSlice = createSlice({
   name: "workoutTemplates",
   initialState: initialState,
   reducers: {
-    addWorkoutTemplate: (
+    addWorkoutTemplateToFront: (
       state: WorkoutTemplate[],
       action: PayloadAction<WorkoutTemplate>
     ) => {
-      state.unshift(initialWorkoutTemplate);
+      state.unshift(action.payload);
+    },
+    addWorkoutTemplateToBack: (
+      state: WorkoutTemplate[],
+      action: PayloadAction<WorkoutTemplate>
+    ) => {
+      state.push(action.payload);
     },
     delWorkoutTemplateById: (
       state: WorkoutTemplate[],
@@ -45,7 +52,15 @@ export const WorkoutTemplatesSlice = createSlice({
 
 export const workoutTemplatesReducer = WorkoutTemplatesSlice.reducer;
 export const {
-  addWorkoutTemplate,
+  addWorkoutTemplateToBack,
+  addWorkoutTemplateToFront,
   delWorkoutTemplateById,
   updateWorkoutTemplate,
 } = WorkoutTemplatesSlice.actions;
+
+export const selectAllTemplates = (state: RootState) => state.workoutTemplates;
+export const selectTemplateById = createSelector(
+  [selectAllTemplates, (_, templateId) => templateId],
+  (templates, templateId) =>
+    templates.find((t) => t.workoutId === templateId) ?? initialWorkoutTemplate
+);

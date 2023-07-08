@@ -6,6 +6,7 @@ import {
   unparsedWorkoutsTableRow,
 } from "../types/localDBTables";
 import { parseWorkoutTableRow } from "../util/workoutUtils";
+import { getCurDate } from "../util/dates";
 
 const db = SQLite.openDatabase("repr_local");
 
@@ -49,9 +50,10 @@ export const selectWorkoutInfoById = (id: number) => {
   return new Promise<parsedWorkoutsTableRow>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
-        "SELECT * FROM workout_templates WHERE workout_id = ?;",
+        "SELECT workout_id, workout_state, exercises, sets, last_performed FROM workout_templates WHERE workout_id = ?;",
         [id],
         (_, result) => {
+          console.log(result.rows._array);
           const template = parseWorkoutTableRow(
             result.rows._array[0] as unparsedWorkoutsTableRow
           );
@@ -86,25 +88,25 @@ export const insertCurrentWorkoutTemplate = (
   exercises: EntityState<Exercise>,
   sets: EntityState<WorkoutSet>
 ) => {
-  let insertedId = -1;
-
-  db.transaction((tx) =>
-    tx.executeSql(
-      "INSERT INTO workout_templates (workout_state, exercises, sets, last_performed) VALUES (?, ?, ?, date('now'));",
-      [
-        JSON.stringify(workoutState),
-        JSON.stringify(exercises),
-        JSON.stringify(sets),
-      ],
-      (tx, rs) => (insertedId = rs.insertId ?? -1),
-      (_, error) => {
-        console.log("Error inserting new workout template: ", error);
-        return true;
-      }
-    )
-  );
-
-  return insertedId;
+  return new Promise<number>((resolve, reject) => {
+    db.transaction((tx) =>
+      tx.executeSql(
+        "INSERT INTO workout_templates (workout_state, exercises, sets, last_performed) VALUES (?, ?, ?, ?);",
+        [
+          JSON.stringify(workoutState),
+          JSON.stringify(exercises),
+          JSON.stringify(sets),
+          getCurDate(),
+        ],
+        (_, result) => resolve(result.insertId ?? -1),
+        (_, error) => {
+          console.log("Error inserting new workout template: ", error);
+          reject(undefined);
+          return true;
+        }
+      )
+    );
+  });
 };
 
 export const updateWorkoutTemplate = (
@@ -128,4 +130,10 @@ export const updateWorkoutTemplate = (
       }
     )
   );
+};
+
+export const deleteAllWorkoutRows = () => {
+  db.transaction((tx) => {
+    tx.executeSql("DELETE FROM workout_templates");
+  });
 };

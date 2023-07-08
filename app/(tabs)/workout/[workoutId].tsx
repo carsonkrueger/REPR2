@@ -21,6 +21,7 @@ import {
   selectExercises,
   selectSets,
   selectWorkout,
+  setWorkoutId,
   startInProgress,
   toggleLock,
 } from "../../../src/redux/slices/workoutSlice";
@@ -36,7 +37,6 @@ import { templateFromCurrentWorkout } from "../../../src/util/workoutUtils";
 
 export default function WorkoutScreen() {
   const router = useRouter();
-  const { paramWorkoutId } = useSearchParams();
   const dispatch = useDispatch<AppDispatch>();
 
   const workout: WorkoutState = useSelector((state: RootState) =>
@@ -71,8 +71,10 @@ export default function WorkoutScreen() {
   };
 
   const finishWorkout = () => {
-    if (Number(paramWorkoutId) === -1) {
-      insertCurrentWorkoutTemplate(workout, exercises, sets);
+    console.log("finishing workout, param workout id:", workout.id);
+    if (Number(workout.id) === -1) {
+      const insertId = insertCurrentWorkoutTemplate(workout, exercises, sets);
+      dispatch(setWorkoutId({ id: insertId }));
       dispatch(
         addWorkoutTemplate(templateFromCurrentWorkout(workout, exercises))
       );

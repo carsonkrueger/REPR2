@@ -40,7 +40,7 @@ const exerciseAdapterInitialState = exerciseAdapter.addOne(
 );
 
 const initialWorkout: WorkoutState = {
-  id: 0,
+  id: -1,
   name: "",
   isLocked: false,
   inProgress: false,
@@ -210,11 +210,19 @@ const workoutSlice = createSlice({
     setName(state, action: PayloadAction<{ name: string }>) {
       state.name = action.payload.name;
     },
+    setWorkoutId(state, action: PayloadAction<{ id: number }>) {
+      state.id = action.payload.id;
+    },
     toggleLock(state) {
       state.isLocked = !state.isLocked;
     },
     resetWorkout(state) {
-      state = { ...initialWorkout, inProgress: false };
+      state.id = initialWorkout.id;
+      state.inProgress = initialWorkout.inProgress;
+      state.isLocked = initialWorkout.isLocked;
+      state.name = initialWorkout.name;
+      state.nextExerciseId = initialWorkout.nextExerciseId;
+      state.nextSetId = initialWorkout.nextSetId;
     },
     startInProgress(state) {
       state.inProgress = true;
@@ -253,8 +261,13 @@ export const {
 } = exercisesSlice.actions;
 
 export const workoutReducer = workoutSlice.reducer;
-export const { resetWorkout, setName, toggleLock, startInProgress } =
-  workoutSlice.actions;
+export const {
+  resetWorkout,
+  setName,
+  toggleLock,
+  startInProgress,
+  setWorkoutId,
+} = workoutSlice.actions;
 
 // SELECTORS
 export const selectSets = (state: RootState) => state.workoutSets;

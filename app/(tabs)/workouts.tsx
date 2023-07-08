@@ -11,6 +11,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponents/WorkoutTemplateHeaderComponent";
 import { useEffect } from "react";
 import { selectAllTemplatesByDateDESC } from "../../src/sqlite/queries";
+import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
+import { addWorkoutTemplate } from "../../src/redux/slices/WorkoutTemplatesSlice";
+import { templateFromParseWorkoutTableRow } from "../../src/util/workoutUtils";
 
 export default function Workouts() {
   const templates: WorkoutTemplate[] = useSelector(
@@ -20,10 +23,19 @@ export default function Workouts() {
   const router = useRouter();
 
   useEffect(() => {
-    const allTemplates = selectAllTemplatesByDateDESC();
-
-    console.log(allTemplates?.rows._array);
-  });
+    // only get templates from sqlite db on first render
+    if (templates.length <= 0)
+      selectAllTemplatesByDateDESC()
+        .then((templates: parsedWorkoutsTableRow[]) => {
+          for (let i = 0; i < templates.length; i++) {
+            const template = templateFromParseWorkoutTableRow(templates[i]);
+            dispatch(addWorkoutTemplate(template));
+          }
+        })
+        .catch((reason) => {
+          console.log("ERR", reason);
+        });
+  }, []);
 
   return (
     <View style={tw`flex-1 bg-back dark:bg-dark-back`}>

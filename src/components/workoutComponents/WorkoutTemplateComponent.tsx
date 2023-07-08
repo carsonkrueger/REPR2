@@ -17,7 +17,7 @@ export default function WorkoutTemplateComponent({ template }: props) {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
 
-  const navigateTo = () => {
+  const onTemplatePress = () => {
     const workoutTemplate = selectWorkoutInfoById(template.workoutId);
 
     router.push(`workout/${template.workoutId}`);
@@ -36,7 +36,10 @@ export default function WorkoutTemplateComponent({ template }: props) {
 
       {/* TEMPLATE CONTAINER */}
       <View style={tw`flex-1 bg-front p-2 shadow-sm rounded-lg`}>
-        <TouchableOpacity style={tw`flex-row flex-1 `} onPress={navigateTo}>
+        <TouchableOpacity
+          style={tw`flex-row flex-1 `}
+          onPress={onTemplatePress}
+        >
           <View style={tw`flex-9 flex-col justify-evenly`}>
             <Text style={tw`text-lg text-primary`}>{template.workoutName}</Text>
             <Text style={tw`text-xs text-light-gray`}>

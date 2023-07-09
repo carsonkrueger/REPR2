@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   View,
@@ -17,11 +17,11 @@ import { WorkoutState } from "../../../src/types/workoutTypes";
 import { RootState, AppDispatch } from "../../../src/redux/store";
 import {
   addExercise,
+  finishWorkout,
   resetWorkout,
   selectExercises,
   selectSets,
   selectWorkout,
-  setWorkoutId,
   setWorkoutName,
   startInProgress,
   toggleLock,
@@ -34,8 +34,10 @@ import {
 } from "../../../src/sqlite/queries";
 import { addWorkoutTemplateToFront } from "../../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromCurrentWorkout } from "../../../src/util/workoutUtils";
+import { getCurDate } from "../../../src/util/dates";
 
 export default function WorkoutScreen() {
+  const { paramWorkoutId } = useLocalSearchParams();
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -70,20 +72,22 @@ export default function WorkoutScreen() {
     dispatch(startInProgress());
   };
 
-  const finishWorkout = () => {
-    if (Number(workout.id) === -1) {
-      insertCurrentWorkoutTemplate(workout, exercises, sets)
-        .then((insertId) => dispatch(setWorkoutId({ id: insertId })))
-        .catch((reason) =>
-          console.log("error inserting workout template", reason)
-        );
+  const onFinishWorkout = () => {
+    console.log(getCurDate());
+    dispatch(finishWorkout());
 
-      dispatch(
-        addWorkoutTemplateToFront(
-          templateFromCurrentWorkout(workout, exercises)
-        )
+    if (Number(paramWorkoutId) === -1)
+      insertCurrentWorkoutTemplate(workout, exercises, sets).then(
+        (insertId) => {
+          dispatch(
+            addWorkoutTemplateToFront(
+              templateFromCurrentWorkout(insertId, workout, exercises)
+            )
+          );
+        }
       );
-    } else updateWorkoutTemplate(workout, exercises, sets);
+    else if (Number(paramWorkoutId) > 0)
+      updateWorkoutTemplate(Number(paramWorkoutId), workout, exercises, sets);
 
     dispatch(resetWorkout());
 
@@ -106,7 +110,7 @@ export default function WorkoutScreen() {
           msg="Are you sure you want to finish your workout?"
           onOutOfBoundsClick={backPress}
           dangerCommand={cancelWorkout}
-          safeCommand={finishWorkout}
+          safeCommand={onFinishWorkout}
           dangerText="Cancel Workout"
           safeText="Finish Workout"
         />

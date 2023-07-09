@@ -9,28 +9,25 @@ import {
   parsedWorkoutsTableRow,
   unparsedWorkoutsTableRow,
 } from "../types/localDBTables";
+import { getCurDate } from "./dates";
 
 export function cleanNumStr(text: string) {
   return text.replace(/[^0-9]/g, "");
 }
 
 export function templateFromCurrentWorkout(
+  workoutId: number,
   workoutState: WorkoutState,
   exercises: EntityState<Exercise>
 ): WorkoutTemplate {
   const d = new Date();
 
   return {
-    workoutId: workoutState.id,
+    workoutId: workoutId,
     exerciseNames: exercises.ids.map(
       (id) => exercises.entities[id]?.name ?? ""
     ),
-    lastPerfromed:
-      d.getFullYear().toString() +
-      "-" +
-      d.getMonth().toString() +
-      "-" +
-      d.getDate().toString(),
+    lastPerfromed: getCurDate(),
     workoutName: workoutState.name,
   };
 }

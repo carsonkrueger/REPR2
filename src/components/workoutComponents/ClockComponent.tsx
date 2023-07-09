@@ -82,6 +82,8 @@ const Clock = ({ exerciseId }: props) => {
         value={curTime.toString() === "0" ? "" : curTime.toString()}
         placeholder="0"
         maxLength={4}
+        multiline={true}
+        numberOfLines={1}
         keyboardType="number-pad"
         onChangeText={(text: string) => onClockTextChange(text)}
       />

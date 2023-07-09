@@ -9,7 +9,7 @@ const WorkoutTemplateHeaderComponent = () => {
   const router = useRouter();
 
   const onCreateWorkout = () => {
-    router.push(`workout/${-1}`);
+    router.push({ pathname: `workout/${-1}`, params: { paramWorkoutId: -1 } });
     // dispatch(addWorkoutTemplate());
   };
 

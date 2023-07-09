@@ -41,7 +41,7 @@ const exerciseAdapterInitialState = exerciseAdapter.addOne(
 );
 
 const initialWorkout: WorkoutState = {
-  id: -1,
+  // id: -1,
   name: "",
   isLocked: false,
   inProgress: false,
@@ -117,6 +117,18 @@ export const workoutSetSlice = createSlice({
         workoutSetAdapter.addOne(state, {
           ...initialSet,
         });
+      })
+      .addCase(workoutSlice.actions.finishWorkout, (state) => {
+        state.ids.map((setId) =>
+          workoutSetAdapter.updateOne(state, {
+            id: setId,
+            changes: {
+              isFinished: false,
+              prevWeight: state.entities[setId]?.weight,
+              prevReps: state.entities[setId]?.reps,
+            },
+          })
+        );
       });
   },
 });
@@ -208,6 +220,14 @@ export const exercisesSlice = createSlice({
         exerciseAdapter.addOne(state, {
           ...initialExercise,
         });
+      })
+      .addCase(workoutSlice.actions.finishWorkout, (state) => {
+        state.ids.map((exId) =>
+          exerciseAdapter.updateOne(state, {
+            id: exId,
+            changes: { timerStartTime: undefined },
+          })
+        );
       });
   },
 });
@@ -219,14 +239,14 @@ const workoutSlice = createSlice({
     setWorkoutName(state, action: PayloadAction<{ name: string }>) {
       state.name = action.payload.name;
     },
-    setWorkoutId(state, action: PayloadAction<{ id: number }>) {
-      state.id = action.payload.id;
-    },
+    // setWorkoutId(state, action: PayloadAction<{ id: number }>) {
+    //   state.id = action.payload.id;
+    // },
     toggleLock(state) {
       state.isLocked = !state.isLocked;
     },
     resetWorkout(state) {
-      state.id = initialWorkout.id;
+      // state.id = initialWorkout.id;
       state.inProgress = initialWorkout.inProgress;
       state.isLocked = initialWorkout.isLocked;
       state.name = initialWorkout.name;
@@ -237,12 +257,15 @@ const workoutSlice = createSlice({
       state.inProgress = true;
     },
     setWorkout(state, action: PayloadAction<WorkoutState>) {
-      state.id = action.payload.id;
+      // state.id = action.payload.id;
       state.inProgress = action.payload.inProgress;
       state.isLocked = action.payload.isLocked;
       state.name = action.payload.name;
       state.nextExerciseId = action.payload.nextExerciseId;
       state.nextSetId = action.payload.nextSetId;
+    },
+    finishWorkout(state) {
+      state.inProgress = false;
     },
   },
   extraReducers(builder) {
@@ -284,8 +307,9 @@ export const {
   setWorkoutName,
   toggleLock,
   startInProgress,
-  setWorkoutId,
+  // setWorkoutId,
   setWorkout,
+  finishWorkout,
 } = workoutSlice.actions;
 
 // SELECTORS

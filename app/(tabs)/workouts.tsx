@@ -12,6 +12,7 @@ import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponen
 import { useEffect } from "react";
 import {
   deleteAllWorkoutRows,
+  printAllTemplatesByDateDESC,
   selectAllTemplatesByDateDESC,
 } from "../../src/sqlite/queries";
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
@@ -29,8 +30,7 @@ export default function Workouts() {
   const router = useRouter();
 
   useEffect(() => {
-    // deleteAllWorkoutRows();
-    // only get templates from sqlite db on first render
+    // only get templates from sqlite db on first render (when temlates slice is empty)
     if (templates.length <= 0)
       selectAllTemplatesByDateDESC()
         .then((templates: parsedWorkoutsTableRow[]) => {

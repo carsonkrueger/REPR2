@@ -28,15 +28,16 @@ export default function WorkoutTemplateComponent({ templateId }: props) {
 
   const onTemplatePress = () => {
     selectWorkoutInfoById(template.workoutId)
-      .then((template: parsedWorkoutsTableRow) => {
-        template.workout_state.id = template.workout_id; // id may not match
-        dispatch(setWorkout(template.workout_state));
-        dispatch(setExercises(template.exercises));
-        dispatch(setSets(template.sets));
+      .then((t: parsedWorkoutsTableRow) => {
+        dispatch(setWorkout(t.workout_state));
+        dispatch(setExercises(t.exercises));
+        dispatch(setSets(t.sets));
+        router.push({
+          pathname: `workout/${t.workout_id}`,
+          params: { paramWorkoutId: t.workout_id },
+        });
       })
       .catch((reason) => console.log("error fetching workout", reason));
-
-    router.push(`workout/${template.workoutId}`);
   };
 
   return (

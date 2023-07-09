@@ -32,7 +32,8 @@ export const selectAllTemplatesByDateDESC = () => {
         undefined,
         (_, result) => {
           const templates: parsedWorkoutsTableRow[] = result.rows._array.map(
-            (obj: unparsedWorkoutsTableRow) => parseWorkoutTableRow(obj)
+            (obj: unparsedWorkoutsTableRow) =>
+              parseWorkoutTableRow(obj as unparsedWorkoutsTableRow)
           );
           resolve(templates);
         },
@@ -53,7 +54,6 @@ export const selectWorkoutInfoById = (id: number) => {
         "SELECT workout_id, workout_state, exercises, sets, last_performed FROM workout_templates WHERE workout_id = ?;",
         [id],
         (_, result) => {
-          console.log(result.rows._array);
           const template = parseWorkoutTableRow(
             result.rows._array[0] as unparsedWorkoutsTableRow
           );
@@ -72,7 +72,7 @@ export const selectWorkoutInfoById = (id: number) => {
 export const printAllTemplatesByDateDESC = () => {
   db.transaction((tx) =>
     tx.executeSql(
-      "SELECT * FROM workout_templates ORDERY BY last_performed DESC;",
+      "SELECT * FROM workout_templates ORDER BY last_performed DESC;",
       undefined,
       (_, result) => console.log(result.rows._array),
       (_, error) => {
@@ -110,6 +110,7 @@ export const insertCurrentWorkoutTemplate = (
 };
 
 export const updateWorkoutTemplate = (
+  workoutId: number,
   workoutState: WorkoutState,
   exercises: EntityState<Exercise>,
   sets: EntityState<WorkoutSet>
@@ -118,7 +119,7 @@ export const updateWorkoutTemplate = (
     tx.executeSql(
       "INSERT OR REPLACE INTO workout_templates (workout_id, workout_state, exercises, sets, last_performed) VALUES (?, ?, ?, ?, date('now'));",
       [
-        workoutState.id,
+        workoutId,
         JSON.stringify(workoutState),
         JSON.stringify(exercises),
         JSON.stringify(sets),
@@ -134,6 +135,32 @@ export const updateWorkoutTemplate = (
 
 export const deleteAllWorkoutRows = () => {
   db.transaction((tx) => {
-    tx.executeSql("DELETE FROM workout_templates");
+    tx.executeSql("DELETE FROM workout_templates;");
   });
 };
+
+// export const getNextRowId = () => {
+//   return new Promise<number>((resolve, reject) => {
+//     db.transaction((tx) => {
+//       tx.executeSql(
+//         "SELECT last_insert_rowid() FROM workout_templates;",
+//         undefined,
+//         (_, result) => {
+//           console.log("next row id: ", result.rows._array[0]);
+//           resolve(
+//             Number(
+//               (result.rows._array[0] as { "last_insert_rowid()": number })[
+//                 "last_insert_rowid()"
+//               ]
+//             ) + 1
+//           );
+//         },
+//         (_, error) => {
+//           console.log("Error updating workout template: ", error);
+//           resolve(0);
+//           return true;
+//         }
+//       );
+//     });
+//   });
+// };

@@ -24,7 +24,7 @@ export const initWorkoutTemplatesTable = () => {
   );
 };
 
-export const selectAllTemplatesByDateDESC = () => {
+export const sqlSelectAllTemplatesByDateDESC = () => {
   return new Promise<parsedWorkoutsTableRow[]>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
@@ -47,7 +47,7 @@ export const selectAllTemplatesByDateDESC = () => {
   });
 };
 
-export const selectWorkoutInfoById = (id: number) => {
+export const sqlSelectWorkoutInfoById = (id: number) => {
   return new Promise<parsedWorkoutsTableRow>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
@@ -69,7 +69,7 @@ export const selectWorkoutInfoById = (id: number) => {
   });
 };
 
-export const printAllTemplatesByDateDESC = () => {
+export const sqlPrintAllTemplatesByDateDESC = () => {
   db.transaction((tx) =>
     tx.executeSql(
       "SELECT * FROM workout_templates ORDER BY last_performed DESC;",
@@ -83,7 +83,7 @@ export const printAllTemplatesByDateDESC = () => {
   );
 };
 
-export const insertCurrentWorkoutTemplate = (
+export const sqlInsertCurrentWorkoutTemplate = (
   workoutState: WorkoutState,
   exercises: EntityState<Exercise>,
   sets: EntityState<WorkoutSet>
@@ -109,31 +109,34 @@ export const insertCurrentWorkoutTemplate = (
   });
 };
 
-export const updateWorkoutTemplate = (
+export const sqlUpdateWorkoutTemplate = (
   workoutId: number,
   workoutState: WorkoutState,
   exercises: EntityState<Exercise>,
   sets: EntityState<WorkoutSet>
 ) => {
-  db.transaction((tx) =>
-    tx.executeSql(
-      "INSERT OR REPLACE INTO workout_templates (workout_id, workout_state, exercises, sets, last_performed) VALUES (?, ?, ?, ?, date('now'));",
-      [
-        workoutId,
-        JSON.stringify(workoutState),
-        JSON.stringify(exercises),
-        JSON.stringify(sets),
-      ],
-      undefined,
-      (_, error) => {
-        console.log("Error updating workout template: ", error);
-        return true;
-      }
-    )
-  );
+  return new Promise((resolve, reject) => {
+    db.transaction((tx) =>
+      tx.executeSql(
+        "INSERT OR REPLACE INTO workout_templates (workout_id, workout_state, exercises, sets, last_performed) VALUES (?, ?, ?, ?, date('now'));",
+        [
+          workoutId,
+          JSON.stringify(workoutState),
+          JSON.stringify(exercises),
+          JSON.stringify(sets),
+        ],
+        (_) => resolve(undefined),
+        (_, error) => {
+          console.log("Error updating workout template: ", error);
+          reject(undefined);
+          return true;
+        }
+      )
+    );
+  });
 };
 
-export const deleteAllWorkoutRows = () => {
+export const sqlDeleteAllWorkoutRows = () => {
   db.transaction((tx) => {
     tx.executeSql("DELETE FROM workout_templates;");
   });

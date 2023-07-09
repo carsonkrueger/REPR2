@@ -14,6 +14,7 @@ import {
   selectSetById,
 } from "../../redux/slices/workoutSlice";
 import { cleanNumStr } from "../../util/workoutUtils";
+import CustomColors from "../../util/customColors";
 
 interface props {
   setId: EntityId;
@@ -66,7 +67,7 @@ export default function WorkoutSetComponent({
 
       <Text
         style={tw`flex-${flexWidths.prevVol} text-center ${
-          workoutSet.isFinished ? "text-dark-finished-green" : "text-primary"
+          workoutSet.isFinished ? "text-dark-finished-green" : "text-dark-gray"
         }`}
       >
         {workoutSet.prevWeight * workoutSet.prevReps}
@@ -74,7 +75,7 @@ export default function WorkoutSetComponent({
 
       <Text
         style={tw`flex-${flexWidths.curVol} text-center ${
-          workoutSet.isFinished ? "text-dark-finished-green" : "text-primary"
+          workoutSet.isFinished ? "text-dark-finished-green" : "text-dark-gray"
         }`}
       >
         {workoutSet.weight * workoutSet.reps}
@@ -83,13 +84,19 @@ export default function WorkoutSetComponent({
       <View style={tw`flex-${flexWidths.weight}`}>
         <TextInput
           style={tw`mx-1 text-center h-7 ${
-            workoutSet.isFinished ? "text-black" : "bg-back"
+            workoutSet.isFinished
+              ? "text-dark-finished-green"
+              : "text-primary bg-back"
           }  rounded-md`}
           keyboardType="number-pad"
           maxLength={4}
           editable={!workoutSet.isFinished}
           placeholder={workoutSet.prevWeight.toString()}
-          placeholderTextColor={"#c2c2c2"}
+          placeholderTextColor={
+            workoutSet.isFinished
+              ? CustomColors["dark-finished-green"]
+              : CustomColors["light-gray"]
+          }
           onChangeText={(weight) => onWeightChanged(weight)}
           multiline={true}
           numberOfLines={1}
@@ -101,13 +108,19 @@ export default function WorkoutSetComponent({
       <View style={tw`flex-${flexWidths.reps}`}>
         <TextInput
           style={tw`mx-1 text-center rounded-md h-7 ${
-            workoutSet.isFinished ? "text-black" : "bg-back"
+            workoutSet.isFinished
+              ? "text-dark-finished-green"
+              : "text-primary bg-back"
           } `}
           keyboardType="number-pad"
           maxLength={4}
           editable={!workoutSet.isFinished}
           placeholder={workoutSet.prevReps.toString()}
-          placeholderTextColor={"#c2c2c2"}
+          placeholderTextColor={
+            workoutSet.isFinished
+              ? CustomColors["dark-finished-green"]
+              : CustomColors["light-gray"]
+          }
           onChangeText={(reps) => onRepsChanged(reps)}
           multiline={true}
           numberOfLines={1}

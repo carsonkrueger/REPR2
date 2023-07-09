@@ -6,7 +6,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { AppDispatch, RootState } from "../../redux/store";
 import { WorkoutTemplate } from "../../types/workoutTypes";
-import { selectWorkoutInfoById } from "../../sqlite/queries";
+import { sqlSelectWorkoutInfoById } from "../../sqlite/queries";
 import {
   setExercises,
   setSets,
@@ -27,7 +27,7 @@ export default function WorkoutTemplateComponent({ templateId }: props) {
   );
 
   const onTemplatePress = () => {
-    selectWorkoutInfoById(template.workoutId)
+    sqlSelectWorkoutInfoById(template.workoutId)
       .then((t: parsedWorkoutsTableRow) => {
         dispatch(setWorkout(t.workout_state));
         dispatch(setExercises(t.exercises));
@@ -52,19 +52,36 @@ export default function WorkoutTemplateComponent({ templateId }: props) {
       </View>
 
       {/* TEMPLATE CONTAINER */}
-      <View style={tw`flex-1 bg-front p-2 shadow-sm rounded-lg`}>
+      <View style={tw`flex-1 bg-front py-2 px-3 shadow-sm rounded-md`}>
         <TouchableOpacity
           style={tw`flex-row flex-1 `}
           onPress={onTemplatePress}
         >
+          {/* LEFT SIDE */}
           <View style={tw`flex-9 flex-col justify-evenly`}>
             <Text style={tw`text-lg text-primary`}>{template.workoutName}</Text>
             <Text style={tw`text-xs text-light-gray`}>
               Last Performed: {template.lastPerfromed}
             </Text>
           </View>
-
-          <View style={tw`flex-10 flex-col justify-start`}></View>
+          {/* RIGHT SIDE */}
+          <View style={tw`flex-10 flex-col justify-start items-end`}>
+            {template.exerciseNames.map((name, idx) =>
+              name === "" || idx >= 5 ? (
+                <></>
+              ) : (
+                <Text
+                  style={[
+                    tw`text-light-gray text-xs`,
+                    { fontFamily: "RobotoCondensed" },
+                  ]}
+                  key={template.workoutId.toString() + idx.toString()}
+                >
+                  {name}
+                </Text>
+              )
+            )}
+          </View>
         </TouchableOpacity>
       </View>
     </View>

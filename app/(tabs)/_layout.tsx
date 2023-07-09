@@ -7,7 +7,7 @@ export default function TabLayout() {
   return (
     <>
       <StatusBar style="dark" backgroundColor="#fff" />
-      <Stack screenOptions={{ animation: "none" }}>
+      <Stack screenOptions={{ animation: "fade" }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="search" options={{ headerShown: false }} />
         <Stack.Screen name="workouts" options={{ headerShown: false }} />

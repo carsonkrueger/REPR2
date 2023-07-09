@@ -6,20 +6,13 @@ import { useRouter } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
 
 import WorkoutTemplateComponent from "../../src/components/workoutComponents/WorkoutTemplateComponent";
-import { WorkoutState, WorkoutTemplate } from "../../src/types/workoutTypes";
+import { WorkoutTemplate } from "../../src/types/workoutTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponents/WorkoutTemplateHeaderComponent";
 import { useEffect } from "react";
-import {
-  deleteAllWorkoutRows,
-  printAllTemplatesByDateDESC,
-  selectAllTemplatesByDateDESC,
-} from "../../src/sqlite/queries";
+import { sqlSelectAllTemplatesByDateDESC } from "../../src/sqlite/queries";
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
-import {
-  addWorkoutTemplateToBack,
-  addWorkoutTemplateToFront,
-} from "../../src/redux/slices/WorkoutTemplatesSlice";
+import { addWorkoutTemplateToBack } from "../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromParseWorkoutTableRow } from "../../src/util/workoutUtils";
 
 export default function Workouts() {
@@ -30,9 +23,10 @@ export default function Workouts() {
   const router = useRouter();
 
   useEffect(() => {
+    // printTemplates();
     // only get templates from sqlite db on first render (when temlates slice is empty)
     if (templates.length <= 0)
-      selectAllTemplatesByDateDESC()
+      sqlSelectAllTemplatesByDateDESC()
         .then((templates: parsedWorkoutsTableRow[]) => {
           for (let i = 0; i < templates.length; i++) {
             const template = templateFromParseWorkoutTableRow(templates[i]);
@@ -43,6 +37,10 @@ export default function Workouts() {
           console.log("ERR", reason);
         });
   }, []);
+
+  function printTemplates() {
+    templates.map((t) => console.log(t.workoutName, t.workoutId));
+  }
 
   return (
     <View style={tw`flex-1 bg-back dark:bg-dark-back`}>

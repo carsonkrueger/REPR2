@@ -13,11 +13,12 @@ import { Ionicons, Entypo } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 
 import ExerciseComponent from "../../../src/components/workoutComponents/ExerciseComponent";
-import { WorkoutState } from "../../../src/types/workoutTypes";
+import { WorkoutSet, WorkoutState } from "../../../src/types/workoutTypes";
 import { RootState, AppDispatch } from "../../../src/redux/store";
 import {
   addExercise,
-  finishWorkout,
+  cleanExercises,
+  cleanSets,
   resetWorkout,
   selectExercises,
   selectSets,
@@ -29,12 +30,16 @@ import {
 import MyAlert from "../../../src/components/MyDangerAlert";
 import tw from "../../../src/util/tailwind";
 import {
-  insertCurrentWorkoutTemplate,
-  updateWorkoutTemplate,
+  sqlInsertCurrentWorkoutTemplate,
+  sqlUpdateWorkoutTemplate,
 } from "../../../src/sqlite/queries";
-import { addWorkoutTemplateToFront } from "../../../src/redux/slices/WorkoutTemplatesSlice";
+import {
+  addWorkoutTemplateToFront,
+  updateWorkoutTemplate,
+} from "../../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromCurrentWorkout } from "../../../src/util/workoutUtils";
 import { getCurDate } from "../../../src/util/dates";
+import { EntityState } from "@reduxjs/toolkit";
 
 export default function WorkoutScreen() {
   const { paramWorkoutId } = useLocalSearchParams();
@@ -46,7 +51,9 @@ export default function WorkoutScreen() {
   );
   const exercises = useSelector((state: RootState) => selectExercises(state));
   const sets = useSelector((state: RootState) => selectSets(state));
+
   const [backPressed, setBackPressed] = useState(false);
+  const [finishPressed, setFinishedPressed] = useState(false);
 
   useEffect(() => {
     startWorkout();
@@ -64,43 +71,62 @@ export default function WorkoutScreen() {
     return () => backHandler.remove();
   }, []);
 
-  const backPress = () => {
-    setBackPressed((prev) => !prev);
-  };
-
-  const startWorkout = () => {
-    dispatch(startInProgress());
-  };
-
-  const onFinishWorkout = () => {
-    console.log(getCurDate());
-    dispatch(finishWorkout());
-
-    if (Number(paramWorkoutId) === -1)
-      insertCurrentWorkoutTemplate(workout, exercises, sets).then(
-        (insertId) => {
-          dispatch(
-            addWorkoutTemplateToFront(
-              templateFromCurrentWorkout(insertId, workout, exercises)
+  useEffect(() => {
+    if (finishPressed) {
+      if (Number(paramWorkoutId) === -1) {
+        sqlInsertCurrentWorkoutTemplate(workout, exercises, sets).then(
+          (insertId) =>
+            dispatch(
+              addWorkoutTemplateToFront(
+                templateFromCurrentWorkout(insertId, workout, exercises)
+              )
             )
-          );
-        }
-      );
-    else if (Number(paramWorkoutId) > 0)
-      updateWorkoutTemplate(Number(paramWorkoutId), workout, exercises, sets);
+        );
+      } else if (Number(paramWorkoutId) > 0) {
+        sqlUpdateWorkoutTemplate(
+          Number(paramWorkoutId),
+          workout,
+          exercises,
+          sets
+        );
+        dispatch(
+          updateWorkoutTemplate(
+            templateFromCurrentWorkout(
+              Number(paramWorkoutId),
+              workout,
+              exercises
+            )
+          )
+        );
+      }
 
+      dispatch(resetWorkout());
+
+      router.back();
+      router.replace("/workouts");
+    }
+  }, [finishPressed]);
+
+  function backPress() {
+    setBackPressed((prev) => !prev);
+  }
+
+  function startWorkout() {
+    dispatch(startInProgress());
+  }
+
+  function onFinishWorkout() {
+    dispatch(cleanExercises());
+    dispatch(cleanSets());
+
+    setFinishedPressed(true);
+  }
+
+  function cancelWorkout() {
     dispatch(resetWorkout());
-
     router.back();
     router.replace("/workouts");
-  };
-
-  const cancelWorkout = () => {
-    // backPress();
-    dispatch(resetWorkout());
-    router.back();
-    router.replace("/workouts");
-  };
+  }
 
   return (
     <SafeAreaView style={[tw`flex-1 bg-back z-0`, { elevation: 0 }]}>

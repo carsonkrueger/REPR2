@@ -103,6 +103,26 @@ export const workoutSetSlice = createSlice({
       state.entities = action.payload.entities;
       state.ids = action.payload.ids;
     },
+    cleanSets(state) {
+      state.ids.map((setId) =>
+        workoutSetAdapter.updateOne(state, {
+          id: setId,
+          changes: {
+            isFinished: false,
+            weight: 0,
+            reps: 0,
+            prevWeight:
+              state.entities[setId]?.weight === 0
+                ? state.entities[setId]?.prevWeight
+                : state.entities[setId]?.weight,
+            prevReps:
+              state.entities[setId]?.reps === 0
+                ? state.entities[setId]?.prevReps
+                : state.entities[setId]?.reps,
+          },
+        })
+      );
+    },
   },
   extraReducers(builder) {
     builder
@@ -117,18 +137,6 @@ export const workoutSetSlice = createSlice({
         workoutSetAdapter.addOne(state, {
           ...initialSet,
         });
-      })
-      .addCase(workoutSlice.actions.finishWorkout, (state) => {
-        state.ids.map((setId) =>
-          workoutSetAdapter.updateOne(state, {
-            id: setId,
-            changes: {
-              isFinished: false,
-              prevWeight: state.entities[setId]?.weight,
-              prevReps: state.entities[setId]?.reps,
-            },
-          })
-        );
       });
   },
 });
@@ -203,6 +211,14 @@ export const exercisesSlice = createSlice({
       state.entities = action.payload.entities;
       state.ids = action.payload.ids;
     },
+    cleanExercises(state) {
+      state.ids.map((exId) =>
+        exerciseAdapter.updateOne(state, {
+          id: exId,
+          changes: { timerStartTime: undefined },
+        })
+      );
+    },
   },
   extraReducers(builder) {
     builder
@@ -220,14 +236,6 @@ export const exercisesSlice = createSlice({
         exerciseAdapter.addOne(state, {
           ...initialExercise,
         });
-      })
-      .addCase(workoutSlice.actions.finishWorkout, (state) => {
-        state.ids.map((exId) =>
-          exerciseAdapter.updateOne(state, {
-            id: exId,
-            changes: { timerStartTime: undefined },
-          })
-        );
       });
   },
 });
@@ -264,9 +272,6 @@ const workoutSlice = createSlice({
       state.nextExerciseId = action.payload.nextExerciseId;
       state.nextSetId = action.payload.nextSetId;
     },
-    finishWorkout(state) {
-      state.inProgress = false;
-    },
   },
   extraReducers(builder) {
     builder
@@ -286,8 +291,15 @@ const workoutSlice = createSlice({
 });
 
 export const workoutSetReducer = workoutSetSlice.reducer;
-export const { addSet, delSet, setReps, setWeight, toggleFinishSet, setSets } =
-  workoutSetSlice.actions;
+export const {
+  addSet,
+  delSet,
+  setReps,
+  setWeight,
+  toggleFinishSet,
+  setSets,
+  cleanSets,
+} = workoutSetSlice.actions;
 
 export const exerciseReducer = exercisesSlice.reducer;
 export const {
@@ -299,6 +311,7 @@ export const {
   swapExerciseWithBelow,
   swapExerciseWithAbove,
   setExercises,
+  cleanExercises,
 } = exercisesSlice.actions;
 
 export const workoutReducer = workoutSlice.reducer;
@@ -307,9 +320,7 @@ export const {
   setWorkoutName,
   toggleLock,
   startInProgress,
-  // setWorkoutId,
   setWorkout,
-  finishWorkout,
 } = workoutSlice.actions;
 
 // SELECTORS

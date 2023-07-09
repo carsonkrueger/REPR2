@@ -10,7 +10,10 @@ import { WorkoutTemplate } from "../../src/types/workoutTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponents/WorkoutTemplateHeaderComponent";
 import { useEffect } from "react";
-import { sqlSelectAllTemplatesByDateDESC } from "../../src/sqlite/queries";
+import {
+  sqlDeleteAllWorkoutRows,
+  sqlSelectAllTemplatesByDateDESC,
+} from "../../src/sqlite/queries";
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
 import { addWorkoutTemplateToBack } from "../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromParseWorkoutTableRow } from "../../src/util/workoutUtils";
@@ -23,6 +26,7 @@ export default function Workouts() {
   const router = useRouter();
 
   useEffect(() => {
+    // sqlDeleteAllWorkoutRows();
     // printTemplates();
     // only get templates from sqlite db on first render (when temlates slice is empty)
     if (templates.length <= 0)

@@ -13,7 +13,7 @@ import { Ionicons, Entypo } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 
 import ExerciseComponent from "../../../src/components/workoutComponents/ExerciseComponent";
-import { WorkoutSet, WorkoutState } from "../../../src/types/workoutTypes";
+import { WorkoutState } from "../../../src/types/workoutTypes";
 import { RootState, AppDispatch } from "../../../src/redux/store";
 import {
   addExercise,
@@ -38,8 +38,6 @@ import {
   updateWorkoutTemplate,
 } from "../../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromCurrentWorkout } from "../../../src/util/workoutUtils";
-import { getCurDate } from "../../../src/util/dates";
-import { EntityState } from "@reduxjs/toolkit";
 
 export default function WorkoutScreen() {
   const { paramWorkoutId } = useLocalSearchParams();

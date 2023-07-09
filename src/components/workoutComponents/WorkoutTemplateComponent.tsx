@@ -42,34 +42,23 @@ export default function WorkoutTemplateComponent({ templateId }: props) {
 
   return (
     <View style={tw`mt-3 mx-1 max-h-32 min-h-24`}>
-      {/* TRASH CONTAINER */}
-      <View style={tw`absolute flex-1 right-0 h-full justify-center items-end`}>
-        <TouchableOpacity
-          style={tw`bg-red-500 h-full rounded-lg justify-center px-4`}
-        >
-          <Ionicons name="trash" color="white" size={30} />
-        </TouchableOpacity>
-      </View>
-
       {/* TEMPLATE CONTAINER */}
-      <View style={tw`flex-1 bg-front py-2 px-3 shadow-sm rounded-md`}>
+      <View style={tw`flex-1 bg-front shadow-sm rounded-md overflow-hidden`}>
         <TouchableOpacity
           style={tw`flex-row flex-1 `}
           onPress={onTemplatePress}
         >
           {/* LEFT SIDE */}
-          <View style={tw`flex-9 flex-col justify-evenly`}>
+          <View style={tw`flex-9 py-2 pl-3 flex-col justify-evenly`}>
             <Text style={tw`text-lg text-primary`}>{template.workoutName}</Text>
             <Text style={tw`text-xs text-light-gray`}>
               Last Performed: {template.lastPerfromed}
             </Text>
           </View>
           {/* RIGHT SIDE */}
-          <View style={tw`flex-10 flex-col justify-start items-end`}>
+          <View style={tw`flex-10 py-2 pr-5 flex-col justify-start items-end`}>
             {template.exerciseNames.map((name, idx) =>
-              name === "" || idx >= 5 ? (
-                <></>
-              ) : (
+              name === "" || idx >= 5 ? null : (
                 <Text
                   style={[
                     tw`text-light-gray text-xs`,
@@ -82,6 +71,13 @@ export default function WorkoutTemplateComponent({ templateId }: props) {
               )
             )}
           </View>
+        </TouchableOpacity>
+
+        {/* TRASH CONTAINER */}
+        <TouchableOpacity
+          style={tw`absolute left-[100%] bg-red-500 h-full rounded-md justify-center px-4`}
+        >
+          <Ionicons name="trash" color="white" size={30} />
         </TouchableOpacity>
       </View>
     </View>

@@ -4,6 +4,7 @@ import { Profile } from "../../types/profileType";
 import { supabase } from "../../types/supabaseClient";
 import { profilesTable } from "../../types/remoteDBTables";
 import { Session } from "@supabase/supabase-js";
+import { RootState } from "../store";
 
 const initialSettings: Profile = {
   userId: 0,
@@ -59,3 +60,5 @@ export const profileSlice = createSlice({
 
 export const profileReducer = profileSlice.reducer;
 export const { toggleDarkMode, setSession } = profileSlice.actions;
+
+export const selectProfile = (state: RootState) => state.profile;

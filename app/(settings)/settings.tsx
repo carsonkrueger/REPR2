@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../src/redux/store";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
@@ -9,20 +9,31 @@ import SettingsItem from "../../src/components/settingsComponents/SettingsItem";
 import SettingsGroup from "../../src/components/settingsComponents/SettingsGroup";
 import { toggleDarkMode } from "../../src/redux/slices/profileSlice";
 import { supabase } from "../../src/types/supabaseClient";
+import React from "react";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Settings() {
   const router = useRouter();
   const profile = useSelector((state: RootState) => state.profile);
   const dispatch: AppDispatch = useDispatch();
 
-  const logout = () => {
+  function logout() {
     supabase.auth.signOut();
     router.push("login");
-  };
+  }
+
+  function navigateBack() {
+    router.back();
+  }
 
   return (
     <SafeAreaView style={tw`flex-1 bg-back`}>
-      <View style={tw`py-2 bg-front shadow-md`}>
+      <View
+        style={tw`flex-row py-2 bg-front shadow-md justify-center items-center`}
+      >
+        <TouchableOpacity style={tw`absolute left-1`} onPress={navigateBack}>
+          <Ionicons name="md-chevron-back" color={"#3b83f5"} size={30} />
+        </TouchableOpacity>
         <Text
           style={[
             tw`text-xl text-center text-primary`,

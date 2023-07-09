@@ -41,11 +41,11 @@ export default function Nav() {
   }
 
   function navigateStartWorkout() {
-    pushNavigateTo(`/workout/${curWorkout.id}`, 2);
+    pushNavigateTo(`/workout/${-1}`, 2);
   }
 
-  function navigateSettings() {
-    replaceNavigateTo("settings", 3);
+  function navigateMetrics() {
+    replaceNavigateTo("metrics", 3);
   }
 
   function navigateProfile() {
@@ -97,12 +97,10 @@ export default function Nav() {
 
       <TouchableOpacity
         style={tw`flex-1 flex-col justify-end items-center pb-1`}
-        onPress={navigateSettings}
+        onPress={navigateMetrics}
       >
         <Ionicons
-          name={`${
-            selectedPos === 3 ? "md-settings-sharp" : "md-settings-outline"
-          }`}
+          name={`${selectedPos === 3 ? "stats-chart" : "stats-chart-outline"}`}
           color={"#3b83f5"}
           size={27}
         />

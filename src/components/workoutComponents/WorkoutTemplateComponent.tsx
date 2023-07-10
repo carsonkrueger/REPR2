@@ -14,6 +14,7 @@ import {
 } from "../../redux/slices/workoutSlice";
 import { selectTemplateById } from "../../redux/slices/WorkoutTemplatesSlice";
 import { parsedWorkoutsTableRow } from "../../types/localDBTables";
+import { convertDateToHuman } from "../../util/dates";
 
 interface props {
   templateId: number;
@@ -51,8 +52,21 @@ export default function WorkoutTemplateComponent({ templateId }: props) {
           {/* LEFT SIDE */}
           <View style={tw`flex-9 py-2 pl-3 flex-col justify-evenly`}>
             <Text style={tw`text-lg text-primary`}>{template.workoutName}</Text>
-            <Text style={tw`text-xs text-light-gray`}>
-              Last Performed: {template.lastPerfromed}
+            <Text
+              style={[
+                tw`text-xs text-light-gray -mb-2`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              Last Performed:
+            </Text>
+            <Text
+              style={[
+                tw`text-xs text-light-gray`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              {convertDateToHuman(template.lastPerfromed)}
             </Text>
           </View>
           {/* RIGHT SIDE */}

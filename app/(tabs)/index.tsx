@@ -1,20 +1,23 @@
 import "expo-router/entry";
 
 import { useDispatch } from "react-redux";
-import { useRouter } from "expo-router";
+import { SplashScreen, useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 import tw from "../../src/util/tailwind";
 import CustomColors from "../../src/util/customColors";
-import { useFonts } from "expo-font";
-import { useCallback, useEffect } from "react";
+import * as Font from "expo-font";
+import { useCallback, useEffect, useState } from "react";
+import * as SpashScreen from "expo-splash-screen";
+
 import { getSession, selectProfile } from "../../src/redux/slices/profileSlice";
 import { initWorkoutTemplatesTable } from "../../src/sqlite/queries";
 import { useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../src/redux/store";
-import { Session } from "@supabase/supabase-js";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function Home() {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,37 +25,38 @@ export default function Home() {
 
   const profile = useSelector((state: RootState) => selectProfile(state));
 
-  const [fontsLoaded] = useFonts({
-    RobotoCondensed: require("../../assets/fonts/RobotoCondensed-Regular.ttf"),
-  });
+  const [appIsReady, setAppIsReady] = useState(false);
+  // const [fontsLoaded] = Font.useFonts({
+  //   RobotoCondensed: require("../../assets/fonts/RobotoCondensed-Regular.ttf"),
+  // });
 
   useEffect(() => {
-    initWorkoutTemplatesTable();
+    async function prepare() {
+      try {
+        initWorkoutTemplatesTable();
+        await Font.loadAsync({
+          RobotoCondensed: require("../../assets/fonts/RobotoCondensed-Regular.ttf"),
+        });
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppIsReady(true);
+      }
+    }
+
+    prepare();
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      if (!profile.session || profile.session.expires_in <= 0)
-        dispatch(getSession())
-          .then((s) => {
-            try {
-              const session: Session | null = s.payload as Session;
-              if (!session || session.expires_in <= 0) router.push("login");
-              console.log(session);
-            } catch (e) {
-              console.log(e);
-              router.push("login");
-            }
-          })
-          .catch((reason) => {
-            console.log(reason);
-            router.push("login");
-          });
-      else console.log("success");
-    }
-  }, [fontsLoaded]);
+    if (!profile.session || profile.session?.expires_in <= 0)
+      router.push("login");
 
-  if (!fontsLoaded || !profile.session) return null;
+    if (appIsReady) {
+      await SpashScreen.hideAsync();
+    }
+  }, [appIsReady]);
+
+  if (!appIsReady) return null;
 
   return (
     <SafeAreaView style={tw`flex-1 bg-back `} onLayout={onLayoutRootView}>

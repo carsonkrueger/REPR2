@@ -19,9 +19,8 @@ const initialSettings: Profile = {
 
 export const getSession = createAsyncThunk("getSession", async () => {
   const session = await supabase.auth.getSession();
-  console.log(session.error);
   if (session.error) throw session.error;
-  return session.data;
+  return session.data.session;
 });
 
 // export const getProfile = createAsyncThunk("getProfile", async () => {
@@ -52,13 +51,12 @@ export const profileSlice = createSlice({
   },
   extraReducers(builder) {
     builder.addCase(getSession.fulfilled, (state, action) => {
-      state.session = action.payload.session;
-      console.log(action.payload.session);
-      if (action.payload.session) {
-        const { first_name, last_name, user_name } = action.payload.session.user
+      state.session = action.payload;
+      if (action.payload) {
+        const { first_name, last_name, user_name } = action.payload.user
           .user_metadata as userMetaData;
-        state.session = action.payload.session;
-        state.email = action.payload.session.user.email ?? "";
+        state.session = action.payload;
+        state.email = action.payload.user.email ?? "";
         state.firstname = first_name;
         state.lastname = last_name;
         state.username = user_name;

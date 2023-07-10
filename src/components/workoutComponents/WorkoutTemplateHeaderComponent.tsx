@@ -15,7 +15,7 @@ const WorkoutTemplateHeaderComponent = () => {
 
   return (
     <View style={tw`flex-row px-2 pt-6 justify-between items-center`}>
-      <Text style={[tw`text-light-gray`, { fontFamily: "RobotoCondensed" }]}>
+      <Text style={[tw`text-dark-gray`, { fontFamily: "RobotoCondensed" }]}>
         My Workouts
       </Text>
       <TouchableOpacity

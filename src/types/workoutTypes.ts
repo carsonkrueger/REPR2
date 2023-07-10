@@ -18,6 +18,7 @@ export interface Exercise {
 }
 
 export interface WorkoutState {
+  id: number;
   name: string;
   isLocked: boolean;
   inProgress: boolean;

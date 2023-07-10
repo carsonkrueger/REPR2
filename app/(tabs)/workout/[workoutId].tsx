@@ -23,6 +23,7 @@ import {
   selectExercises,
   selectSets,
   selectWorkout,
+  setWorkoutId,
   setWorkoutName,
   startInProgress,
   toggleLock,
@@ -54,6 +55,7 @@ export default function WorkoutScreen() {
   const [finishPressed, setFinishedPressed] = useState(false);
 
   useEffect(() => {
+    dispatch(setWorkoutId({ id: Number(paramWorkoutId) }));
     startWorkout();
 
     const backAction = () => {

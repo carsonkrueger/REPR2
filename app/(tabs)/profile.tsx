@@ -15,7 +15,6 @@ export default function Profile() {
   const dispatch = useDispatch();
 
   const profile = useSelector((state: RootState) => selectProfile(state));
-  console.log(profile);
 
   function navigateToSettings() {
     router.push("settings");

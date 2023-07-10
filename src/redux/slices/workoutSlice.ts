@@ -41,7 +41,7 @@ const exerciseAdapterInitialState = exerciseAdapter.addOne(
 );
 
 const initialWorkout: WorkoutState = {
-  // id: -1,
+  id: -1,
   name: "",
   isLocked: false,
   inProgress: false,
@@ -247,9 +247,9 @@ const workoutSlice = createSlice({
     setWorkoutName(state, action: PayloadAction<{ name: string }>) {
       state.name = action.payload.name;
     },
-    // setWorkoutId(state, action: PayloadAction<{ id: number }>) {
-    //   state.id = action.payload.id;
-    // },
+    setWorkoutId(state, action: PayloadAction<{ id: number }>) {
+      state.id = action.payload.id;
+    },
     toggleLock(state) {
       state.isLocked = !state.isLocked;
     },
@@ -321,6 +321,7 @@ export const {
   toggleLock,
   startInProgress,
   setWorkout,
+  setWorkoutId,
 } = workoutSlice.actions;
 
 // SELECTORS

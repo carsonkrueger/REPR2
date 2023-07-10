@@ -41,7 +41,7 @@ export default function Nav() {
   }
 
   function navigateStartWorkout() {
-    pushNavigateTo(`/workout/${-1}`, 2);
+    pushNavigateTo(`/workout/${curWorkout.id}`, 2);
   }
 
   function navigateMetrics() {

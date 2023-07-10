@@ -10,13 +10,17 @@ import tw from "../../src/util/tailwind";
 import CustomColors from "../../src/util/customColors";
 import { useFonts } from "expo-font";
 import { useCallback, useEffect } from "react";
-import { supabase } from "../../src/types/supabaseClient";
-import { setSession } from "../../src/redux/slices/profileSlice";
+import { getSession, selectProfile } from "../../src/redux/slices/profileSlice";
 import { initWorkoutTemplatesTable } from "../../src/sqlite/queries";
+import { useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../src/redux/store";
+import { Session } from "@supabase/supabase-js";
 
 export default function Home() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
+
+  const profile = useSelector((state: RootState) => selectProfile(state));
 
   const [fontsLoaded] = useFonts({
     RobotoCondensed: require("../../assets/fonts/RobotoCondensed-Regular.ttf"),
@@ -28,17 +32,27 @@ export default function Home() {
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
-      const session = (await supabase.auth.getSession()).data.session;
-
-      if (session && session.expires_in >= 0) {
-        dispatch(setSession({ session: session }));
-      } else {
-        router.push("login");
-      }
+      if (!profile.session || profile.session.expires_in <= 0)
+        dispatch(getSession())
+          .then((s) => {
+            try {
+              const session: Session | null = s.payload as Session;
+              if (!session || session.expires_in <= 0) router.push("login");
+              console.log(session);
+            } catch (e) {
+              console.log(e);
+              router.push("login");
+            }
+          })
+          .catch((reason) => {
+            console.log(reason);
+            router.push("login");
+          });
+      else console.log("success");
     }
   }, [fontsLoaded]);
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded || !profile.session) return null;
 
   return (
     <SafeAreaView style={tw`flex-1 bg-back `} onLayout={onLayoutRootView}>

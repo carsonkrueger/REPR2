@@ -34,6 +34,8 @@ interface props {
 }
 
 export default function ExerciseComponent({ exerciseId }: props) {
+  const dispatch = useDispatch<AppDispatch>();
+
   const workout = useSelector((state: RootState) => selectWorkout(state));
   const isLocked: boolean = useSelector((state: RootState) =>
     selectIsLocked(state)
@@ -41,7 +43,6 @@ export default function ExerciseComponent({ exerciseId }: props) {
   const exercise: Exercise = useSelector((state: RootState) =>
     selectExerciseById(state, exerciseId)
   );
-  const dispatch = useDispatch<AppDispatch>();
 
   const toggleIsSelected = () => {
     dispatch(setMenuId({ exerciseId: exerciseId }));
@@ -154,6 +155,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
         <WorkoutSetComponent
           key={"set" + id}
           setId={id}
+          exerciseId={exerciseId}
           relativeSetIndex={idx}
         />
       ))}

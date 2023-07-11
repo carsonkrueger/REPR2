@@ -2,7 +2,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../src/redux/store";
 import { View, Text } from "react-native";
 import tw from "../../src/util/tailwind";
-import { useRouter } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
 
 import WorkoutTemplateComponent from "../../src/components/workoutComponents/WorkoutTemplateComponent";
@@ -12,6 +11,8 @@ import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponen
 import { useEffect } from "react";
 import {
   sqlDeleteAllWorkoutRows,
+  sqlPrintExerciseHistory,
+  sqlPrintWorkoutHistoryByDateDESC,
   sqlSelectAllTemplatesByDateDESC,
 } from "../../src/sqlite/queries";
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
@@ -23,9 +24,10 @@ export default function Workouts() {
     (state: RootState) => state.workoutTemplates
   );
   const dispatch: AppDispatch = useDispatch();
-  const router = useRouter();
 
   useEffect(() => {
+    // sqlPrintWorkoutHistoryByDateDESC();
+    // sqlPrintExerciseHistory();
     // only get templates from sqlite db on first render (when temlates slice is empty)
     if (templates.length <= 0)
       sqlSelectAllTemplatesByDateDESC()

@@ -13,7 +13,7 @@ import { Ionicons, Entypo } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 
 import ExerciseComponent from "../../../src/components/workoutComponents/ExerciseComponent";
-import { WorkoutState } from "../../../src/types/workoutTypes";
+import { Exercise, WorkoutState } from "../../../src/types/workoutTypes";
 import { RootState, AppDispatch } from "../../../src/redux/store";
 import {
   addExercise,
@@ -33,6 +33,8 @@ import MyAlert from "../../../src/components/MyDangerAlert";
 import tw from "../../../src/util/tailwind";
 import {
   sqlInsertCurrentWorkoutTemplate,
+  sqlInsertExerciseHistory,
+  sqlInsertWorkoutHistory,
   sqlUpdateWorkoutTemplate,
 } from "../../../src/sqlite/queries";
 import {
@@ -40,6 +42,7 @@ import {
   updateWorkoutTemplate,
 } from "../../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromCurrentWorkout } from "../../../src/util/workoutUtils";
+import { EntityId } from "@reduxjs/toolkit";
 
 export default function WorkoutScreen() {
   const { paramWorkoutId } = useLocalSearchParams();
@@ -76,32 +79,38 @@ export default function WorkoutScreen() {
 
   useEffect(() => {
     if (finishPressed) {
-      if (Number(paramWorkoutId) === -1) {
-        sqlInsertCurrentWorkoutTemplate(workout, exercises, sets).then(
-          (insertId) =>
-            dispatch(
-              addWorkoutTemplateToFront(
-                templateFromCurrentWorkout(insertId, workout, exercises)
+      async function asyncFinish() {
+        // insert new workout template
+        if (Number(paramWorkoutId) === -1) {
+          sqlInsertCurrentWorkoutTemplate(workout, exercises, sets).then(
+            (insertId) =>
+              dispatch(
+                addWorkoutTemplateToFront(
+                  templateFromCurrentWorkout(insertId, workout, exercises)
+                )
+              )
+          );
+        }
+        // update old workout template
+        else if (Number(paramWorkoutId) > 0) {
+          sqlUpdateWorkoutTemplate(
+            Number(paramWorkoutId),
+            workout,
+            exercises,
+            sets
+          );
+          dispatch(
+            updateWorkoutTemplate(
+              templateFromCurrentWorkout(
+                Number(paramWorkoutId),
+                workout,
+                exercises
               )
             )
-        );
-      } else if (Number(paramWorkoutId) > 0) {
-        sqlUpdateWorkoutTemplate(
-          Number(paramWorkoutId),
-          workout,
-          exercises,
-          sets
-        );
-        dispatch(
-          updateWorkoutTemplate(
-            templateFromCurrentWorkout(
-              Number(paramWorkoutId),
-              workout,
-              exercises
-            )
-          )
-        );
+          );
+        }
       }
+      asyncFinish();
 
       dispatch(resetWorkout());
 
@@ -115,6 +124,21 @@ export default function WorkoutScreen() {
   }
 
   function onFinishWorkout() {
+    // insert workout history
+    sqlInsertWorkoutHistory(workout).then((workoutHistoryId: number) => {
+      // after insert workout history, insert every exercise histroy
+      for (let i = 0; i < exercises.ids.length; i++) {
+        const exerciseId = exercises.ids[i];
+        const { weight, reps } = calcBestSet(exerciseId);
+        sqlInsertExerciseHistory(
+          exercises.entities[exerciseId]!,
+          workoutHistoryId,
+          weight,
+          reps
+        );
+      }
+    });
+
     dispatch(cleanExercises());
     dispatch(cleanSets());
     dispatch(cleanWorkout());
@@ -128,16 +152,25 @@ export default function WorkoutScreen() {
     router.replace("/workouts");
   }
 
-  function calcBestSet(exerciseId: number) {
-    // Maybe just calc best set and volume when weight and reps are entered by user.
-    const bestSet = { weight: 0, reps: 0 };
-    const totalVolume = 0;
+  function calcBestSet(exerciseId: EntityId): { weight: number; reps: number } {
+    let bestWeight = 0;
+    let bestReps = 0;
 
     for (
       let i = 0;
       i < (exercises.entities[exerciseId]?.Sets.length ?? 0);
       i++
-    ) {}
+    ) {
+      const setId: EntityId = exercises.entities[exerciseId]?.Sets[i] ?? 0;
+      const newWeight = sets.entities[setId]?.weight ?? 0;
+      const newReps = sets.entities[setId]?.reps ?? 0;
+      if (newWeight * newReps > bestWeight * bestReps) {
+        bestWeight = newWeight;
+        bestReps = newReps;
+      }
+    }
+
+    return { weight: bestWeight, reps: bestReps };
   }
 
   return (

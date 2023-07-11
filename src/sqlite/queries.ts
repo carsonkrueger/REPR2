@@ -181,24 +181,27 @@ export const sqlDeleteAllWorkoutRows = () => {
 
 export const sqlInsertWorkoutHistory = async (
   workoutState: WorkoutState,
-  numPrs: number
+  numPrs: number = 0
 ) => {
-  db.transaction((tx) =>
-    tx.executeSql(
-      "INSERT INTO workout_history (workout_name, workout_time, num_prs, performed) VALUES (?, ?, ?, ?);",
-      [
-        workoutState.name,
-        Date.now() - workoutState.startedAt,
-        numPrs,
-        getCurDate(),
-      ],
-      undefined,
-      (_, error) => {
-        console.log("Error updating workout template: ", error);
-        return true;
-      }
-    )
-  );
+  return new Promise<number>((resolve, reject) => {
+    db.transaction((tx) =>
+      tx.executeSql(
+        "INSERT INTO workout_history (workout_name, workout_time, num_prs, performed) VALUES (?, ?, ?, ?);",
+        [
+          workoutState.name,
+          Date.now() - workoutState.startedAt,
+          numPrs,
+          getCurDate(),
+        ],
+        (_, res) => resolve(res.insertId ?? -1),
+        (_, error) => {
+          console.log("Error updating workout template: ", error);
+          reject(undefined);
+          return true;
+        }
+      )
+    );
+  });
 };
 
 export const sqlInsertExerciseHistory = async (
@@ -220,6 +223,34 @@ export const sqlInsertExerciseHistory = async (
       undefined,
       (_, error) => {
         console.log("Error updating workout template: ", error);
+        return true;
+      }
+    )
+  );
+};
+
+export const sqlPrintWorkoutHistoryByDateDESC = () => {
+  db.transaction((tx) =>
+    tx.executeSql(
+      "SELECT * FROM workout_history ORDER BY performed DESC;",
+      undefined,
+      (_, result) => console.log(result.rows._array),
+      (_, error) => {
+        console.log("Error printing all workout history: ", error);
+        return true;
+      }
+    )
+  );
+};
+
+export const sqlPrintExerciseHistory = () => {
+  db.transaction((tx) =>
+    tx.executeSql(
+      "SELECT * FROM exercise_history;",
+      undefined,
+      (_, result) => console.log(result.rows._array),
+      (_, error) => {
+        console.log("Error printing all exercise history: ", error);
         return true;
       }
     )

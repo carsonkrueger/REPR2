@@ -190,7 +190,7 @@ export const exercisesSlice = createSlice({
     ) {
       exerciseAdapter.updateOne(state, {
         id: action.payload.id,
-        changes: { name: action.payload.name },
+        changes: { name: action.payload.name.trim() },
       });
     },
     swapExerciseWithBelow(state, action: PayloadAction<{ id: EntityId }>) {
@@ -247,7 +247,7 @@ const workoutSlice = createSlice({
   initialState: initialWorkout,
   reducers: {
     setWorkoutName(state, action: PayloadAction<{ name: string }>) {
-      state.name = action.payload.name;
+      state.name = action.payload.name.trim();
     },
     setWorkoutId(state, action: PayloadAction<{ id: number }>) {
       state.id = action.payload.id;
@@ -306,9 +306,9 @@ export const workoutSetReducer = workoutSetSlice.reducer;
 export const {
   addSet,
   delSet,
+  toggleFinishSet,
   setReps,
   setWeight,
-  toggleFinishSet,
   setSets,
   cleanSets,
 } = workoutSetSlice.actions;

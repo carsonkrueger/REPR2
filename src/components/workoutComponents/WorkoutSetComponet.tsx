@@ -9,20 +9,22 @@ import { EntityId } from "@reduxjs/toolkit";
 import flexWidths from "../../util/exerciseHeaderFlexWidths";
 import {
   toggleFinishSet,
+  selectSetById,
   setWeight,
   setReps,
-  selectSetById,
 } from "../../redux/slices/workoutSlice";
 import { cleanNumStr } from "../../util/workoutUtils";
 import CustomColors from "../../util/customColors";
 
 interface props {
   setId: EntityId;
+  exerciseId: EntityId;
   relativeSetIndex: number;
 }
 
 export default function WorkoutSetComponent({
   setId,
+  exerciseId,
   relativeSetIndex,
 }: props) {
   const workoutSet: WorkoutSet = useSelector((state: RootState) =>

@@ -2,8 +2,10 @@ import * as SQLite from "expo-sqlite";
 import { Exercise, WorkoutSet, WorkoutState } from "../types/workoutTypes";
 import { EntityState } from "@reduxjs/toolkit";
 import {
+  exerciseHistoryTableRow,
   parsedWorkoutsTableRow,
   unparsedWorkoutsTableRow,
+  workoutHistoryTableRow,
 } from "../types/localDBTables";
 import { parseWorkoutTableRow } from "../util/workoutUtils";
 import { getCurDate } from "../util/dates";
@@ -255,4 +257,44 @@ export const sqlPrintExerciseHistory = () => {
       }
     )
   );
+};
+
+export const sqlSelectAllWorkoutHistoryByDateDESC = async () => {
+  return new Promise<workoutHistoryTableRow[]>((resolve, reject) => {
+    db.transaction((tx) =>
+      tx.executeSql(
+        "SELECT * FROM workout_history ORDER BY performed DESC;",
+        undefined,
+        (_, result) => {
+          resolve(result.rows._array as workoutHistoryTableRow[]);
+        },
+        (_, error) => {
+          console.log("Error selecting all workout history: ", error);
+          reject(undefined);
+          return true;
+        }
+      )
+    );
+  });
+};
+
+export const sqlSelectExerciseHistoryByWorkoutId = async (
+  workoutHistoryId: number
+) => {
+  return new Promise<exerciseHistoryTableRow[]>((resolve, reject) => {
+    db.transaction((tx) =>
+      tx.executeSql(
+        "SELECT exercise_history_id, workout_history_id, exercise_name, num_sets, best_weight, best_reps FROM exercise_history WHERE workout_history_id = ?;",
+        [workoutHistoryId],
+        (_, result) => {
+          resolve(result.rows._array as exerciseHistoryTableRow[]);
+        },
+        (_, error) => {
+          console.log("Error selecting all exercise history: ", error);
+          reject(error);
+          return true;
+        }
+      )
+    );
+  });
 };

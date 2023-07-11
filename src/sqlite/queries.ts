@@ -10,7 +10,7 @@ import { getCurDate } from "../util/dates";
 
 const db = SQLite.openDatabase("repr_local");
 
-export const initWorkoutTemplatesTable = () => {
+export const initWorkoutTemplatesTable = async () => {
   db.transaction((tx) =>
     tx.executeSql(
       "CREATE TABLE IF NOT EXISTS workout_templates (workout_id INTEGER PRIMARY KEY AUTOINCREMENT, workout_state STRING, exercises STRING, sets STRING, last_performed STRING);",
@@ -22,9 +22,45 @@ export const initWorkoutTemplatesTable = () => {
       }
     )
   );
+
+  db.transaction((tx) =>
+    tx.executeSql(
+      "CREATE TABLE IF NOT EXISTS exercises (exercise_id INTEGER PRIMARY KEY AUTOINCREMENT, exercise_name STRING, best_weight INTEGER, best_reps INTEGER);",
+      undefined,
+      undefined,
+      (_, error) => {
+        console.log("Error creating exercises table: ", error);
+        return true;
+      }
+    )
+  );
+
+  db.transaction((tx) =>
+    tx.executeSql(
+      "CREATE TABLE IF NOT EXISTS workout_history (workout_history_id INTEGER PRIMARY KEY AUTOINCREMENT, workout_name STRING, workout_time INTEGER, num_prs INTEGER, performed STRING);",
+      undefined,
+      undefined,
+      (_, error) => {
+        console.log("Error creating workout_history table: ", error);
+        return true;
+      }
+    )
+  );
+
+  db.transaction((tx) =>
+    tx.executeSql(
+      "CREATE TABLE IF NOT EXISTS exercise_history (exercise_history_id INTEGER PRIMARY KEY AUTOINCREMENT, workout_history_id INTEGER, exercise_name STRING, num_sets INTEGER, best_weight INTEGER, best_reps INTEGER);",
+      undefined,
+      undefined,
+      (_, error) => {
+        console.log("Error creating exercises table: ", error);
+        return true;
+      }
+    )
+  );
 };
 
-export const sqlSelectAllTemplatesByDateDESC = () => {
+export const sqlSelectAllTemplatesByDateDESC = async () => {
   return new Promise<parsedWorkoutsTableRow[]>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
@@ -47,7 +83,7 @@ export const sqlSelectAllTemplatesByDateDESC = () => {
   });
 };
 
-export const sqlSelectWorkoutInfoById = (id: number) => {
+export const sqlSelectWorkoutInfoById = async (id: number) => {
   return new Promise<parsedWorkoutsTableRow>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
@@ -83,7 +119,7 @@ export const sqlPrintAllTemplatesByDateDESC = () => {
   );
 };
 
-export const sqlInsertCurrentWorkoutTemplate = (
+export const sqlInsertCurrentWorkoutTemplate = async (
   workoutState: WorkoutState,
   exercises: EntityState<Exercise>,
   sets: EntityState<WorkoutSet>
@@ -109,7 +145,7 @@ export const sqlInsertCurrentWorkoutTemplate = (
   });
 };
 
-export const sqlUpdateWorkoutTemplate = (
+export const sqlUpdateWorkoutTemplate = async (
   workoutId: number,
   workoutState: WorkoutState,
   exercises: EntityState<Exercise>,
@@ -118,12 +154,13 @@ export const sqlUpdateWorkoutTemplate = (
   return new Promise((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
-        "INSERT OR REPLACE INTO workout_templates (workout_id, workout_state, exercises, sets, last_performed) VALUES (?, ?, ?, ?, date('now'));",
+        "INSERT OR REPLACE INTO workout_templates (workout_id, workout_state, exercises, sets, last_performed) VALUES (?, ?, ?, ?, ?);",
         [
           workoutId,
           JSON.stringify(workoutState),
           JSON.stringify(exercises),
           JSON.stringify(sets),
+          getCurDate(),
         ],
         (_) => resolve(undefined),
         (_, error) => {
@@ -142,28 +179,49 @@ export const sqlDeleteAllWorkoutRows = () => {
   });
 };
 
-// export const getNextRowId = () => {
-//   return new Promise<number>((resolve, reject) => {
-//     db.transaction((tx) => {
-//       tx.executeSql(
-//         "SELECT last_insert_rowid() FROM workout_templates;",
-//         undefined,
-//         (_, result) => {
-//           console.log("next row id: ", result.rows._array[0]);
-//           resolve(
-//             Number(
-//               (result.rows._array[0] as { "last_insert_rowid()": number })[
-//                 "last_insert_rowid()"
-//               ]
-//             ) + 1
-//           );
-//         },
-//         (_, error) => {
-//           console.log("Error updating workout template: ", error);
-//           resolve(0);
-//           return true;
-//         }
-//       );
-//     });
-//   });
-// };
+export const sqlInsertWorkoutHistory = async (
+  workoutState: WorkoutState,
+  numPrs: number
+) => {
+  db.transaction((tx) =>
+    tx.executeSql(
+      "INSERT INTO workout_history (workout_name, workout_time, num_prs, performed) VALUES (?, ?, ?, ?);",
+      [
+        workoutState.name,
+        Date.now() - workoutState.startedAt,
+        numPrs,
+        getCurDate(),
+      ],
+      undefined,
+      (_, error) => {
+        console.log("Error updating workout template: ", error);
+        return true;
+      }
+    )
+  );
+};
+
+export const sqlInsertExerciseHistory = async (
+  exercise: Exercise,
+  workoutHistoryId: number,
+  bestWeight: number,
+  bestReps: number
+) => {
+  db.transaction((tx) =>
+    tx.executeSql(
+      "INSERT INTO exercise_history (workout_history_id, exercise_name, num_sets, best_weight, best_reps) VALUES (?, ?, ?, ?, ?);",
+      [
+        workoutHistoryId,
+        exercise.name,
+        exercise.Sets.length,
+        bestWeight,
+        bestReps,
+      ],
+      undefined,
+      (_, error) => {
+        console.log("Error updating workout template: ", error);
+        return true;
+      }
+    )
+  );
+};

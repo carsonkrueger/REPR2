@@ -21,9 +21,11 @@ export interface WorkoutState {
   id: number;
   name: string;
   isLocked: boolean;
+  menuSelectedId: EntityId | undefined;
   inProgress: boolean;
   nextSetId: EntityId;
   nextExerciseId: EntityId;
+  startedAt: number;
 }
 
 export interface WorkoutTemplate {

@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native";
-import { useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import { EntityId } from "@reduxjs/toolkit";
 
@@ -21,6 +20,7 @@ import {
   delSet,
   selectExerciseById,
   selectIsLocked,
+  setMenuId,
   selectWorkout,
   setExerciseName,
   swapExerciseWithAbove,
@@ -43,25 +43,20 @@ export default function ExerciseComponent({ exerciseId }: props) {
   );
   const dispatch = useDispatch<AppDispatch>();
 
-  const [isSelected, setIsSelected] = useState<boolean>(false);
-
   const toggleIsSelected = () => {
-    setIsSelected((prev) => !prev);
+    dispatch(setMenuId({ exerciseId: exerciseId }));
   };
 
   const swapExerciseUp = () => {
     dispatch(swapExerciseWithAbove({ id: exerciseId }));
-    setIsSelected(false);
   };
 
   const swapExerciseDown = () => {
     dispatch(swapExerciseWithBelow({ id: exerciseId }));
-    setIsSelected(false);
   };
 
   const deleteExercise = () => {
     dispatch(delExercise({ id: exerciseId }));
-    setIsSelected(false);
   };
 
   const addSetToEnd = () => {
@@ -166,7 +161,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
       {/* EXERCISE MENU (ADD SET / DEL SET / SWAP) */}
       {!isLocked && (
         <>
-          {isSelected && (
+          {workout.menuSelectedId === exerciseId && (
             <TouchableWithoutFeedback onPress={toggleIsSelected}>
               <View style={tw`absolute top-0 right-0 bottom-0 left-0`} />
             </TouchableWithoutFeedback>
@@ -182,7 +177,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
               />
             </TouchableOpacity>
 
-            {isSelected && (
+            {workout.menuSelectedId === exerciseId && (
               <View
                 style={[
                   tw`absolute flex-row right-0 mr-7 bg-front w-40 justify-evenly items-center py-2 rounded-full shadow-md z-50`,

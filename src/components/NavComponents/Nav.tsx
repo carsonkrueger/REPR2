@@ -25,7 +25,7 @@ export default function Nav() {
   const pushNavigateTo = (href: string, index: number) => {
     if (index === selectedPos) return;
     setSelectedPos(index);
-    router.push(href);
+    router.push({ pathname: href, params: { paramWorkoutId: curWorkout.id } });
   };
 
   function navigateHome() {

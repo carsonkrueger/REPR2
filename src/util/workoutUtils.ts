@@ -49,7 +49,7 @@ export function parseWorkoutTableRow(
   obj: unparsedWorkoutsTableRow
 ): parsedWorkoutsTableRow {
   return {
-    workout_id: Number(obj.workout_id),
+    workout_id: obj.workout_id,
     workout_state: JSON.parse(obj.workout_state) as WorkoutState,
     exercises: JSON.parse(obj.exercises) as EntityState<Exercise>,
     sets: JSON.parse(obj.sets) as EntityState<WorkoutSet>,

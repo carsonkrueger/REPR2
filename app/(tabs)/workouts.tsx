@@ -26,8 +26,6 @@ export default function Workouts() {
   const router = useRouter();
 
   useEffect(() => {
-    // sqlDeleteAllWorkoutRows();
-    // printTemplates();
     // only get templates from sqlite db on first render (when temlates slice is empty)
     if (templates.length <= 0)
       sqlSelectAllTemplatesByDateDESC()
@@ -41,10 +39,6 @@ export default function Workouts() {
           console.log("ERR", reason);
         });
   }, []);
-
-  function printTemplates() {
-    templates.map((t) => console.log(t.workoutName, t.workoutId));
-  }
 
   return (
     <View style={tw`flex-1 bg-back dark:bg-dark-back`}>

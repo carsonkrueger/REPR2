@@ -44,9 +44,11 @@ const initialWorkout: WorkoutState = {
   id: -1,
   name: "",
   isLocked: false,
+  menuSelectedId: undefined,
   inProgress: false,
   nextSetId: 1,
   nextExerciseId: 1,
+  startedAt: 0,
 };
 
 export const workoutSetSlice = createSlice({
@@ -261,8 +263,9 @@ const workoutSlice = createSlice({
       state.nextExerciseId = initialWorkout.nextExerciseId;
       state.nextSetId = initialWorkout.nextSetId;
     },
-    startInProgress(state) {
+    startWorkout(state) {
       state.inProgress = true;
+      state.startedAt = Date.now();
     },
     setWorkout(state, action: PayloadAction<WorkoutState>) {
       // state.id = action.payload.id;
@@ -271,6 +274,15 @@ const workoutSlice = createSlice({
       state.name = action.payload.name;
       state.nextExerciseId = action.payload.nextExerciseId;
       state.nextSetId = action.payload.nextSetId;
+    },
+    setMenuId(state, action: PayloadAction<{ exerciseId: EntityId }>) {
+      state.menuSelectedId =
+        state.menuSelectedId !== action.payload.exerciseId
+          ? action.payload.exerciseId
+          : undefined;
+    },
+    cleanWorkout(state) {
+      state.menuSelectedId = undefined;
     },
   },
   extraReducers(builder) {
@@ -319,9 +331,11 @@ export const {
   resetWorkout,
   setWorkoutName,
   toggleLock,
-  startInProgress,
+  startWorkout,
   setWorkout,
   setWorkoutId,
+  setMenuId,
+  cleanWorkout,
 } = workoutSlice.actions;
 
 // SELECTORS

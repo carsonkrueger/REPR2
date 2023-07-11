@@ -37,6 +37,7 @@ export default function Home() {
         await Font.loadAsync({
           RobotoCondensed: require("../../assets/fonts/RobotoCondensed-Regular.ttf"),
         });
+        await dispatch(getSession());
       } catch (e) {
         console.warn(e);
       } finally {

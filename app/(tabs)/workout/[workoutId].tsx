@@ -19,13 +19,14 @@ import {
   addExercise,
   cleanExercises,
   cleanSets,
+  cleanWorkout,
   resetWorkout,
   selectExercises,
   selectSets,
   selectWorkout,
   setWorkoutId,
   setWorkoutName,
-  startInProgress,
+  startWorkout,
   toggleLock,
 } from "../../../src/redux/slices/workoutSlice";
 import MyAlert from "../../../src/components/MyDangerAlert";
@@ -55,8 +56,10 @@ export default function WorkoutScreen() {
   const [finishPressed, setFinishedPressed] = useState(false);
 
   useEffect(() => {
-    dispatch(setWorkoutId({ id: Number(paramWorkoutId) }));
-    startWorkout();
+    if (!workout.inProgress) {
+      dispatch(setWorkoutId({ id: Number(paramWorkoutId) }));
+      dispatch(startWorkout());
+    }
 
     const backAction = () => {
       backPress();
@@ -111,13 +114,10 @@ export default function WorkoutScreen() {
     setBackPressed((prev) => !prev);
   }
 
-  function startWorkout() {
-    dispatch(startInProgress());
-  }
-
   function onFinishWorkout() {
     dispatch(cleanExercises());
     dispatch(cleanSets());
+    dispatch(cleanWorkout());
 
     setFinishedPressed(true);
   }
@@ -126,6 +126,18 @@ export default function WorkoutScreen() {
     dispatch(resetWorkout());
     router.back();
     router.replace("/workouts");
+  }
+
+  function calcBestSet(exerciseId: number) {
+    // Maybe just calc best set and volume when weight and reps are entered by user.
+    const bestSet = { weight: 0, reps: 0 };
+    const totalVolume = 0;
+
+    for (
+      let i = 0;
+      i < (exercises.entities[exerciseId]?.Sets.length ?? 0);
+      i++
+    ) {}
   }
 
   return (

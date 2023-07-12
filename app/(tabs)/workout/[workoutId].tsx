@@ -43,6 +43,11 @@ import {
 } from "../../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromCurrentWorkout } from "../../../src/util/workoutUtils";
 import { EntityId } from "@reduxjs/toolkit";
+import {
+  addExerciseHistory,
+  addWorkoutHistory,
+} from "../../../src/redux/slices/metricsSlice";
+import { ExerciseMetric, WorkoutMetric } from "../../../src/types/metricsTypes";
 
 export default function WorkoutScreen() {
   const { paramWorkoutId } = useLocalSearchParams();
@@ -125,19 +130,7 @@ export default function WorkoutScreen() {
 
   function onFinishWorkout() {
     // insert workout history
-    sqlInsertWorkoutHistory(workout).then((workoutHistoryId: number) => {
-      // after insert workout history, insert every exercise histroy
-      for (let i = 0; i < exercises.ids.length; i++) {
-        const exerciseId = exercises.ids[i];
-        const { weight, reps } = calcBestSet(exerciseId);
-        sqlInsertExerciseHistory(
-          exercises.entities[exerciseId]!,
-          workoutHistoryId,
-          weight,
-          reps
-        );
-      }
-    });
+    insertHistory();
 
     dispatch(cleanExercises());
     dispatch(cleanSets());
@@ -150,6 +143,30 @@ export default function WorkoutScreen() {
     dispatch(resetWorkout());
     router.back();
     router.replace("/workouts");
+  }
+
+  function insertHistory() {
+    sqlInsertWorkoutHistory(workout).then((workoutMetric: WorkoutMetric) => {
+      dispatch(addWorkoutHistory({ workout: workoutMetric }));
+      // insert workout history, then insert every exercise histroy
+      for (let i = 0; i < exercises.ids.length; i++) {
+        const exerciseId = exercises.ids[i];
+        const { weight, reps } = calcBestSet(exerciseId);
+
+        sqlInsertExerciseHistory(
+          exercises.entities[exerciseId]!,
+          Number(workoutMetric.workoutHistoryId),
+          weight,
+          reps
+        ).then((exerciseMetric: ExerciseMetric) => {
+          dispatch(
+            addExerciseHistory({
+              exercise: exerciseMetric,
+            })
+          );
+        });
+      }
+    });
   }
 
   function calcBestSet(exerciseId: EntityId): { weight: number; reps: number } {

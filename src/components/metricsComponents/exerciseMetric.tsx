@@ -16,7 +16,9 @@ export function ExerciseMetric({ exerciseMetricId }: props) {
 
   return (
     <View style={tw``}>
-      <Text>{exerciseMetric?.exerciseName}</Text>
+      <Text style={[tw``, { fontFamily: "RobotoCondensed" }]}>
+        {exerciseMetric?.numSets} x {exerciseMetric?.exerciseName}
+      </Text>
     </View>
   );
 }

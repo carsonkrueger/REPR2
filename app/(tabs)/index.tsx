@@ -13,9 +13,28 @@ import { useCallback, useEffect, useState } from "react";
 import * as SpashScreen from "expo-splash-screen";
 
 import { getSession, selectProfile } from "../../src/redux/slices/profileSlice";
-import { initWorkoutTemplatesTable } from "../../src/sqlite/queries";
+import {
+  initWorkoutTemplatesTable,
+  sqlDeleteAllWorkoutAndExerciseHistoryRows,
+  sqlSelectAllWorkoutHistoryByDateDESC,
+  sqlSelectExerciseHistoryByWorkoutId,
+} from "../../src/sqlite/queries";
 import { useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../src/redux/store";
+import {
+  exerciseHistoryTableRow,
+  workoutHistoryTableRow,
+} from "../../src/types/localDBTables";
+import {
+  addExerciseHistory,
+  addWorkoutHistory,
+  selectNextExerciseHistoryId,
+  selectNextWorkoutHistoryId,
+} from "../../src/redux/slices/metricsSlice";
+import {
+  parseExerciseHistoryTableRow,
+  parseWorkoutHistoryTableRow,
+} from "../../src/util/metricsUtils";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -26,18 +45,17 @@ export default function Home() {
   const profile = useSelector((state: RootState) => selectProfile(state));
 
   const [appIsReady, setAppIsReady] = useState(false);
-  // const [fontsLoaded] = Font.useFonts({
-  //   RobotoCondensed: require("../../assets/fonts/RobotoCondensed-Regular.ttf"),
-  // });
 
   useEffect(() => {
     async function prepare() {
+      // sqlDeleteAllWorkoutAndExerciseHistoryRows();
       try {
-        initWorkoutTemplatesTable();
         await Font.loadAsync({
           RobotoCondensed: require("../../assets/fonts/RobotoCondensed-Regular.ttf"),
         });
         await dispatch(getSession());
+        initWorkoutTemplatesTable();
+        loadMetricsData();
       } catch (e) {
         console.warn(e);
       } finally {
@@ -56,6 +74,30 @@ export default function Home() {
       await SpashScreen.hideAsync();
     }
   }, [appIsReady]);
+
+  async function loadMetricsData() {
+    sqlSelectAllWorkoutHistoryByDateDESC().then(
+      (workoutHistories: workoutHistoryTableRow[]) => {
+        workoutHistories.map((workout) => {
+          dispatch(
+            addWorkoutHistory({
+              workout: parseWorkoutHistoryTableRow(workout),
+            })
+          );
+          sqlSelectExerciseHistoryByWorkoutId(workout.workout_history_id).then(
+            (exerciseRows: exerciseHistoryTableRow[]) =>
+              exerciseRows.map((exercise) =>
+                dispatch(
+                  addExerciseHistory({
+                    exercise: parseExerciseHistoryTableRow(exercise),
+                  })
+                )
+              )
+          );
+        });
+      }
+    );
+  }
 
   if (!appIsReady) return null;
 

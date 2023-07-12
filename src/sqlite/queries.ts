@@ -9,6 +9,7 @@ import {
 } from "../types/localDBTables";
 import { parseWorkoutTableRow } from "../util/workoutUtils";
 import { getCurDate } from "../util/dates";
+import { ExerciseMetric, WorkoutMetric } from "../types/metricsTypes";
 
 const db = SQLite.openDatabase("repr_local");
 
@@ -185,7 +186,7 @@ export const sqlInsertWorkoutHistory = async (
   workoutState: WorkoutState,
   numPrs: number = 0
 ) => {
-  return new Promise<number>((resolve, reject) => {
+  return new Promise<WorkoutMetric>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
         "INSERT INTO workout_history (workout_name, workout_time, num_prs, performed) VALUES (?, ?, ?, ?);",
@@ -195,7 +196,15 @@ export const sqlInsertWorkoutHistory = async (
           numPrs,
           getCurDate(),
         ],
-        (_, res) => resolve(res.insertId ?? -1),
+        (_, res) =>
+          resolve({
+            workoutHistoryId: res.insertId ?? -1,
+            workoutName: workoutState.name,
+            numPrs: numPrs,
+            workoutTime: Date.now() - workoutState.startedAt,
+            exerciseIds: [],
+            performed: getCurDate(),
+          }),
         (_, error) => {
           console.log("Error updating workout template: ", error);
           reject(undefined);
@@ -212,23 +221,34 @@ export const sqlInsertExerciseHistory = async (
   bestWeight: number,
   bestReps: number
 ) => {
-  db.transaction((tx) =>
-    tx.executeSql(
-      "INSERT INTO exercise_history (workout_history_id, exercise_name, num_sets, best_weight, best_reps) VALUES (?, ?, ?, ?, ?);",
-      [
-        workoutHistoryId,
-        exercise.name,
-        exercise.Sets.length,
-        bestWeight,
-        bestReps,
-      ],
-      undefined,
-      (_, error) => {
-        console.log("Error updating workout template: ", error);
-        return true;
-      }
-    )
-  );
+  return new Promise<ExerciseMetric>((resolve, reject) => {
+    db.transaction((tx) =>
+      tx.executeSql(
+        "INSERT INTO exercise_history (workout_history_id, exercise_name, num_sets, best_weight, best_reps) VALUES (?, ?, ?, ?, ?);",
+        [
+          workoutHistoryId,
+          exercise.name,
+          exercise.Sets.length,
+          bestWeight,
+          bestReps,
+        ],
+        (_, res) =>
+          resolve({
+            exerciseHistoryId: res.insertId ?? -1,
+            workoutHistoryId: workoutHistoryId,
+            bestWeight: bestWeight,
+            bestReps: bestReps,
+            exerciseName: exercise.name,
+            numSets: exercise.Sets.length,
+          }),
+        (_, error) => {
+          console.log("Error updating workout template: ", error);
+          reject(error);
+          return true;
+        }
+      )
+    );
+  });
 };
 
 export const sqlPrintWorkoutHistoryByDateDESC = () => {
@@ -296,5 +316,14 @@ export const sqlSelectExerciseHistoryByWorkoutId = async (
         }
       )
     );
+  });
+};
+
+export const sqlDeleteAllWorkoutAndExerciseHistoryRows = () => {
+  db.transaction((tx) => {
+    tx.executeSql("DELETE FROM workout_history;");
+  });
+  db.transaction((tx) => {
+    tx.executeSql("DELETE FROM exercise_history;");
   });
 };

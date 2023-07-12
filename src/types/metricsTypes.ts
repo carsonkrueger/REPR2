@@ -7,8 +7,7 @@ export interface MetricsState {
 }
 
 export interface WorkoutMetric {
-  id: EntityId;
-  workoutHistoryId: number;
+  workoutHistoryId: EntityId;
   workoutName: string;
   workoutTime: number;
   numPrs: number;
@@ -17,9 +16,8 @@ export interface WorkoutMetric {
 }
 
 export interface ExerciseMetric {
-  id: EntityId;
-  exerciseHistory_id: number;
-  workoutHistory_id: number;
+  exerciseHistoryId: EntityId;
+  workoutHistoryId: EntityId;
   exerciseName: string;
   numSets: number;
   bestWeight: number;

@@ -7,7 +7,7 @@ import { FlashList } from "@shopify/flash-list";
 import { selectMetricsState } from "../../src/redux/slices/metricsSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../src/redux/store";
-import { WorkoutMetric } from "../../src/components/metricsCompoents/workoutMetric";
+import { WorkoutMetric } from "../../src/components/metricsComponents/workoutMetric";
 
 export default function Metrics() {
   const metricsState = useSelector((state: RootState) =>
@@ -16,7 +16,7 @@ export default function Metrics() {
 
   return (
     <SafeAreaView style={tw`flex-1 bg-back`}>
-      <View style={tw`py-2 bg-front shadow-md`}>
+      {/* <View style={tw`py-2 bg-front shadow-md`}>
         <Text
           style={[
             tw`text-xl text-center text-primary`,
@@ -25,10 +25,19 @@ export default function Metrics() {
         >
           METRICS
         </Text>
-      </View>
+      </View> */}
 
       <View>
+        <Text
+          style={[
+            tw`text-lg text-dark-gray pl-5 pt-5`,
+            { fontFamily: "RobotoCondensed" },
+          ]}
+        >
+          MY WORKOUT HISTORY
+        </Text>
         <FlashList
+          estimatedItemSize={200}
           data={metricsState.workoutIds}
           renderItem={({ item }) => (
             <WorkoutMetric
@@ -37,6 +46,17 @@ export default function Metrics() {
             />
           )}
           horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          ListEmptyComponent={
+            <Text
+              style={[
+                tw`text-center text-lg text-light-gray pl-5 pt-3`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              NO WORKOUT HISTORY
+            </Text>
+          }
         />
       </View>
     </SafeAreaView>

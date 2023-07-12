@@ -1,46 +1,72 @@
 import {
+  EntityId,
   PayloadAction,
   createEntityAdapter,
+  createSelector,
   createSlice,
 } from "@reduxjs/toolkit";
 import {
-  MetricsExercise,
+  ExerciseMetric,
   MetricsState,
-  MetricsWorkout,
+  WorkoutMetric,
 } from "../../types/metricsTypes";
 import { RootState } from "../store";
 
-const metricsExerciseAdapter = createEntityAdapter<MetricsExercise>({
-  selectId: (exercise: MetricsExercise) => exercise.id,
+const exerciseMetricsAdapter = createEntityAdapter<ExerciseMetric>({
+  selectId: (exercise: ExerciseMetric) => exercise.id,
 });
 
-const metricsExerciseSlice = createSlice({
-  name: "metricsExercises",
-  initialState: metricsExerciseAdapter.getInitialState(),
+const exerciseMetricsSlice = createSlice({
+  name: "exerciseMetrics",
+  initialState: exerciseMetricsAdapter.getInitialState(),
   reducers: {
-    addExercise(state, action: PayloadAction<{ exercise: MetricsExercise }>) {
-      metricsExerciseAdapter.addOne(state, action.payload.exercise);
+    addExercise(
+      state,
+      action: PayloadAction<{
+        exercise: ExerciseMetric;
+        workoutId: number;
+        nextExerciseId: number;
+      }>
+    ) {
+      exerciseMetricsAdapter.addOne(state, action.payload.exercise);
     },
   },
 });
 
-const metricsWorkoutAdapter = createEntityAdapter<MetricsWorkout>({
-  selectId: (workout: MetricsWorkout) => workout.id,
+const workoutMetricsAdapter = createEntityAdapter<WorkoutMetric>({
+  selectId: (workout: WorkoutMetric) => workout.id,
 });
 
-const metricsWorkoutSlice = createSlice({
-  name: "metricsWorkouts",
-  initialState: metricsWorkoutAdapter.getInitialState(),
+const workoutMetricsSlice = createSlice({
+  name: "workoutMetrics",
+  initialState: workoutMetricsAdapter.getInitialState(),
   reducers: {
-    addWorkout(state, action: PayloadAction<{ workout: MetricsWorkout }>) {
-      metricsWorkoutAdapter.addOne(state, action.payload.workout);
+    addWorkout(state, action: PayloadAction<{ workout: WorkoutMetric }>) {
+      workoutMetricsAdapter.addOne(state, action.payload.workout);
     },
+  },
+  extraReducers(builder) {
+    builder.addCase(
+      exerciseMetricsSlice.actions.addExercise,
+      (state, action) => {
+        workoutMetricsAdapter.updateOne(state, {
+          id: action.payload.workoutId,
+          changes: {
+            exerciseIds: [
+              ...state.entities[action.payload.workoutId]!.exerciseIds,
+              action.payload.nextExerciseId,
+            ],
+          },
+        });
+      }
+    );
   },
 });
 
 const initialMetricsState: MetricsState = {
   nextMetricsExerciseId: 0,
   nextMetricsWorkoutId: 0,
+  workoutIds: [],
 };
 
 const metricsStateSlice = createSlice({
@@ -49,23 +75,34 @@ const metricsStateSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(metricsWorkoutSlice.actions.addWorkout, (state) => {
+      .addCase(workoutMetricsSlice.actions.addWorkout, (state) => {
+        state.workoutIds.push(state.nextMetricsWorkoutId);
         state.nextMetricsWorkoutId += 1;
       })
-      .addCase(metricsExerciseSlice.actions.addExercise, (state) => {
+      .addCase(exerciseMetricsSlice.actions.addExercise, (state) => {
         state.nextMetricsExerciseId += 1;
       });
   },
 });
 
-export const metricsExerciseReducer = metricsExerciseSlice.reducer;
-export const { addExercise } = metricsExerciseSlice.actions;
+export const exerciseMetricsReducer = exerciseMetricsSlice.reducer;
+export const { addExercise } = exerciseMetricsSlice.actions;
 
-export const metricsWorkoutReducer = metricsWorkoutSlice.reducer;
-export const { addWorkout } = metricsWorkoutSlice.actions;
+export const workoutMetricsReducer = workoutMetricsSlice.reducer;
+export const { addWorkout } = workoutMetricsSlice.actions;
 
 export const metricsStateReducer = metricsStateSlice.reducer;
 
-const selectExerciseMetrics = (state: RootState) => state.exerciseMetrics;
-const selectWorkoutMetrics = (state: RootState) => state.workoutMetrics;
-const selectMetricsState = (state: RootState) => state.metricsState;
+export const selectExerciseMetrics = (state: RootState) =>
+  state.exerciseMetrics;
+export const selectWorkoutMetrics = (state: RootState) => state.workoutMetrics;
+export const selectMetricsState = (state: RootState) => state.metricsState;
+
+export const selectExerciseMetricById = createSelector(
+  [selectExerciseMetrics, (_, exerciseId: EntityId) => exerciseId],
+  (exerciseMetrics, exerciseId) => exerciseMetrics.entities[exerciseId]
+);
+export const selectWorkoutMetricById = createSelector(
+  [selectWorkoutMetrics, (_, workoutId: EntityId) => workoutId],
+  (workoutMetrics, workoutId) => workoutMetrics.entities[workoutId]
+);

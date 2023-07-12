@@ -7,9 +7,9 @@ import {
 import { workoutTemplatesReducer } from "./slices/WorkoutTemplatesSlice";
 import { profileReducer } from "./slices/profileSlice";
 import {
-  metricsExerciseReducer,
+  exerciseMetricsReducer,
   metricsStateReducer,
-  metricsWorkoutReducer,
+  workoutMetricsReducer,
 } from "./slices/metricsSlice";
 
 export const store = configureStore({
@@ -19,8 +19,8 @@ export const store = configureStore({
     workout: workoutReducer,
     workoutTemplates: workoutTemplatesReducer,
     profile: profileReducer,
-    exerciseMetrics: metricsExerciseReducer,
-    workoutMetrics: metricsWorkoutReducer,
+    exerciseMetrics: exerciseMetricsReducer,
+    workoutMetrics: workoutMetricsReducer,
     metricsState: metricsStateReducer,
   },
 });

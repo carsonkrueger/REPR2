@@ -9,4 +9,6 @@ export type Profile = {
   isDarkMode: boolean;
   isPremium: boolean;
   session: Session | null;
+  initLoaded: boolean;
+  isIos: boolean;
 };

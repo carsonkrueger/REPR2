@@ -15,20 +15,23 @@ import {
 } from "../../redux/slices/workoutSlice";
 import { cleanNumStr } from "../../util/workoutUtils";
 import CustomColors from "../../util/customColors";
+import { Profile } from "../../types/profileType";
+import { selectProfile } from "../../redux/slices/profileSlice";
 
 interface props {
   setId: EntityId;
-  exerciseId: EntityId;
   relativeSetIndex: number;
 }
 
 export default function WorkoutSetComponent({
   setId,
-  exerciseId,
   relativeSetIndex,
 }: props) {
   const workoutSet: WorkoutSet = useSelector((state: RootState) =>
     selectSetById(state, setId)
+  );
+  const profile: Profile = useSelector((state: RootState) =>
+    selectProfile(state)
   );
   const dispatch = useDispatch<AppDispatch>();
 
@@ -85,7 +88,7 @@ export default function WorkoutSetComponent({
 
       <View style={tw`flex-${flexWidths.weight}`}>
         <TextInput
-          style={tw`mx-1 text-center h-7 ${
+          style={tw`mx-1 text-center h-8 ${
             workoutSet.isFinished
               ? "text-dark-finished-green"
               : "text-primary bg-back"
@@ -100,7 +103,7 @@ export default function WorkoutSetComponent({
               : CustomColors["light-gray"]
           }
           onChangeText={(weight) => onWeightChanged(weight)}
-          multiline={true}
+          multiline={profile.isIos ? false : true}
           numberOfLines={1}
         >
           {workoutSet.weight === 0 ? "" : workoutSet.weight}
@@ -109,7 +112,7 @@ export default function WorkoutSetComponent({
 
       <View style={tw`flex-${flexWidths.reps}`}>
         <TextInput
-          style={tw`mx-1 text-center rounded-md h-7 ${
+          style={tw`mx-1 text-center rounded-md h-8 ${
             workoutSet.isFinished
               ? "text-dark-finished-green"
               : "text-primary bg-back"
@@ -124,7 +127,7 @@ export default function WorkoutSetComponent({
               : CustomColors["light-gray"]
           }
           onChangeText={(reps) => onRepsChanged(reps)}
-          multiline={true}
+          multiline={profile.isIos ? false : true}
           numberOfLines={1}
         >
           {workoutSet.reps === 0 ? "" : workoutSet.reps}
@@ -136,7 +139,7 @@ export default function WorkoutSetComponent({
           <Ionicons
             name="checkbox"
             color={`${workoutSet.isFinished ? "#a2e8bb" : "#3b83f5"}`}
-            size={34}
+            size={38}
           />
         </TouchableOpacity>
       </View>

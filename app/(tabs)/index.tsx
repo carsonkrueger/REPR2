@@ -12,7 +12,12 @@ import * as Font from "expo-font";
 import { useCallback, useEffect, useState } from "react";
 import * as SpashScreen from "expo-splash-screen";
 
-import { getSession, selectProfile } from "../../src/redux/slices/profileSlice";
+import {
+  getPlatform,
+  getSession,
+  selectProfile,
+  setInitLoadedTrue,
+} from "../../src/redux/slices/profileSlice";
 import {
   initWorkoutTemplatesTable,
   sqlDeleteAllWorkoutAndExerciseHistoryRows,
@@ -28,8 +33,6 @@ import {
 import {
   addExerciseHistory,
   addWorkoutHistory,
-  selectNextExerciseHistoryId,
-  selectNextWorkoutHistoryId,
 } from "../../src/redux/slices/metricsSlice";
 import {
   parseExerciseHistoryTableRow,
@@ -48,14 +51,16 @@ export default function Home() {
 
   useEffect(() => {
     async function prepare() {
-      // sqlDeleteAllWorkoutAndExerciseHistoryRows();
       try {
+        if (profile.initLoaded) return;
         await Font.loadAsync({
           RobotoCondensed: require("../../assets/fonts/RobotoCondensed-Regular.ttf"),
         });
         await dispatch(getSession());
         initWorkoutTemplatesTable();
         loadMetricsData();
+        dispatch(setInitLoadedTrue());
+        dispatch(getPlatform());
       } catch (e) {
         console.warn(e);
       } finally {
@@ -85,14 +90,15 @@ export default function Home() {
             })
           );
           sqlSelectExerciseHistoryByWorkoutId(workout.workout_history_id).then(
-            (exerciseRows: exerciseHistoryTableRow[]) =>
+            (exerciseRows: exerciseHistoryTableRow[]) => {
               exerciseRows.map((exercise) =>
                 dispatch(
                   addExerciseHistory({
                     exercise: parseExerciseHistoryTableRow(exercise),
                   })
                 )
-              )
+              );
+            }
           );
         });
       }

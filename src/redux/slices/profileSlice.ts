@@ -1,4 +1,5 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { Platform } from "react-native";
 
 import { Profile } from "../../types/profileType";
 import { supabase } from "../../types/supabaseClient";
@@ -15,6 +16,8 @@ const initialSettings: Profile = {
   isPremium: false,
   isDarkMode: false,
   session: null,
+  initLoaded: false,
+  isIos: true,
 };
 
 export const getSession = createAsyncThunk("getSession", async () => {
@@ -48,6 +51,12 @@ export const profileSlice = createSlice({
       state.lastname = last_name;
       state.username = user_name;
     },
+    setInitLoadedTrue(state) {
+      state.initLoaded = true;
+    },
+    getPlatform(state) {
+      state.isIos = Platform.OS === "ios";
+    },
   },
   extraReducers(builder) {
     builder.addCase(getSession.fulfilled, (state, action) => {
@@ -75,6 +84,7 @@ export const profileSlice = createSlice({
 });
 
 export const profileReducer = profileSlice.reducer;
-export const { toggleDarkMode, setSession } = profileSlice.actions;
+export const { toggleDarkMode, setSession, setInitLoadedTrue, getPlatform } =
+  profileSlice.actions;
 
 export const selectProfile = (state: RootState) => state.profile;

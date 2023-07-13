@@ -8,6 +8,7 @@ import { RootState } from "../../redux/store";
 import { WorkoutState } from "../../types/workoutTypes";
 import tw from "../../util/tailwind";
 import { selectWorkout } from "../../redux/slices/workoutSlice";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Nav() {
   const curWorkout: WorkoutState = useSelector((state: RootState) =>
@@ -53,12 +54,10 @@ export default function Nav() {
   }
 
   return (
-    <View
-      style={tw`absolute flex-1 flex-row items-center bottom-0 right-0 left-0 mx-3 mb-4 px-1 py-2 bg-front rounded-full shadow-md z-50`}
+    <SafeAreaView
+      style={tw`absolute px-1 flex-1 flex-row items-center bottom-0 right-0 left-0 bg-front z-50`}
     >
-      <View
-        style={tw`absolute left-0 right-0 justify-center items-center pb-8`}
-      >
+      <View style={tw`absolute left-0 right-0 justify-center items-center `}>
         <View style={tw`bg-front rounded-full overflow-hidden`}>
           <TouchableOpacity
             style={tw`p-3 justify-center items-center bg-primary`}
@@ -116,6 +115,6 @@ export default function Nav() {
           size={27}
         />
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }

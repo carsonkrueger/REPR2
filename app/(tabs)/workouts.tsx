@@ -43,19 +43,17 @@ export default function Workouts() {
   }, []);
 
   return (
-    <View style={tw`flex-1 bg-back dark:bg-dark-back`}>
-      <SafeAreaView style={tw`z-10`}>
-        <View style={tw`py-2 bg-front shadow-sm`}>
-          <Text
-            style={[
-              tw`text-xl text-center text-primary`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
-          >
-            WORKOUTS
-          </Text>
-        </View>
-      </SafeAreaView>
+    <SafeAreaView style={tw`flex-1 bg-front dark:bg-dark-back`}>
+      <View style={tw`py-2 bg-front shadow-sm z-10`}>
+        <Text
+          style={[
+            tw`text-xl text-center text-primary`,
+            { fontFamily: "RobotoCondensed" },
+          ]}
+        >
+          WORKOUTS
+        </Text>
+      </View>
 
       <View style={tw`flex-1 px-2`}>
         {/* WORKOUT TEMPLATES */}
@@ -72,6 +70,6 @@ export default function Workouts() {
           ListFooterComponent={<View style={tw`mb-52`} />}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }

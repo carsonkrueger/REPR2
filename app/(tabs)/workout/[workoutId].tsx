@@ -191,7 +191,7 @@ export default function WorkoutScreen() {
   }
 
   return (
-    <SafeAreaView style={[tw`flex-1 bg-back z-0`, { elevation: 0 }]}>
+    <SafeAreaView style={[tw`flex-1 bg-front z-0`, { elevation: 0 }]}>
       {/* BACK ALERT */}
       {backPressed && (
         <MyAlert

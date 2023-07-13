@@ -66,8 +66,6 @@ const workoutMetricsSlice = createSlice({
 });
 
 const initialMetricsState: MetricsState = {
-  nextMetricsExerciseId: 0,
-  nextMetricsWorkoutId: 0,
   workoutIds: [],
 };
 
@@ -76,14 +74,12 @@ const metricsStateSlice = createSlice({
   initialState: initialMetricsState,
   reducers: {},
   extraReducers(builder) {
-    builder
-      .addCase(workoutMetricsSlice.actions.addWorkoutHistory, (state) => {
-        state.workoutIds.push(state.nextMetricsWorkoutId);
-        state.nextMetricsWorkoutId += 1;
-      })
-      .addCase(exerciseMetricsSlice.actions.addExerciseHistory, (state) => {
-        state.nextMetricsExerciseId += 1;
-      });
+    builder.addCase(
+      workoutMetricsSlice.actions.addWorkoutHistory,
+      (state, action) => {
+        state.workoutIds.push(action.payload.workout.workoutHistoryId);
+      }
+    );
   },
 });
 
@@ -107,12 +103,4 @@ export const selectExerciseMetricById = createSelector(
 export const selectWorkoutMetricById = createSelector(
   [selectWorkoutMetrics, (_, workoutId: EntityId) => workoutId],
   (workoutMetrics, workoutId) => workoutMetrics.entities[workoutId]
-);
-export const selectNextWorkoutHistoryId = createSelector(
-  selectMetricsState,
-  (metricsState) => metricsState.nextMetricsWorkoutId
-);
-export const selectNextExerciseHistoryId = createSelector(
-  selectMetricsState,
-  (metricsState) => metricsState.nextMetricsExerciseId
 );

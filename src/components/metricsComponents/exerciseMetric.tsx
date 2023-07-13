@@ -15,9 +15,16 @@ export function ExerciseMetric({ exerciseMetricId }: props) {
   );
 
   return (
-    <View style={tw``}>
-      <Text style={[tw``, { fontFamily: "RobotoCondensed" }]}>
+    <View style={tw`flex-row justify-between`}>
+      <Text
+        style={[tw`text-light-gray text-xs`, { fontFamily: "RobotoCondensed" }]}
+      >
         {exerciseMetric?.numSets} x {exerciseMetric?.exerciseName}
+      </Text>
+      <Text
+        style={[tw`text-light-gray text-xs`, { fontFamily: "RobotoCondensed" }]}
+      >
+        {exerciseMetric?.bestWeight} x {exerciseMetric?.bestReps}
       </Text>
     </View>
   );

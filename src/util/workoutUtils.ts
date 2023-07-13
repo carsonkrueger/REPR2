@@ -12,7 +12,7 @@ import {
 import { getCurDate } from "./dates";
 
 export function cleanNumStr(text: string) {
-  return text.replace(/[^0-9]/g, "");
+  return text.replace(/[^0-9-]/g, "");
 }
 
 export function templateFromCurrentWorkout(

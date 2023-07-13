@@ -1,8 +1,6 @@
 import { EntityId } from "@reduxjs/toolkit";
 
 export interface MetricsState {
-  nextMetricsWorkoutId: number;
-  nextMetricsExerciseId: number;
   workoutIds: EntityId[];
 }
 

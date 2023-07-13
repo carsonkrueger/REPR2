@@ -42,37 +42,43 @@ export default function WorkoutTemplateComponent({ templateId }: props) {
   };
 
   return (
-    <View style={tw`mt-3 mx-1 max-h-32 min-h-24`}>
+    <View
+      style={tw`mt-3 mx-2 px-4 max-h-32 min-h-24 rounded-lg bg-front shadow-sm`}
+    >
       {/* TEMPLATE CONTAINER */}
-      <View style={tw`flex-1 bg-front shadow-sm rounded-md overflow-hidden`}>
+      <View style={tw`flex-1 py-3 rounded-md overflow-hidden`}>
         <TouchableOpacity
           style={tw`flex-row flex-1 `}
           onPress={onTemplatePress}
         >
           {/* LEFT SIDE */}
-          <View style={tw`flex-9 py-2 pl-3 flex-col justify-evenly`}>
-            <Text style={tw`text-lg text-primary`}>{template.workoutName}</Text>
-            <Text
-              style={[
-                tw`text-xs text-light-gray -mb-2`,
-                { fontFamily: "RobotoCondensed" },
-              ]}
-            >
-              Last Performed:
+          <View style={tw`flex-9 flex-col justify-evenly`}>
+            <Text style={tw`text-lg text-dark-gray`}>
+              {template.workoutName}
             </Text>
-            <Text
-              style={[
-                tw`text-xs text-light-gray`,
-                { fontFamily: "RobotoCondensed" },
-              ]}
-            >
-              {convertDateToHuman(template.lastPerfromed)}
-            </Text>
+            <View>
+              <Text
+                style={[
+                  tw`text-xs text-light-gray`,
+                  { fontFamily: "RobotoCondensed" },
+                ]}
+              >
+                Last Performed:
+              </Text>
+              <Text
+                style={[
+                  tw`text-xs text-light-gray`,
+                  { fontFamily: "RobotoCondensed" },
+                ]}
+              >
+                {convertDateToHuman(template.lastPerfromed)}
+              </Text>
+            </View>
           </View>
           {/* RIGHT SIDE */}
-          <View style={tw`flex-10 py-2 pr-5 flex-col justify-start items-end`}>
+          <View style={tw`flex-10 flex-col justify-center items-end`}>
             {template.exerciseNames.map((name, idx) =>
-              name === "" || idx >= 5 ? null : (
+              name === "" ? null : (
                 <Text
                   style={[
                     tw`text-light-gray text-xs`,

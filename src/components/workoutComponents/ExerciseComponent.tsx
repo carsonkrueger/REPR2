@@ -28,6 +28,8 @@ import {
 } from "../../redux/slices/workoutSlice";
 import Clock from "./ClockComponent";
 import CustomColors from "../../util/customColors";
+import { Profile } from "../../types/profileType";
+import { selectProfile } from "../../redux/slices/profileSlice";
 
 interface props {
   exerciseId: EntityId;
@@ -42,6 +44,9 @@ export default function ExerciseComponent({ exerciseId }: props) {
   );
   const exercise: Exercise = useSelector((state: RootState) =>
     selectExerciseById(state, exerciseId)
+  );
+  const profile: Profile = useSelector((state: RootState) =>
+    selectProfile(state)
   );
 
   const toggleIsSelected = () => {
@@ -75,7 +80,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
   };
 
   return (
-    <View style={tw`py-3 mt-4 mx-2 bg-front rounded-lg shadow-sm`}>
+    <View style={tw`py-3 mt-4 mx-2 bg-front`}>
       {/* HEADER */}
       <View
         style={tw`mx-2 mb-1 flex-row justify-between items-center ${
@@ -85,7 +90,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
         {/* EXERCISE NAME */}
         <TextInput
           style={[
-            tw`flex-1 mr-2 text-base text-primary rounded-md px-1 max-h-12 h-9 ${
+            tw`flex-1 mr-2 text-base text-primary self-center rounded-md px-1 max-h-13 min-h-9 ${
               isLocked ? "" : "bg-back"
             }`,
             { fontFamily: "RobotoCondensed" },
@@ -96,8 +101,9 @@ export default function ExerciseComponent({ exerciseId }: props) {
             dispatch(setExerciseName({ id: exerciseId, name: newName }))
           }
           editable={!isLocked}
-          multiline={true}
-          numberOfLines={2}
+          multiline={profile.isIos ? false : true}
+          numberOfLines={1}
+          maxLength={60}
         >
           {exercise?.name}
         </TextInput>
@@ -155,7 +161,6 @@ export default function ExerciseComponent({ exerciseId }: props) {
         <WorkoutSetComponent
           key={"set" + id}
           setId={id}
-          exerciseId={exerciseId}
           relativeSetIndex={idx}
         />
       ))}

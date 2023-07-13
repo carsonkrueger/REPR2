@@ -4,6 +4,6 @@ const flexWidths = {
   curVol: "3",
   weight: "3",
   reps: "3",
-  check: "1.4",
+  check: "1.6",
 };
 export default flexWidths;

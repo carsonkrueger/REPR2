@@ -8,6 +8,7 @@ import { selectMetricsState } from "../../src/redux/slices/metricsSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../src/redux/store";
 import { WorkoutMetric } from "../../src/components/metricsComponents/workoutMetric";
+import { useEffect } from "react";
 
 export default function Metrics() {
   const metricsState = useSelector((state: RootState) =>
@@ -30,11 +31,11 @@ export default function Metrics() {
       <View>
         <Text
           style={[
-            tw`text-lg text-dark-gray pl-5 pt-5`,
+            tw`text-lg text-primary text-primary pl-5 pt-5`,
             { fontFamily: "RobotoCondensed" },
           ]}
         >
-          MY WORKOUT HISTORY
+          WORKOUT HISTORY
         </Text>
         <FlashList
           estimatedItemSize={200}

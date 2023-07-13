@@ -7,7 +7,7 @@ import CustomColors from "../../src/util/customColors";
 
 export default function Search() {
   return (
-    <SafeAreaView style={tw`flex-1 bg-back`}>
+    <SafeAreaView style={tw`flex-1 bg-front`}>
       <View
         style={tw`flex-row items-center justify-between py-2 px-3 bg-front shadow-md`}
       >

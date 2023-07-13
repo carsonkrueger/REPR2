@@ -1,6 +1,11 @@
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../src/redux/store";
-import { View, Text } from "react-native";
+import {
+  View,
+  Text,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+} from "react-native";
 import tw from "../../src/util/tailwind";
 import { FlashList } from "@shopify/flash-list";
 
@@ -8,7 +13,7 @@ import WorkoutTemplateComponent from "../../src/components/workoutComponents/Wor
 import { WorkoutTemplate } from "../../src/types/workoutTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponents/WorkoutTemplateHeaderComponent";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   sqlDeleteAllWorkoutRows,
   sqlPrintExerciseHistory,
@@ -24,6 +29,8 @@ export default function Workouts() {
     (state: RootState) => state.workoutTemplates
   );
   const dispatch: AppDispatch = useDispatch();
+
+  const [distanceFromTop, setDistanceFromTop] = useState(0);
 
   useEffect(() => {
     // sqlPrintWorkoutHistoryByDateDESC();
@@ -42,9 +49,19 @@ export default function Workouts() {
         });
   }, []);
 
+  function onSetDistanceFromTop(
+    event: NativeSyntheticEvent<NativeScrollEvent>
+  ) {
+    setDistanceFromTop(event.nativeEvent.contentOffset.y);
+  }
+
   return (
-    <SafeAreaView style={tw`flex-1 bg-front dark:bg-dark-back`}>
-      <View style={tw`py-2 bg-front shadow-sm z-10`}>
+    <SafeAreaView style={tw`flex-1 bg-front `}>
+      <View
+        style={tw`py-2 bg-front z-10 ${
+          distanceFromTop <= 18 ? "" : "shadow-md"
+        }`}
+      >
         <Text
           style={[
             tw`text-xl text-center text-primary`,
@@ -66,6 +83,7 @@ export default function Workouts() {
               templateId={item.workoutId}
             />
           )}
+          onScroll={onSetDistanceFromTop}
           estimatedItemSize={110}
           ListFooterComponent={<View style={tw`mb-52`} />}
         />

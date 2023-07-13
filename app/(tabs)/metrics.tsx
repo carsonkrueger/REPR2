@@ -16,7 +16,7 @@ export default function Metrics() {
   );
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-back`}>
+    <SafeAreaView style={tw`flex-1 bg-front`}>
       {/* <View style={tw`py-2 bg-front shadow-md`}>
         <Text
           style={[
@@ -31,7 +31,7 @@ export default function Metrics() {
       <View>
         <Text
           style={[
-            tw`text-lg text-primary text-primary pl-5 pt-5`,
+            tw`text-lg text-primary pl-5 pt-5`,
             { fontFamily: "RobotoCondensed" },
           ]}
         >

@@ -20,7 +20,6 @@ import {
 } from "../../src/redux/slices/profileSlice";
 import {
   initWorkoutTemplatesTable,
-  sqlDeleteAllWorkoutAndExerciseHistoryRows,
   sqlSelectAllWorkoutHistoryByDateDESC,
   sqlSelectExerciseHistoryByWorkoutId,
 } from "../../src/sqlite/queries";
@@ -32,7 +31,7 @@ import {
 } from "../../src/types/localDBTables";
 import {
   addExerciseHistory,
-  addWorkoutHistory,
+  addWorkoutHistoryToBack,
 } from "../../src/redux/slices/metricsSlice";
 import {
   parseExerciseHistoryTableRow,
@@ -85,7 +84,7 @@ export default function Home() {
       (workoutHistories: workoutHistoryTableRow[]) => {
         workoutHistories.map((workout) => {
           dispatch(
-            addWorkoutHistory({
+            addWorkoutHistoryToBack({
               workout: parseWorkoutHistoryTableRow(workout),
             })
           );
@@ -108,7 +107,7 @@ export default function Home() {
   if (!appIsReady) return null;
 
   return (
-    <SafeAreaView style={tw`flex-1 bg-back `} onLayout={onLayoutRootView}>
+    <SafeAreaView style={tw`flex-1 bg-front `} onLayout={onLayoutRootView}>
       <View style={tw`flex-row px-3 py-2 bg-front shadow-md justify-between`}>
         <Text
           style={[tw`text-xl text-primary`, { fontFamily: "RobotoCondensed" }]}

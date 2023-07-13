@@ -80,17 +80,17 @@ export default function ExerciseComponent({ exerciseId }: props) {
   };
 
   return (
-    <View style={tw`py-3 mt-4 mx-2 bg-front`}>
+    <View style={tw`py-3 mt-4 bg-front`}>
       {/* HEADER */}
       <View
-        style={tw`mx-2 mb-1 flex-row justify-between items-center ${
+        style={tw`mx-3 mb-1 flex-row justify-between items-center ${
           isLocked ? "" : "mr-9"
         }`}
       >
         {/* EXERCISE NAME */}
         <TextInput
           style={[
-            tw`flex-1 mr-2 text-base text-primary self-center rounded-md px-1 max-h-13 min-h-9 ${
+            tw`flex-1 mr-2 text-base text-lg text-primary self-center rounded-md px-1 max-h-13 min-h-9 ${
               isLocked ? "" : "bg-back"
             }`,
             { fontFamily: "RobotoCondensed" },
@@ -174,7 +174,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
             </TouchableWithoutFeedback>
           )}
           <View
-            style={tw`absolute top-4 right-1 h-8 w-6 mx-1 justify-center items-center z-50`}
+            style={tw`absolute top-[0.85rem] right-1 h-8 w-6 mx-1 justify-center items-center z-50`}
           >
             <TouchableOpacity onPress={toggleIsSelected}>
               <Feather

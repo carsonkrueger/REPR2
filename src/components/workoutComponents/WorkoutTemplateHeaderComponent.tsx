@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { Feather } from "@expo/vector-icons";
 import tw from "../../util/tailwind";
 import { useRouter } from "expo-router";
 
@@ -20,11 +20,8 @@ const WorkoutTemplateHeaderComponent = () => {
       >
         MY TEMPLATES
       </Text>
-      <TouchableOpacity
-        // style={tw`shadow-sm justify-center items-center h-8 w-8 bg-primary rounded-full`}
-        onPress={onCreateWorkout}
-      >
-        <Ionicons name="add" color={CustomColors.primary} size={28} />
+      <TouchableOpacity style={tw`p-1`} onPress={onCreateWorkout}>
+        <Feather name="plus" size={28} color={CustomColors.primary} />
       </TouchableOpacity>
     </View>
   );

@@ -63,38 +63,54 @@ export default function WorkoutSetComponent({
       ]}
     >
       <Text
-        style={tw`flex-${flexWidths.set} text-center ${
-          workoutSet.isFinished ? "text-dark-finished-green" : "text-primary"
-        }`}
+        style={[
+          tw`flex-${flexWidths.set} text-center text-lg ${
+            workoutSet.isFinished ? "text-dark-finished-green" : "text-primary"
+          }`,
+          { fontFamily: "" },
+        ]}
       >
         {relativeSetIndex + 1}
       </Text>
 
       <Text
-        style={tw`flex-${flexWidths.prevVol} text-center ${
-          workoutSet.isFinished ? "text-dark-finished-green" : "text-dark-gray"
-        }`}
+        style={[
+          tw`flex-${flexWidths.prevVol} text-center text-lg ${
+            workoutSet.isFinished
+              ? "text-dark-finished-green"
+              : "text-dark-gray"
+          }`,
+          { fontFamily: "" },
+        ]}
       >
         {workoutSet.prevWeight * workoutSet.prevReps}
       </Text>
 
       <Text
-        style={tw`flex-${flexWidths.curVol} text-center ${
-          workoutSet.isFinished ? "text-dark-finished-green" : "text-dark-gray"
-        }`}
+        style={[
+          tw`flex-${flexWidths.curVol} text-center text-lg ${
+            workoutSet.isFinished
+              ? "text-dark-finished-green"
+              : "text-dark-gray"
+          }`,
+          { fontFamily: "" },
+        ]}
       >
         {workoutSet.weight * workoutSet.reps}
       </Text>
 
       <View style={tw`flex-${flexWidths.weight}`}>
         <TextInput
-          style={tw`mx-1 text-center h-8 ${
-            workoutSet.isFinished
-              ? "text-dark-finished-green"
-              : "text-primary bg-back"
-          }  rounded-md`}
+          style={[
+            tw`mx-1 text-center text-lg h-8 ${
+              workoutSet.isFinished
+                ? "text-dark-finished-green"
+                : "text-primary bg-back"
+            }  rounded-md`,
+            { fontFamily: "" },
+          ]}
           keyboardType="number-pad"
-          maxLength={4}
+          maxLength={3}
           editable={!workoutSet.isFinished}
           placeholder={workoutSet.prevWeight.toString()}
           placeholderTextColor={
@@ -112,13 +128,16 @@ export default function WorkoutSetComponent({
 
       <View style={tw`flex-${flexWidths.reps}`}>
         <TextInput
-          style={tw`mx-1 text-center rounded-md h-8 ${
-            workoutSet.isFinished
-              ? "text-dark-finished-green"
-              : "text-primary bg-back"
-          } `}
+          style={[
+            tw`mx-1 text-center text-lg rounded-md h-8 ${
+              workoutSet.isFinished
+                ? "text-dark-finished-green"
+                : "text-primary bg-back"
+            } `,
+            { fontFamily: "" },
+          ]}
           keyboardType="number-pad"
-          maxLength={4}
+          maxLength={3}
           editable={!workoutSet.isFinished}
           placeholder={workoutSet.prevReps.toString()}
           placeholderTextColor={

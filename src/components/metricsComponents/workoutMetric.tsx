@@ -19,7 +19,7 @@ export function WorkoutMetric({ workoutMetricId }: props) {
 
   return (
     <View
-      style={tw`bg-front shadow-md rounded-xl p-2 my-4 mx-2 min-h-36 max-h-44 w-65`}
+      style={tw`bg-front shadow-md rounded-xl p-2 my-4 mx-2 min-h-40 max-h-52 w-65`}
     >
       <View style={tw`flex-row justify-between items-center`}>
         <Text
@@ -27,12 +27,7 @@ export function WorkoutMetric({ workoutMetricId }: props) {
         >
           {workoutMetric?.workoutName}
         </Text>
-        <Text
-          style={[
-            tw`text-md text-light-gray`,
-            { fontFamily: "RobotoCondensed" },
-          ]}
-        >
+        <Text style={[tw`text-light-gray`, { fontFamily: "RobotoCondensed" }]}>
           {convertDateToHuman(workoutMetric!.performed)}
         </Text>
       </View>
@@ -40,21 +35,11 @@ export function WorkoutMetric({ workoutMetricId }: props) {
       <View style={tw`border-b-[1px] border-gray-200 my-1`} />
 
       <View style={tw`flex-row justify-between`}>
-        <Text
-          style={[
-            tw`text-md text-dark-gray`,
-            { fontFamily: "RobotoCondensed" },
-          ]}
-        >
+        <Text style={[tw`text-dark-gray`, { fontFamily: "RobotoCondensed" }]}>
           Exercise
         </Text>
 
-        <Text
-          style={[
-            tw`text-md text-dark-gray`,
-            { fontFamily: "RobotoCondensed" },
-          ]}
-        >
+        <Text style={[tw`text-dark-gray`, { fontFamily: "RobotoCondensed" }]}>
           Best Set
         </Text>
       </View>

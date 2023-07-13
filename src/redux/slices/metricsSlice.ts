@@ -39,7 +39,13 @@ const workoutMetricsSlice = createSlice({
   name: "workoutMetrics",
   initialState: workoutMetricsAdapter.getInitialState(),
   reducers: {
-    addWorkoutHistory(
+    addWorkoutHistoryToFront(
+      state,
+      action: PayloadAction<{ workout: WorkoutMetric }>
+    ) {
+      workoutMetricsAdapter.addOne(state, action.payload.workout);
+    },
+    addWorkoutHistoryToBack(
       state,
       action: PayloadAction<{ workout: WorkoutMetric }>
     ) {
@@ -74,12 +80,19 @@ const metricsStateSlice = createSlice({
   initialState: initialMetricsState,
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(
-      workoutMetricsSlice.actions.addWorkoutHistory,
-      (state, action) => {
-        state.workoutIds.push(action.payload.workout.workoutHistoryId);
-      }
-    );
+    builder
+      .addCase(
+        workoutMetricsSlice.actions.addWorkoutHistoryToFront,
+        (state, action) => {
+          state.workoutIds.unshift(action.payload.workout.workoutHistoryId);
+        }
+      )
+      .addCase(
+        workoutMetricsSlice.actions.addWorkoutHistoryToBack,
+        (state, action) => {
+          state.workoutIds.push(action.payload.workout.workoutHistoryId);
+        }
+      );
   },
 });
 
@@ -87,7 +100,8 @@ export const exerciseMetricsReducer = exerciseMetricsSlice.reducer;
 export const { addExerciseHistory } = exerciseMetricsSlice.actions;
 
 export const workoutMetricsReducer = workoutMetricsSlice.reducer;
-export const { addWorkoutHistory } = workoutMetricsSlice.actions;
+export const { addWorkoutHistoryToFront, addWorkoutHistoryToBack } =
+  workoutMetricsSlice.actions;
 
 export const metricsStateReducer = metricsStateSlice.reducer;
 

@@ -6,6 +6,8 @@ import {
   TextInput,
   BackHandler,
   TouchableOpacity,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -13,7 +15,7 @@ import { Ionicons, Entypo } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 
 import ExerciseComponent from "../../../src/components/workoutComponents/ExerciseComponent";
-import { Exercise, WorkoutState } from "../../../src/types/workoutTypes";
+import { WorkoutState } from "../../../src/types/workoutTypes";
 import { RootState, AppDispatch } from "../../../src/redux/store";
 import {
   addExercise,
@@ -45,7 +47,7 @@ import { templateFromCurrentWorkout } from "../../../src/util/workoutUtils";
 import { EntityId } from "@reduxjs/toolkit";
 import {
   addExerciseHistory,
-  addWorkoutHistory,
+  addWorkoutHistoryToFront,
 } from "../../../src/redux/slices/metricsSlice";
 import { ExerciseMetric, WorkoutMetric } from "../../../src/types/metricsTypes";
 
@@ -62,6 +64,7 @@ export default function WorkoutScreen() {
 
   const [backPressed, setBackPressed] = useState(false);
   const [finishPressed, setFinishedPressed] = useState(false);
+  const [distanceFromTop, setDistanceFromTop] = useState(0);
 
   useEffect(() => {
     if (!workout.inProgress) {
@@ -147,7 +150,7 @@ export default function WorkoutScreen() {
 
   function insertHistory() {
     sqlInsertWorkoutHistory(workout).then((workoutMetric: WorkoutMetric) => {
-      dispatch(addWorkoutHistory({ workout: workoutMetric }));
+      dispatch(addWorkoutHistoryToFront({ workout: workoutMetric }));
       // insert workout history, then insert every exercise histroy
       for (let i = 0; i < exercises.ids.length; i++) {
         const exerciseId = exercises.ids[i];
@@ -190,8 +193,14 @@ export default function WorkoutScreen() {
     return { weight: bestWeight, reps: bestReps };
   }
 
+  function onSetDistanceFromTop(
+    event: NativeSyntheticEvent<NativeScrollEvent>
+  ) {
+    setDistanceFromTop(event.nativeEvent.contentOffset.y);
+  }
+
   return (
-    <SafeAreaView style={[tw`flex-1 bg-front z-0`, { elevation: 0 }]}>
+    <SafeAreaView style={tw`flex-1 bg-front z-0`}>
       {/* BACK ALERT */}
       {backPressed && (
         <MyAlert
@@ -206,7 +215,9 @@ export default function WorkoutScreen() {
 
       {/* HEADER */}
       <View
-        style={tw`flex-row justify-center items-center px-2 py-3 bg-front shadow-sm z-10`}
+        style={tw`flex-row justify-center items-center px-2 py-3 bg-front z-10 ${
+          distanceFromTop <= 18 ? "" : "shadow-md"
+        }`}
       >
         <TouchableOpacity onPress={backPress}>
           <Ionicons name="md-chevron-back" color={"#3b83f5"} size={30} />
@@ -239,12 +250,11 @@ export default function WorkoutScreen() {
       {/* EXERCISE COMPONENTS */}
       <FlashList
         data={exercises.ids}
-        // removeClippedSubviews={false}
-        // CellRendererComponent={({ children }) => children}
         renderItem={({ item }) => (
           <ExerciseComponent key={"exercise" + item} exerciseId={item} />
         )}
         estimatedItemSize={220}
+        onScroll={onSetDistanceFromTop}
         ListFooterComponent={
           // ADD EXERCISE BUTTON
           <View style={tw`mt-4 mb-[70%] items-center`}>

@@ -8,7 +8,7 @@ import { RootState } from "../../redux/store";
 import { WorkoutState } from "../../types/workoutTypes";
 import tw from "../../util/tailwind";
 import { selectWorkout } from "../../redux/slices/workoutSlice";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native";
 
 export default function Nav() {
   const curWorkout: WorkoutState = useSelector((state: RootState) =>
@@ -55,9 +55,11 @@ export default function Nav() {
 
   return (
     <SafeAreaView
-      style={tw`absolute px-1 flex-1 flex-row items-center bottom-0 right-0 left-0 bg-front z-50`}
+      style={tw`absolute px-1 flex-row items-center bottom-0 right-0 left-0 bg-back z-50 py-2`}
     >
-      <View style={tw`absolute left-0 right-0 justify-center items-center `}>
+      <View
+        style={tw`absolute left-0 right-0 justify-center items-center pb-5`}
+      >
         <View style={tw`bg-front rounded-full overflow-hidden`}>
           <TouchableOpacity
             style={tw`p-3 justify-center items-center bg-primary`}
@@ -71,7 +73,7 @@ export default function Nav() {
       </View>
 
       <TouchableOpacity
-        style={tw`flex-1 flex-col justify-end items-center pb-1`}
+        style={tw`flex-1 justify-center items-center pb-1`}
         onPress={navigateHome}
       >
         <Ionicons
@@ -82,7 +84,7 @@ export default function Nav() {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={tw`flex-1 flex-col justify-end items-center pb-1`}
+        style={tw`flex-1 justify-center items-center pb-1`}
         onPress={navigateSearch}
       >
         <Ionicons
@@ -95,7 +97,7 @@ export default function Nav() {
       <View style={tw`flex-0.8`}></View>
 
       <TouchableOpacity
-        style={tw`flex-1 flex-col justify-end items-center pb-1`}
+        style={tw`flex-1 justify-center items-center pb-1`}
         onPress={navigateMetrics}
       >
         <Ionicons
@@ -106,7 +108,7 @@ export default function Nav() {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={tw`flex-1 flex-col justify-end items-center pb-1`}
+        style={tw`flex-1 justify-center items-center pb-1`}
         onPress={navigateProfile}
       >
         <Ionicons

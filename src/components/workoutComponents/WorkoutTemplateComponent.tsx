@@ -76,7 +76,7 @@ export default function WorkoutTemplateComponent({ templateId }: props) {
             </View>
           </View>
           {/* RIGHT SIDE */}
-          <View style={tw`flex-10 flex-col justify-center items-end`}>
+          <View style={tw`flex-10 flex-col py-2 justify-center items-end`}>
             {template.exerciseNames.map((name, idx) =>
               name === "" ? null : (
                 <Text

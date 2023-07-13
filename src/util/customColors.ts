@@ -19,6 +19,7 @@ const CustomColors = {
   "extra-dark-green": "#a2e8bb",
   "dark-finished-green": "#95b89d",
   danger: "#ff5c5c",
+  gold: "#e0ac1b",
 };
 
 export default CustomColors;

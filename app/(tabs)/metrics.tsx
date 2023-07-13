@@ -38,7 +38,7 @@ export default function Metrics() {
           WORKOUT HISTORY
         </Text>
         <FlashList
-          estimatedItemSize={200}
+          estimatedItemSize={250}
           data={metricsState.workoutIds}
           renderItem={({ item }) => (
             <WorkoutMetric

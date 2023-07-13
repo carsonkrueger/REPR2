@@ -80,7 +80,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
   };
 
   return (
-    <View style={tw`py-3 mt-4 bg-front`}>
+    <View style={tw`py-3 mx-1 mt-4 bg-front`}>
       {/* HEADER */}
       <View
         style={tw`mx-3 mb-1 flex-row justify-between items-center ${

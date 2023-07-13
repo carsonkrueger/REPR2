@@ -30,7 +30,7 @@ const MyAlert = ({
       >
         <TouchableWithoutFeedback>
           <View
-            style={tw`rounded-lg justify-around bg-front px-4 py-5 max-h-64 max-w-128 h-[25%] w-[85%]`}
+            style={tw`rounded-lg justify-around bg-front px-4 py-5 max-h-64 max-w-128 h-[25%] w-[85%] shadow-2xl`}
           >
             <Text
               style={[

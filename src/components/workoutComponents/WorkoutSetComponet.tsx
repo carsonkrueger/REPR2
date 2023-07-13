@@ -64,10 +64,10 @@ export default function WorkoutSetComponent({
     >
       <Text
         style={[
-          tw`flex-${flexWidths.set} text-center text-lg ${
+          tw`flex-${flexWidths.set} text-center text-base ${
             workoutSet.isFinished ? "text-dark-finished-green" : "text-primary"
           }`,
-          { fontFamily: "" },
+          { fontFamily: "RobotoCondensed" },
         ]}
       >
         {relativeSetIndex + 1}
@@ -75,12 +75,12 @@ export default function WorkoutSetComponent({
 
       <Text
         style={[
-          tw`flex-${flexWidths.prevVol} text-center text-lg ${
+          tw`flex-${flexWidths.prevVol} text-center text-base ${
             workoutSet.isFinished
               ? "text-dark-finished-green"
               : "text-dark-gray"
           }`,
-          { fontFamily: "" },
+          { fontFamily: "RobotoCondensed" },
         ]}
       >
         {workoutSet.prevWeight * workoutSet.prevReps}
@@ -88,12 +88,12 @@ export default function WorkoutSetComponent({
 
       <Text
         style={[
-          tw`flex-${flexWidths.curVol} text-center text-lg ${
+          tw`flex-${flexWidths.curVol} text-center text-base ${
             workoutSet.isFinished
               ? "text-dark-finished-green"
               : "text-dark-gray"
           }`,
-          { fontFamily: "" },
+          { fontFamily: "RobotoCondensed" },
         ]}
       >
         {workoutSet.weight * workoutSet.reps}
@@ -102,12 +102,12 @@ export default function WorkoutSetComponent({
       <View style={tw`flex-${flexWidths.weight}`}>
         <TextInput
           style={[
-            tw`mx-1 text-center text-lg h-8 ${
+            tw`mx-1 text-center text-base h-8 ${
               workoutSet.isFinished
                 ? "text-dark-finished-green"
                 : "text-primary bg-back"
             }  rounded-md`,
-            { fontFamily: "" },
+            { fontFamily: "RobotoCondensed" },
           ]}
           keyboardType="number-pad"
           maxLength={3}
@@ -129,12 +129,12 @@ export default function WorkoutSetComponent({
       <View style={tw`flex-${flexWidths.reps}`}>
         <TextInput
           style={[
-            tw`mx-1 text-center text-lg rounded-md h-8 ${
+            tw`mx-1 text-center text-base rounded-md h-8 ${
               workoutSet.isFinished
                 ? "text-dark-finished-green"
                 : "text-primary bg-back"
             } `,
-            { fontFamily: "" },
+            { fontFamily: "RobotoCondensed" },
           ]}
           keyboardType="number-pad"
           maxLength={3}

@@ -48,9 +48,9 @@ const thDate = (date: string) => {
   }
 };
 
-export const convertDateToHuman = (date: string) => {
+export const convertDateToHuman = (date: string, withYear: boolean = true) => {
   const [year, month, day] = date.split("-");
   return `${monthNames[month as keyof typeof monthNames]} ${
     Number(day) + thDate(day)
-  }, ${year}`;
+  }${withYear ? `, ${year}` : ""}`;
 };

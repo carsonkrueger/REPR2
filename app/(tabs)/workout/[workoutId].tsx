@@ -160,7 +160,8 @@ export default function WorkoutScreen() {
           exercises.entities[exerciseId]!,
           Number(workoutMetric.workoutHistoryId),
           weight,
-          reps
+          reps,
+          calcExerciseTotalVolume(exerciseId)
         ).then((exerciseMetric: ExerciseMetric) => {
           dispatch(
             addExerciseHistory({
@@ -191,6 +192,16 @@ export default function WorkoutScreen() {
     }
 
     return { weight: bestWeight, reps: bestReps };
+  }
+
+  function calcExerciseTotalVolume(exerciseId: EntityId): number {
+    let totalVolume = 0;
+    exercises.entities[exerciseId]?.Sets.map(
+      (setId) =>
+        (totalVolume +=
+          sets.entities[setId]!.weight * sets.entities[setId]!.reps)
+    );
+    return totalVolume;
   }
 
   function onSetDistanceFromTop(

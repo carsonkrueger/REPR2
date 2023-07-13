@@ -39,4 +39,5 @@ export interface exerciseHistoryTableRow {
   num_sets: number;
   best_weight: number;
   best_reps: number;
+  total_volume: number;
 }

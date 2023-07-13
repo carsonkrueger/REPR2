@@ -8,7 +8,6 @@ import { selectMetricsState } from "../../src/redux/slices/metricsSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../src/redux/store";
 import { WorkoutMetric } from "../../src/components/metricsComponents/workoutMetric";
-import { useEffect } from "react";
 
 export default function Metrics() {
   const metricsState = useSelector((state: RootState) =>
@@ -17,17 +16,18 @@ export default function Metrics() {
 
   return (
     <SafeAreaView style={tw`flex-1 bg-front`}>
-      {/* <View style={tw`py-2 bg-front shadow-md`}>
+      {/* HEADER */}
+      <View style={tw`py-2 bg-front shadow-md`}>
         <Text
           style={[
             tw`text-xl text-center text-primary`,
             { fontFamily: "RobotoCondensed" },
           ]}
         >
-          METRICS
+          HISTORY
         </Text>
-      </View> */}
-
+      </View>
+      {/* WORKOUT HISTORY */}
       <View>
         <Text
           style={[
@@ -35,7 +35,7 @@ export default function Metrics() {
             { fontFamily: "RobotoCondensed" },
           ]}
         >
-          WORKOUT HISTORY
+          WORKOUTS
         </Text>
         <FlashList
           estimatedItemSize={250}
@@ -59,6 +59,17 @@ export default function Metrics() {
             </Text>
           }
         />
+      </View>
+      {/* EXERCISE HISTORY */}
+      <View style={tw`flex-row`}>
+        <Text
+          style={[
+            tw`text-lg text-primary pl-5 pt-3`,
+            { fontFamily: "RobotoCondensed" },
+          ]}
+        >
+          EXERCISES
+        </Text>
       </View>
     </SafeAreaView>
   );

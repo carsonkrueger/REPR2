@@ -52,7 +52,7 @@ export const initWorkoutTemplatesTable = async () => {
 
   db.transaction((tx) =>
     tx.executeSql(
-      "CREATE TABLE IF NOT EXISTS exercise_history (exercise_history_id INTEGER PRIMARY KEY AUTOINCREMENT, workout_history_id INTEGER, exercise_name STRING, num_sets INTEGER, best_weight INTEGER, best_reps INTEGER);",
+      "CREATE TABLE IF NOT EXISTS exercise_history (exercise_history_id INTEGER PRIMARY KEY AUTOINCREMENT, workout_history_id INTEGER, exercise_name STRING, num_sets INTEGER, best_weight INTEGER, best_reps INTEGER, total_volume INTEGER);",
       undefined,
       undefined,
       (_, error) => {
@@ -219,18 +219,20 @@ export const sqlInsertExerciseHistory = async (
   exercise: Exercise,
   workoutHistoryId: number,
   bestWeight: number,
-  bestReps: number
+  bestReps: number,
+  totalVolume: number
 ) => {
   return new Promise<ExerciseMetric>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
-        "INSERT INTO exercise_history (workout_history_id, exercise_name, num_sets, best_weight, best_reps) VALUES (?, ?, ?, ?, ?);",
+        "INSERT INTO exercise_history (workout_history_id, exercise_name, num_sets, best_weight, best_reps, total_volume) VALUES (?, ?, ?, ?, ?, ?);",
         [
           workoutHistoryId,
           exercise.name,
           exercise.Sets.length,
           bestWeight,
           bestReps,
+          totalVolume,
         ],
         (_, res) =>
           resolve({
@@ -304,7 +306,7 @@ export const sqlSelectExerciseHistoryByWorkoutId = async (
   return new Promise<exerciseHistoryTableRow[]>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
-        "SELECT exercise_history_id, workout_history_id, exercise_name, num_sets, best_weight, best_reps FROM exercise_history WHERE workout_history_id = ?;",
+        "SELECT exercise_history_id, workout_history_id, exercise_name, num_sets, best_weight, best_reps, total_volume FROM exercise_history WHERE workout_history_id = ?;",
         [workoutHistoryId],
         (_, result) => {
           resolve(result.rows._array as exerciseHistoryTableRow[]);
@@ -325,5 +327,11 @@ export const sqlDeleteAllWorkoutAndExerciseHistoryRows = () => {
   });
   db.transaction((tx) => {
     tx.executeSql("DELETE FROM exercise_history;");
+  });
+};
+
+export const sqlDropExercisesTable = () => {
+  db.transaction((tx) => {
+    tx.executeSql("DROP TABLE exercises;");
   });
 };

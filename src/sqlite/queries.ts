@@ -3,6 +3,7 @@ import { Exercise, WorkoutSet, WorkoutState } from "../types/workoutTypes";
 import { EntityState } from "@reduxjs/toolkit";
 import {
   exerciseHistoryTableRow,
+  exercisesTableRow,
   parsedWorkoutsTableRow,
   unparsedWorkoutsTableRow,
   workoutHistoryTableRow,
@@ -63,7 +64,7 @@ export const initWorkoutTemplatesTable = async () => {
   );
 };
 
-export const sqlSelectAllTemplatesByDateDESC = async () => {
+export async function sqlSelectAllTemplatesByDateDESC() {
   return new Promise<parsedWorkoutsTableRow[]>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
@@ -84,9 +85,9 @@ export const sqlSelectAllTemplatesByDateDESC = async () => {
       )
     );
   });
-};
+}
 
-export const sqlSelectWorkoutInfoById = async (id: number) => {
+export async function sqlSelectWorkoutInfoById(id: number) {
   return new Promise<parsedWorkoutsTableRow>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
@@ -106,9 +107,9 @@ export const sqlSelectWorkoutInfoById = async (id: number) => {
       )
     );
   });
-};
+}
 
-export const sqlPrintAllTemplatesByDateDESC = () => {
+export function sqlPrintAllTemplatesByDateDESC() {
   db.transaction((tx) =>
     tx.executeSql(
       "SELECT * FROM workout_templates ORDER BY last_performed DESC;",
@@ -120,13 +121,13 @@ export const sqlPrintAllTemplatesByDateDESC = () => {
       }
     )
   );
-};
+}
 
-export const sqlInsertCurrentWorkoutTemplate = async (
+export async function sqlInsertCurrentWorkoutTemplate(
   workoutState: WorkoutState,
   exercises: EntityState<Exercise>,
   sets: EntityState<WorkoutSet>
-) => {
+) {
   return new Promise<number>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
@@ -146,14 +147,14 @@ export const sqlInsertCurrentWorkoutTemplate = async (
       )
     );
   });
-};
+}
 
-export const sqlUpdateWorkoutTemplate = async (
+export async function sqlUpdateWorkoutTemplate(
   workoutId: number,
   workoutState: WorkoutState,
   exercises: EntityState<Exercise>,
   sets: EntityState<WorkoutSet>
-) => {
+) {
   return new Promise((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
@@ -174,18 +175,18 @@ export const sqlUpdateWorkoutTemplate = async (
       )
     );
   });
-};
+}
 
-export const sqlDeleteAllWorkoutRows = () => {
+export function sqlDeleteAllWorkoutRows() {
   db.transaction((tx) => {
     tx.executeSql("DELETE FROM workout_templates;");
   });
-};
+}
 
-export const sqlInsertWorkoutHistory = async (
+export async function sqlInsertWorkoutHistory(
   workoutState: WorkoutState,
   numPrs: number = 0
-) => {
+) {
   return new Promise<WorkoutMetric>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
@@ -213,15 +214,15 @@ export const sqlInsertWorkoutHistory = async (
       )
     );
   });
-};
+}
 
-export const sqlInsertExerciseHistory = async (
+export async function sqlInsertExerciseHistory(
   exercise: Exercise,
   workoutHistoryId: number,
   bestWeight: number,
   bestReps: number,
   totalVolume: number
-) => {
+) {
   return new Promise<ExerciseMetric>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
@@ -251,9 +252,9 @@ export const sqlInsertExerciseHistory = async (
       )
     );
   });
-};
+}
 
-export const sqlPrintWorkoutHistoryByDateDESC = () => {
+export function sqlPrintWorkoutHistoryByDateDESC() {
   db.transaction((tx) =>
     tx.executeSql(
       "SELECT * FROM workout_history ORDER BY performed DESC;",
@@ -265,9 +266,9 @@ export const sqlPrintWorkoutHistoryByDateDESC = () => {
       }
     )
   );
-};
+}
 
-export const sqlPrintExerciseHistory = () => {
+export function sqlPrintExerciseHistory() {
   db.transaction((tx) =>
     tx.executeSql(
       "SELECT * FROM exercise_history;",
@@ -279,9 +280,9 @@ export const sqlPrintExerciseHistory = () => {
       }
     )
   );
-};
+}
 
-export const sqlSelectAllWorkoutHistoryByDateDESC = async () => {
+export async function sqlSelectAllWorkoutHistoryByDateDESC() {
   return new Promise<workoutHistoryTableRow[]>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
@@ -298,11 +299,11 @@ export const sqlSelectAllWorkoutHistoryByDateDESC = async () => {
       )
     );
   });
-};
+}
 
-export const sqlSelectExerciseHistoryByWorkoutId = async (
+export async function sqlSelectExerciseHistoryByWorkoutId(
   workoutHistoryId: number
-) => {
+) {
   return new Promise<exerciseHistoryTableRow[]>((resolve, reject) => {
     db.transaction((tx) =>
       tx.executeSql(
@@ -319,19 +320,36 @@ export const sqlSelectExerciseHistoryByWorkoutId = async (
       )
     );
   });
-};
+}
 
-export const sqlDeleteAllWorkoutAndExerciseHistoryRows = () => {
+export function sqlDeleteAllWorkoutAndExerciseHistoryRows() {
   db.transaction((tx) => {
     tx.executeSql("DELETE FROM workout_history;");
   });
   db.transaction((tx) => {
     tx.executeSql("DELETE FROM exercise_history;");
   });
-};
+}
 
-export const sqlDropExercisesTable = () => {
+export function sqlDropExercisesTable() {
   db.transaction((tx) => {
     tx.executeSql("DROP TABLE exercises;");
   });
-};
+}
+
+export async function sqlSelectLikeExercisesByName(name: string) {
+  return new Promise<exercisesTableRow[]>((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        "SELECT exercise_id, exercise_name, best_weight, best_reps FROM exercises WHERE exercise_name LIKE '%?%'",
+        [name],
+        (_, res) => resolve(res.rows._array as exercisesTableRow[]),
+        (_, error) => {
+          console.log("Could not select exercise", error);
+          reject(error);
+          return true;
+        }
+      );
+    });
+  });
+}

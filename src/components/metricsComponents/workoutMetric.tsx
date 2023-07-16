@@ -21,7 +21,7 @@ export function WorkoutMetric({ workoutMetricId }: props) {
 
   return (
     <View
-      style={tw`bg-front shadow-md rounded-xl p-2 my-4 mx-2 min-h-48 max-h-48 w-55`}
+      style={tw`bg-front shadow-sm rounded-xl p-2 my-4 mx-2 min-h-48 max-h-48 w-55`}
     >
       {/* Header */}
       <View style={tw`flex-col`}>
@@ -87,7 +87,7 @@ export function WorkoutMetric({ workoutMetricId }: props) {
         </Text>
       </View>
 
-      <ScrollView>
+      <ScrollView style={tw`px-1`}>
         {workoutMetric?.exerciseIds.map((id) => (
           <ExerciseMetric exerciseMetricId={id} key={"ExerciseMetric" + id} />
         ))}

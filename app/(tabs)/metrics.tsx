@@ -8,11 +8,23 @@ import { selectMetricsState } from "../../src/redux/slices/metricsSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../src/redux/store";
 import { WorkoutMetric } from "../../src/components/metricsComponents/workoutMetric";
+import Search from "../../src/components/searchBar";
+import { sqlSelectLikeExercisesByName } from "../../src/sqlite/queries";
+import { exercisesTableRow } from "../../src/types/localDBTables";
+import ExerciseSearchResult from "../../src/components/metricsComponents/exerciseSearchResult";
 
 export default function Metrics() {
   const metricsState = useSelector((state: RootState) =>
     selectMetricsState(state)
   );
+
+  async function onExerciseSearch(name: string) {
+    return await sqlSelectLikeExercisesByName(name).then(
+      (rows: exercisesTableRow[]) => {
+        return rows.map((row) => <ExerciseSearchResult row={row} />);
+      }
+    );
+  }
 
   return (
     <SafeAreaView style={tw`flex-1 bg-front`}>
@@ -60,17 +72,12 @@ export default function Metrics() {
           }
         />
       </View>
+
       {/* EXERCISE HISTORY */}
-      <View style={tw`flex-row`}>
-        <Text
-          style={[
-            tw`text-lg text-primary pl-5 pt-3`,
-            { fontFamily: "RobotoCondensed" },
-          ]}
-        >
-          EXERCISES
-        </Text>
-      </View>
+      <Search
+        placeholder="Search Exercise"
+        searchAndReturnElements={onExerciseSearch}
+      />
     </SafeAreaView>
   );
 }

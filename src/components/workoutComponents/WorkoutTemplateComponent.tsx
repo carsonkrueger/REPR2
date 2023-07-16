@@ -42,24 +42,22 @@ export default function WorkoutTemplateComponent({ templateId }: props) {
   };
 
   return (
-    <View
-      style={tw`mt-3 mx-2 px-4 max-h-32 min-h-24 rounded-lg bg-front shadow-sm`}
-    >
+    <View style={tw`mt-3 mx-2 px-4 min-h-24 rounded-lg bg-front shadow-sm`}>
       {/* TEMPLATE CONTAINER */}
-      <View style={tw`flex-1 py-3 rounded-md overflow-hidden`}>
+      <View style={tw`rounded-md overflow-hidden`}>
         <TouchableOpacity
-          style={tw`flex-row flex-1 `}
+          style={tw`flex-row justify-between min-h-24`}
           onPress={onTemplatePress}
         >
           {/* LEFT SIDE */}
-          <View style={tw`flex-9 flex-col justify-evenly`}>
+          <View style={tw`flex-col justify-center`}>
             <Text style={tw`text-lg text-dark-gray`}>
               {template.workoutName}
             </Text>
             <View>
               <Text
                 style={[
-                  tw`text-xs text-light-gray`,
+                  tw`text-xs text-light-gray pt-2`,
                   { fontFamily: "RobotoCondensed" },
                 ]}
               >
@@ -76,7 +74,7 @@ export default function WorkoutTemplateComponent({ templateId }: props) {
             </View>
           </View>
           {/* RIGHT SIDE */}
-          <View style={tw`flex-10 flex-col py-2 justify-center items-end`}>
+          <View style={tw`flex-col justify-center items-end py-2`}>
             {template.exerciseNames.map((name, idx) =>
               name === "" ? null : (
                 <Text

@@ -55,10 +55,10 @@ export default function Nav() {
 
   return (
     <SafeAreaView
-      style={tw`absolute px-1 flex-row items-center bottom-0 right-0 left-0 bg-back z-50 py-2`}
+      style={tw`absolute px-1 flex-row items-center bottom-0 right-0 left-0 bg-dark-front z-50 py-[14px]`}
     >
       <View
-        style={tw`absolute left-0 right-0 justify-center items-center pb-5`}
+        style={tw`absolute left-0 right-0 justify-center items-center pb-10`}
       >
         <View style={tw`bg-front rounded-full overflow-hidden`}>
           <TouchableOpacity
@@ -73,7 +73,7 @@ export default function Nav() {
       </View>
 
       <TouchableOpacity
-        style={tw`flex-1 justify-center items-center pb-1`}
+        style={tw`flex-1 justify-center items-center`}
         onPress={navigateHome}
       >
         <Ionicons
@@ -84,7 +84,7 @@ export default function Nav() {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={tw`flex-1 justify-center items-center pb-1`}
+        style={tw`flex-1 justify-center items-center`}
         onPress={navigateSearch}
       >
         <Ionicons
@@ -97,7 +97,7 @@ export default function Nav() {
       <View style={tw`flex-0.8`}></View>
 
       <TouchableOpacity
-        style={tw`flex-1 justify-center items-center pb-1`}
+        style={tw`flex-1 justify-center items-center`}
         onPress={navigateMetrics}
       >
         <Ionicons
@@ -108,7 +108,7 @@ export default function Nav() {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={tw`flex-1 justify-center items-center pb-1`}
+        style={tw`flex-1 justify-center items-center`}
         onPress={navigateProfile}
       >
         <Ionicons

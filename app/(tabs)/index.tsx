@@ -20,6 +20,7 @@ import {
 } from "../../src/redux/slices/profileSlice";
 import {
   initWorkoutTemplatesTable,
+  sqlDropAllTables,
   sqlSelectAllWorkoutHistoryByDateDESC,
   sqlSelectExerciseHistoryByWorkoutId,
 } from "../../src/sqlite/queries";
@@ -49,6 +50,7 @@ export default function Home() {
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
+    // sqlDropAllTables();
     async function prepare() {
       try {
         if (profile.initLoaded) return;

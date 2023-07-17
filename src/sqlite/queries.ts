@@ -11,25 +11,23 @@ import {
 import { parseWorkoutTableRow } from "../util/workoutUtils";
 import { getCurDate } from "../util/dates";
 import { ExerciseMetric, WorkoutMetric } from "../types/metricsTypes";
+import exerciseNames from "../util/exerciseNames";
 
 const db = SQLite.openDatabase("repr_local");
 
 export const initWorkoutTemplatesTable = async () => {
   db.transaction((tx) =>
     tx.executeSql(
-      "CREATE TABLE IF NOT EXISTS workout_templates (workout_id INTEGER PRIMARY KEY AUTOINCREMENT, workout_state STRING, exercises STRING, sets STRING, last_performed STRING);",
+      "CREATE TABLE workout_templates (workout_id INTEGER PRIMARY KEY AUTOINCREMENT, workout_state STRING NOT NULL, exercises STRING NOT NULL, sets STRING NOT NULL, last_performed STRING NOT NULL);",
       undefined,
-      undefined,
-      (_, error) => {
-        console.log("Error creating workouts_template table: ", error);
-        return true;
-      }
+      () => sqlInsertDefaultExercises(),
+      () => true
     )
   );
 
   db.transaction((tx) =>
     tx.executeSql(
-      "CREATE TABLE IF NOT EXISTS exercises (exercise_id INTEGER PRIMARY KEY AUTOINCREMENT, exercise_name STRING, best_weight INTEGER, best_reps INTEGER);",
+      "CREATE TABLE IF NOT EXISTS exercises (exercise_id INTEGER PRIMARY KEY AUTOINCREMENT, exercise_name STRING NOT NULL, best_weight INTEGER DEFAULT 0 NOT NULL, best_reps INTEGER DEFAULT 0 NOT NULL);",
       undefined,
       undefined,
       (_, error) => {
@@ -41,7 +39,7 @@ export const initWorkoutTemplatesTable = async () => {
 
   db.transaction((tx) =>
     tx.executeSql(
-      "CREATE TABLE IF NOT EXISTS workout_history (workout_history_id INTEGER PRIMARY KEY AUTOINCREMENT, workout_name STRING, workout_time INTEGER, num_prs INTEGER, performed STRING);",
+      "CREATE TABLE IF NOT EXISTS workout_history (workout_history_id INTEGER PRIMARY KEY AUTOINCREMENT, workout_name STRING NOT NULL, workout_time INTEGER NOT NULL, num_prs INTEGER DEFAULT 0 NOT NULL, performed STRING NOT NULL);",
       undefined,
       undefined,
       (_, error) => {
@@ -53,7 +51,7 @@ export const initWorkoutTemplatesTable = async () => {
 
   db.transaction((tx) =>
     tx.executeSql(
-      "CREATE TABLE IF NOT EXISTS exercise_history (exercise_history_id INTEGER PRIMARY KEY AUTOINCREMENT, workout_history_id INTEGER, exercise_name STRING, num_sets INTEGER, best_weight INTEGER, best_reps INTEGER, total_volume INTEGER);",
+      "CREATE TABLE IF NOT EXISTS exercise_history (exercise_history_id INTEGER PRIMARY KEY AUTOINCREMENT, workout_history_id INTEGER NOT NULL, exercise_name STRING NOT NULL, num_sets INTEGER NOT NULL, best_weight INTEGER NOT NULL, best_reps INTEGER NOT NULL, total_volume INTEGER NOT NULL);",
       undefined,
       undefined,
       (_, error) => {
@@ -337,12 +335,33 @@ export function sqlDropExercisesTable() {
   });
 }
 
+export function sqlDropHistoryTables() {
+  db.transaction((tx) => {
+    tx.executeSql("DROP TABLE exercise_history;");
+  });
+  db.transaction((tx) => {
+    tx.executeSql("DROP TABLE workout_history;");
+  });
+}
+
+export function sqlDropWorkoutTemplatesTable() {
+  db.transaction((tx) => {
+    tx.executeSql("DROP TABLE workout_templates;");
+  });
+}
+
+export function sqlDropAllTables() {
+  sqlDropExercisesTable();
+  sqlDropHistoryTables();
+  sqlDropWorkoutTemplatesTable();
+}
+
 export async function sqlSelectLikeExercisesByName(name: string) {
   return new Promise<exercisesTableRow[]>((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        "SELECT exercise_id, exercise_name, best_weight, best_reps FROM exercises WHERE exercise_name LIKE '%?%'",
-        [name],
+        "SELECT exercise_id, exercise_name, best_weight, best_reps FROM exercises WHERE exercise_name LIKE ?;",
+        [`%${name}%`],
         (_, res) => resolve(res.rows._array as exercisesTableRow[]),
         (_, error) => {
           console.log("Could not select exercise", error);
@@ -352,4 +371,12 @@ export async function sqlSelectLikeExercisesByName(name: string) {
       );
     });
   });
+}
+
+export async function sqlInsertDefaultExercises() {
+  exerciseNames.map((name: string) =>
+    db.transaction((tx) =>
+      tx.executeSql("INSERT INTO exercises (exercise_name) VALUES (?)", [name])
+    )
+  );
 }

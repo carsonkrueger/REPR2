@@ -22,6 +22,10 @@ export default function Layout() {
         />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(settings)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(exercise search)"
+          options={{ headerShown: false }}
+        />
       </Stack>
     </Provider>
   );

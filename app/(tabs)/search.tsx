@@ -1,7 +1,7 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import tw from "../../src/util/tailwind";
-import SearchBar from "../../src/components/searchBar";
+import SearchBar from "../../src/components/SearchBar";
 import { View } from "react-native";
 
 export default function Search() {

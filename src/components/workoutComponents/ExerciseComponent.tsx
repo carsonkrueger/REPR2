@@ -30,12 +30,14 @@ import Clock from "./ClockComponent";
 import CustomColors from "../../util/customColors";
 import { Profile } from "../../types/profileType";
 import { selectProfile } from "../../redux/slices/profileSlice";
+import { useRouter } from "expo-router";
 
 interface props {
   exerciseId: EntityId;
 }
 
 export default function ExerciseComponent({ exerciseId }: props) {
+  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
   const workout = useSelector((state: RootState) => selectWorkout(state));
@@ -49,27 +51,31 @@ export default function ExerciseComponent({ exerciseId }: props) {
     selectProfile(state)
   );
 
-  const toggleIsSelected = () => {
+  const toggleMenu = () => {
     dispatch(setMenuId({ exerciseId: exerciseId }));
   };
 
-  const swapExerciseUp = () => {
+  function toggleOffMenu() {
+    dispatch(setMenuId({ exerciseId: undefined }));
+  }
+
+  function swapExerciseUp() {
     dispatch(swapExerciseWithAbove({ id: exerciseId }));
-  };
+  }
 
-  const swapExerciseDown = () => {
+  function swapExerciseDown() {
     dispatch(swapExerciseWithBelow({ id: exerciseId }));
-  };
+  }
 
-  const deleteExercise = () => {
+  function deleteExercise() {
     dispatch(delExercise({ id: exerciseId }));
-  };
+  }
 
-  const addSetToEnd = () => {
+  function addSetToEnd() {
     dispatch(addSet({ exerciseId: exerciseId, nextSetId: workout.nextSetId }));
-  };
+  }
 
-  const delSetFromEnd = () => {
+  function delSetFromEnd() {
     dispatch(
       delSet({
         exerciseId: exerciseId,
@@ -77,38 +83,48 @@ export default function ExerciseComponent({ exerciseId }: props) {
         numSets: exercise.Sets.length,
       })
     );
-  };
+  }
+
+  function pushNavigateToExerciseSearch() {
+    router.push("exerciseSearch");
+  }
 
   return (
-    <View style={tw`py-3 mx-1 mt-4 bg-front`}>
+    <View style={tw`py-3 mt-4 bg-front`}>
       {/* HEADER */}
-      <View
-        style={tw`mx-3 mb-1 flex-row justify-between items-center ${
-          isLocked ? "" : "mr-9"
-        }`}
-      >
+      <View style={tw`mx-3 mb-1 flex-row items-center`}>
         {/* EXERCISE NAME */}
-        <TextInput
-          style={[
-            tw`flex-1 mr-2 text-base text-lg text-primary self-center rounded-md px-1 max-h-13 min-h-9 ${
-              isLocked ? "" : "bg-back"
-            }`,
-            { fontFamily: "RobotoCondensed" },
-          ]}
-          placeholder="Exercise Name"
-          placeholderTextColor={"#c2c2c2"}
-          onChangeText={(newName) =>
-            dispatch(setExerciseName({ id: exerciseId, name: newName }))
-          }
-          editable={!isLocked}
-          multiline={profile.isIos ? false : true}
-          numberOfLines={1}
-          maxLength={60}
+        <TouchableOpacity
+          style={tw`flex-1 px-1 py-2 mr-2 ${
+            isLocked ? "" : "rounded-md bg-back"
+          }`}
+          onPress={pushNavigateToExerciseSearch}
+          disabled={isLocked}
         >
-          {exercise?.name}
-        </TextInput>
+          <TextInput
+            style={[
+              tw`text-lg text-primary px-1`,
+              { fontFamily: "RobotoCondensed" },
+            ]}
+            placeholder="Exercise Name"
+            placeholderTextColor={"#c2c2c2"}
+            editable={false}
+            value={exercise.name}
+          />
+        </TouchableOpacity>
 
         <Clock exerciseId={exerciseId} />
+
+        {/* ELLIPSIS VERTICAL MENU TOGGLE BUTTON */}
+        {!isLocked && (
+          <TouchableOpacity onPress={toggleMenu} style={tw`px-[3px]`}>
+            <Feather
+              name="more-vertical"
+              size={24}
+              color={CustomColors.primary}
+            />
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* SETS HEADER */}
@@ -165,69 +181,49 @@ export default function ExerciseComponent({ exerciseId }: props) {
         />
       ))}
 
-      {/* EXERCISE MENU (ADD SET / DEL SET / SWAP) */}
       {!isLocked && (
         <>
-          {workout.menuSelectedId === exerciseId && (
-            <TouchableWithoutFeedback onPress={toggleIsSelected}>
+          {/* TOGGLE OFF MENU OVERLAY */}
+          {workout.menuSelectedId !== undefined && (
+            <TouchableWithoutFeedback onPress={toggleOffMenu}>
               <View style={tw`absolute top-0 right-0 bottom-0 left-0`} />
             </TouchableWithoutFeedback>
           )}
-          <View
-            style={tw`absolute top-[0.85rem] right-1 h-8 w-6 mx-1 justify-center items-center z-50`}
-          >
-            <TouchableOpacity onPress={toggleIsSelected}>
-              <Feather
-                name="more-vertical"
-                size={24}
-                color={CustomColors.primary}
-              />
-            </TouchableOpacity>
 
-            {workout.menuSelectedId === exerciseId && (
-              <View
-                style={[
-                  tw`absolute flex-row right-0 mr-7 bg-front w-40 justify-evenly items-center py-2 rounded-full shadow-md z-50`,
-                  { zIndex: 10 },
-                ]}
-              >
-                <TouchableOpacity style={tw`py-[1px]`} onPress={swapExerciseUp}>
-                  <Feather
-                    name="arrow-up"
-                    size={25}
-                    color={CustomColors.primary}
-                  />
-                </TouchableOpacity>
+          {/* EXERCISE MENU (ADD SET / DEL SET / SWAP) */}
+          {workout.menuSelectedId === exercise.id && (
+            <View
+              style={tw`absolute flex-row right-10 top-3 bg-front w-40 justify-evenly items-center py-2 rounded-full shadow-md`}
+            >
+              <TouchableOpacity style={tw`py-[1px]`} onPress={swapExerciseUp}>
+                <Feather
+                  name="arrow-up"
+                  size={25}
+                  color={CustomColors.primary}
+                />
+              </TouchableOpacity>
 
-                <TouchableOpacity style={tw`py-[1px]`} onPress={delSetFromEnd}>
-                  <Feather
-                    name="minus"
-                    size={25}
-                    color={CustomColors.primary}
-                  />
-                </TouchableOpacity>
+              <TouchableOpacity style={tw`py-[1px]`} onPress={delSetFromEnd}>
+                <Feather name="minus" size={25} color={CustomColors.primary} />
+              </TouchableOpacity>
 
-                <TouchableOpacity style={tw`py-[1px]`} onPress={deleteExercise}>
-                  <Feather name="trash" size={22} color={"#ff5c5c"} />
-                </TouchableOpacity>
+              <TouchableOpacity style={tw`py-[1px]`} onPress={deleteExercise}>
+                <Feather name="trash" size={22} color={"#ff5c5c"} />
+              </TouchableOpacity>
 
-                <TouchableOpacity style={tw`py-[1px]`} onPress={addSetToEnd}>
-                  <Feather name="plus" size={25} color={CustomColors.primary} />
-                </TouchableOpacity>
+              <TouchableOpacity style={tw`py-[1px]`} onPress={addSetToEnd}>
+                <Feather name="plus" size={25} color={CustomColors.primary} />
+              </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={tw`py-[1px]`}
-                  onPress={swapExerciseDown}
-                >
-                  <Feather
-                    name="arrow-down"
-                    size={25}
-                    color={CustomColors.primary}
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
+              <TouchableOpacity style={tw`py-[1px]`} onPress={swapExerciseDown}>
+                <Feather
+                  name="arrow-down"
+                  size={25}
+                  color={CustomColors.primary}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
         </>
       )}
     </View>

@@ -275,7 +275,10 @@ const workoutSlice = createSlice({
       state.nextExerciseId = action.payload.nextExerciseId;
       state.nextSetId = action.payload.nextSetId;
     },
-    setMenuId(state, action: PayloadAction<{ exerciseId: EntityId }>) {
+    setMenuId(
+      state,
+      action: PayloadAction<{ exerciseId: EntityId | undefined }>
+    ) {
       state.menuSelectedId =
         state.menuSelectedId !== action.payload.exerciseId
           ? action.payload.exerciseId

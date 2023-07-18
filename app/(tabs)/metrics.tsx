@@ -8,7 +8,7 @@ import { selectMetricsState } from "../../src/redux/slices/metricsSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../src/redux/store";
 import { WorkoutMetric } from "../../src/components/metricsComponents/workoutMetric";
-import Search from "../../src/components/searchBar";
+import Search from "../../src/components/SearchBar";
 import { sqlSelectLikeExercisesByName } from "../../src/sqlite/queries";
 import { exercisesTableRow } from "../../src/types/localDBTables";
 import ExerciseSearchResult from "../../src/components/metricsComponents/exerciseSearchResult";
@@ -80,7 +80,7 @@ export default function Metrics() {
 
       {/* EXERCISE HISTORY */}
       <Search
-        placeholder="Search Exercise"
+        placeholderText="Search Exercise"
         searchAndReturnElements={onExerciseSearch}
       />
     </SafeAreaView>

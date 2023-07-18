@@ -14,14 +14,24 @@ const WorkoutTemplateHeaderComponent = () => {
   };
 
   return (
-    <View style={tw`flex-row px-3 pt-6 justify-between items-center`}>
+    <View style={tw`px-2 pt-6`}>
       <Text
         style={[tw`text-primary text-lg`, { fontFamily: "RobotoCondensed" }]}
       >
         MY TEMPLATES
       </Text>
-      <TouchableOpacity style={tw`p-1`} onPress={onCreateWorkout}>
-        <Feather name="plus" size={28} color={CustomColors.primary} />
+      <TouchableOpacity
+        style={tw`bg-primary rounded-md py-1 mt-2`}
+        onPress={onCreateWorkout}
+      >
+        <Text
+          style={[
+            tw`text-lg text-white text-center`,
+            { fontFamily: "RobotoCondensed" },
+          ]}
+        >
+          CREATE NEW WORKOUT
+        </Text>
       </TouchableOpacity>
     </View>
   );

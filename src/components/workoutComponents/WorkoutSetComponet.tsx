@@ -154,7 +154,7 @@ export default function WorkoutSetComponent({
       </View>
 
       <View style={tw`flex-${flexWidths.check} justify-center items-center`}>
-        <TouchableOpacity onPress={onToggleFinish}>
+        <TouchableOpacity style={tw`shadow-md`} onPress={onToggleFinish}>
           <Ionicons
             name="checkbox"
             color={`${workoutSet.isFinished ? "#a2e8bb" : "#3b83f5"}`}

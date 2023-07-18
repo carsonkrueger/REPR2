@@ -14,12 +14,7 @@ import { WorkoutTemplate } from "../../src/types/workoutTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponents/WorkoutTemplateHeaderComponent";
 import { useEffect, useState } from "react";
-import {
-  sqlDeleteAllWorkoutRows,
-  sqlPrintExerciseHistory,
-  sqlPrintWorkoutHistoryByDateDESC,
-  sqlSelectAllTemplatesByDateDESC,
-} from "../../src/sqlite/queries";
+import { sqlSelectAllTemplatesByDateDESC } from "../../src/sqlite/queries";
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
 import { addWorkoutTemplateToBack } from "../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromParseWorkoutTableRow } from "../../src/util/workoutUtils";
@@ -33,20 +28,19 @@ export default function Workouts() {
   const [distanceFromTop, setDistanceFromTop] = useState(0);
 
   useEffect(() => {
-    // sqlPrintWorkoutHistoryByDateDESC();
-    // sqlPrintExerciseHistory();
     // only get templates from sqlite db on first render (when temlates slice is empty)
     if (templates.length <= 0)
-      sqlSelectAllTemplatesByDateDESC()
-        .then((templates: parsedWorkoutsTableRow[]) => {
-          for (let i = 0; i < templates.length; i++) {
-            const template = templateFromParseWorkoutTableRow(templates[i]);
-            dispatch(addWorkoutTemplateToBack(template));
-          }
-        })
-        .catch((reason) => {
-          console.log("ERR", reason);
-        });
+      sqlSelectAllTemplatesByDateDESC().then(
+        (templates: parsedWorkoutsTableRow[]) => {
+          templates.map((parsedTemplate) =>
+            dispatch(
+              addWorkoutTemplateToBack(
+                templateFromParseWorkoutTableRow(parsedTemplate)
+              )
+            )
+          );
+        }
+      );
   }, []);
 
   function onSetDistanceFromTop(

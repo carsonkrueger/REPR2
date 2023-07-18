@@ -8,10 +8,7 @@ interface props {
 
 export default function ExerciseSearchResult({ row }: props) {
   return (
-    <TouchableOpacity
-      style={tw`px-2 py-[3px]`}
-      key={"ExerciseSearchResult" + row.exercise_id}
-    >
+    <TouchableOpacity style={tw`px-2 py-[3px]`}>
       <Text
         style={[
           tw`text-base text-dark-gray`,

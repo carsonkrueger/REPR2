@@ -21,7 +21,12 @@ export default function Metrics() {
   async function onExerciseSearch(name: string) {
     return await sqlSelectLikeExercisesByName(name).then(
       (rows: exercisesTableRow[]) => {
-        return rows.map((row) => <ExerciseSearchResult row={row} />);
+        return rows.map((row) => (
+          <ExerciseSearchResult
+            row={row}
+            key={"ExerciseSearchResult" + row.exercise_id}
+          />
+        ));
       }
     );
   }

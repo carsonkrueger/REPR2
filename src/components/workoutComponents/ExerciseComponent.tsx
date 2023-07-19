@@ -86,7 +86,10 @@ export default function ExerciseComponent({ exerciseId }: props) {
   }
 
   function pushNavigateToExerciseSearch() {
-    router.push("exerciseSearch");
+    router.push({
+      pathname: "exerciseSearch",
+      params: { exerciseId: exercise.id },
+    });
   }
 
   return (
@@ -95,7 +98,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
       <View style={tw`mx-3 mb-1 flex-row items-center`}>
         {/* EXERCISE NAME */}
         <TouchableOpacity
-          style={tw`flex-1 px-1 py-2 mr-2 ${
+          style={tw`flex-1 px-1 py-[6px] mr-2 ${
             isLocked ? "" : "rounded-md bg-back"
           }`}
           onPress={pushNavigateToExerciseSearch}
@@ -110,6 +113,7 @@ export default function ExerciseComponent({ exerciseId }: props) {
             placeholderTextColor={"#c2c2c2"}
             editable={false}
             value={exercise.name}
+            multiline={true}
           />
         </TouchableOpacity>
 

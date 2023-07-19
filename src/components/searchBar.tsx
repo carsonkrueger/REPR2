@@ -10,7 +10,7 @@ interface props {
   placeholderText?: string;
   searchAndReturnElements(str: string): Promise<React.ReactNode[]>;
   useSearchResultContainerOverlay?: boolean;
-  maxTWHeight?: number;
+  maxTWHeight?: number | string;
 }
 
 export default function SearchBar({
@@ -52,7 +52,7 @@ export default function SearchBar({
             ]}
             placeholder={placeholderText}
             onChangeText={onSearchTextChange}
-            onEndEditing={closeSearchResults}
+            // onEndEditing={closeSearchResults}
           />
 
           {/* OVERLAY SEARCH RESULTS */}

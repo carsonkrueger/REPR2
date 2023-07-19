@@ -1,7 +1,13 @@
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 import { WorkoutSet } from "../../types/workoutTypes";
-import { Text, View, TextInput, TouchableOpacity } from "react-native";
+import {
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Vibration,
+} from "react-native";
 import tw from "../../util/tailwind";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { EntityId } from "@reduxjs/toolkit";
@@ -17,6 +23,7 @@ import { cleanNumStr } from "../../util/workoutUtils";
 import CustomColors from "../../util/customColors";
 import { Profile } from "../../types/profileType";
 import { selectProfile } from "../../redux/slices/profileSlice";
+import { XS_VIBRATE } from "../../util/vibrations";
 
 interface props {
   setId: EntityId;
@@ -46,6 +53,7 @@ export default function WorkoutSetComponent({
   };
 
   const onToggleFinish = () => {
+    Vibration.vibrate(XS_VIBRATE, false);
     dispatch(toggleFinishSet({ setId: setId }));
     if (workoutSet.weight === 0 && workoutSet.prevWeight !== 0)
       onWeightChanged(workoutSet.prevWeight);

@@ -268,7 +268,7 @@ export default function WorkoutScreen() {
         onScroll={onSetDistanceFromTop}
         ListFooterComponent={
           // ADD EXERCISE BUTTON
-          <View style={tw`mt-4 mb-[100%] items-center`}>
+          <View style={tw`mt-4 mb-[50%] items-center`}>
             {!workout.isLocked && (
               <TouchableOpacity
                 style={tw`rounded-full bg-primary shadow-md`}

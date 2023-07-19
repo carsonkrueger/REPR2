@@ -186,7 +186,7 @@ export const exercisesSlice = createSlice({
     },
     setExerciseName(
       state,
-      action: PayloadAction<{ id: EntityId; name: string }>
+      action: PayloadAction<{ id: number; name: string }>
     ) {
       exerciseAdapter.updateOne(state, {
         id: action.payload.id,

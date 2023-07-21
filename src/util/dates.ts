@@ -35,16 +35,20 @@ const thDate = (date: string) => {
       return "th";
   }
 
-  const lastNum = date.charAt(date.length - 1);
-  switch (lastNum) {
-    case "1":
-      return "st";
-    case "2":
-      return "nd";
-    case "3":
-      return "rd";
-    default:
-      return "th";
+  try {
+    const lastNum = date.charAt(date.length - 1);
+    switch (lastNum) {
+      case "1":
+        return "st";
+      case "2":
+        return "nd";
+      case "3":
+        return "rd";
+      default:
+        return "th";
+    }
+  } catch (e) {
+    return "";
   }
 };
 

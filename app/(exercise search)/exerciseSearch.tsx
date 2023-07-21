@@ -38,7 +38,7 @@ export default function ExerciseSearch() {
     navigateBack();
   }
 
-  async function onExerciseSearch(name: string) {
+  async function searchAndReturnElements(name: string) {
     return await sqlSelectLikeExercisesByName(name).then(
       (rows: exercisesTableRow[]) => {
         return rows.map((row) => (
@@ -56,9 +56,11 @@ export default function ExerciseSearch() {
     <SafeAreaView>
       <SearchBar
         placeholderText="Search Exercise"
-        searchAndReturnElements={onExerciseSearch}
+        searchAndReturnElements={searchAndReturnElements}
         useSearchResultContainerOverlay={false}
         maxTWHeight={"100%"}
+        allowEmptySearch={true}
+        doInitEmptySearch={true}
       />
     </SafeAreaView>
   );

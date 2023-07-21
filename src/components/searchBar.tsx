@@ -3,14 +3,17 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 import tw from "../util/tailwind";
 import CustomColors from "../util/customColors";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
+import { FlashList } from "@shopify/flash-list";
 
 interface props {
   placeholderText?: string;
   searchAndReturnElements(str: string): Promise<React.ReactNode[]>;
   useSearchResultContainerOverlay?: boolean;
   maxTWHeight?: number | string;
+  allowEmptySearch?: boolean;
+  doInitEmptySearch?: boolean;
 }
 
 export default function SearchBar({
@@ -18,20 +21,26 @@ export default function SearchBar({
   searchAndReturnElements,
   useSearchResultContainerOverlay = true,
   maxTWHeight = 60,
+  allowEmptySearch = false,
+  doInitEmptySearch = false,
 }: props) {
-  const inputSearchText = useRef<string>("");
   const [searchResults, setSearchResults] = useState<React.ReactNode[]>([]);
+  const searchInput = useRef("");
 
-  function ExerciseSearch() {
-    if (inputSearchText.current.trim() === "") return;
-    searchAndReturnElements(inputSearchText.current).then((nodes) =>
-      setSearchResults(nodes)
-    );
+  useEffect(() => {
+    if (doInitEmptySearch) {
+      ExerciseSearch("");
+    }
+  }, []);
+
+  function ExerciseSearch(name: string) {
+    searchAndReturnElements(name).then((nodes) => setSearchResults(nodes));
   }
 
-  function onSearchTextChange(text: string) {
-    inputSearchText.current = text;
-    ExerciseSearch();
+  function onSearchTextChange(name: string) {
+    searchInput.current = name.trim();
+    if (!allowEmptySearch && name.trim() === "") return;
+    ExerciseSearch(name.trim());
   }
 
   function closeSearchResults() {
@@ -65,7 +74,7 @@ export default function SearchBar({
           )}
         </View>
 
-        <TouchableOpacity onPress={ExerciseSearch}>
+        <TouchableOpacity onPress={() => ExerciseSearch(searchInput.current)}>
           <Ionicons
             name={"search-outline"}
             color={CustomColors.primary}
@@ -77,6 +86,7 @@ export default function SearchBar({
       {/* NON-OVERLAY SEARCH RESULTS */}
       {!useSearchResultContainerOverlay && (
         <View style={tw` ${maxTWHeight ? `max-h-${maxTWHeight}` : ""}`}>
+          {/* <FlashList renderItem={}/> */}
           <ScrollView>{searchResults?.map((node) => node)}</ScrollView>
         </View>
       )}

@@ -95,7 +95,10 @@ export default function Home() {
               exerciseRows.map((exercise) =>
                 dispatch(
                   addExerciseHistory({
-                    exercise: parseExerciseHistoryTableRow(exercise),
+                    exercise: parseExerciseHistoryTableRow(
+                      exercise,
+                      workout.performed
+                    ),
                   })
                 )
               );

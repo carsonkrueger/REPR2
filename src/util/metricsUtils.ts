@@ -18,7 +18,8 @@ export function parseWorkoutHistoryTableRow(
 }
 
 export function parseExerciseHistoryTableRow(
-  exerciseRow: exerciseHistoryTableRow
+  exerciseRow: exerciseHistoryTableRow,
+  performed: string
 ): ExerciseMetric {
   return {
     exerciseName: exerciseRow.exercise_name,
@@ -27,5 +28,6 @@ export function parseExerciseHistoryTableRow(
     bestReps: exerciseRow.best_reps,
     bestWeight: exerciseRow.best_weight,
     numSets: exerciseRow.num_sets,
+    performed: performed,
   };
 }

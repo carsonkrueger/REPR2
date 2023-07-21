@@ -46,14 +46,14 @@ export default function Metrics() {
       </View>
       {/* WORKOUT HISTORY */}
       <View>
-        <Text
+        {/* <Text
           style={[
             tw`text-lg text-primary pl-5 pt-5`,
             { fontFamily: "RobotoCondensed" },
           ]}
         >
           WORKOUTS
-        </Text>
+        </Text> */}
         <FlashList
           estimatedItemSize={250}
           data={metricsState.workoutIds}

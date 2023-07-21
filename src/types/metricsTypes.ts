@@ -20,4 +20,5 @@ export interface ExerciseMetric {
   numSets: number;
   bestWeight: number;
   bestReps: number;
+  performed: string;
 }

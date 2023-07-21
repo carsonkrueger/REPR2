@@ -197,8 +197,16 @@ export default function ExerciseComponent({ exerciseId }: props) {
           {/* EXERCISE MENU (ADD SET / DEL SET / SWAP) */}
           {workout.menuSelectedId === exercise.id && (
             <View
-              style={tw`absolute flex-row right-10 top-3 bg-front w-40 justify-evenly items-center py-2 rounded-full shadow-md`}
+              style={tw`absolute flex-row right-10 top-3 bg-front w-45 justify-evenly items-center py-2 rounded-full shadow-md`}
             >
+              <TouchableOpacity style={tw`py-[1px]`} onPress={swapExerciseDown}>
+                <Feather
+                  name="arrow-down"
+                  size={25}
+                  color={CustomColors.primary}
+                />
+              </TouchableOpacity>
+
               <TouchableOpacity style={tw`py-[1px]`} onPress={swapExerciseUp}>
                 <Feather
                   name="arrow-up"
@@ -207,24 +215,16 @@ export default function ExerciseComponent({ exerciseId }: props) {
                 />
               </TouchableOpacity>
 
-              <TouchableOpacity style={tw`py-[1px]`} onPress={delSetFromEnd}>
-                <Feather name="minus" size={25} color={CustomColors.primary} />
-              </TouchableOpacity>
-
               <TouchableOpacity style={tw`py-[1px]`} onPress={deleteExercise}>
                 <Feather name="trash" size={22} color={"#ff5c5c"} />
               </TouchableOpacity>
 
-              <TouchableOpacity style={tw`py-[1px]`} onPress={addSetToEnd}>
-                <Feather name="plus" size={25} color={CustomColors.primary} />
+              <TouchableOpacity style={tw`py-[1px]`} onPress={delSetFromEnd}>
+                <Feather name="minus" size={25} color={CustomColors.primary} />
               </TouchableOpacity>
 
-              <TouchableOpacity style={tw`py-[1px]`} onPress={swapExerciseDown}>
-                <Feather
-                  name="arrow-down"
-                  size={25}
-                  color={CustomColors.primary}
-                />
+              <TouchableOpacity style={tw`py-[1px]`} onPress={addSetToEnd}>
+                <Feather name="plus" size={25} color={CustomColors.primary} />
               </TouchableOpacity>
             </View>
           )}

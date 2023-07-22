@@ -17,7 +17,7 @@ export default function Profile() {
   const profile = useSelector((state: RootState) => selectProfile(state));
 
   function navigateToSettings() {
-    router.push("settings");
+    router.push("profileSettings");
   }
 
   return (

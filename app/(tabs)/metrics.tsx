@@ -12,24 +12,22 @@ import Search from "../../src/components/SearchBar";
 import { sqlSelectLikeExercisesByName } from "../../src/sqlite/queries";
 import { exercisesTableRow } from "../../src/types/localDBTables";
 import ExerciseSearchResult from "../../src/components/metricsComponents/exerciseSearchResult";
+import ExerciseNameSearchResult from "../../src/components/workoutComponents/exerciseNameSearchResult";
 
 export default function Metrics() {
   const metricsState = useSelector((state: RootState) =>
     selectMetricsState(state)
   );
 
-  async function onExerciseSearch(name: string) {
+  async function searchAction(name: string) {
     return await sqlSelectLikeExercisesByName(name).then(
       (rows: exercisesTableRow[]) => {
-        return rows.map((row) => (
-          <ExerciseSearchResult
-            row={row}
-            key={"ExerciseSearchResult" + row.exercise_id}
-          />
-        ));
+        return rows;
       }
     );
   }
+
+  function onExerciseNamePress() {}
 
   return (
     <SafeAreaView style={tw`flex-1 bg-front`}>
@@ -81,7 +79,15 @@ export default function Metrics() {
       {/* EXERCISE HISTORY */}
       <Search
         placeholderText="Search Exercise"
-        searchAndReturnElements={onExerciseSearch}
+        searchAction={searchAction}
+        renderItem={({ item }) => (
+          <ExerciseNameSearchResult
+            row={item as exercisesTableRow}
+            onPress={onExerciseNamePress}
+            key={"ExerciseSearchResult" + item.exercise_id}
+          />
+        )}
+        estimatedItemSize={36}
       />
     </SafeAreaView>
   );

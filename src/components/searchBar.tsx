@@ -5,50 +5,61 @@ import tw from "../util/tailwind";
 import CustomColors from "../util/customColors";
 import { useEffect, useRef, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
-import { FlashList } from "@shopify/flash-list";
+import {
+  FlashList,
+  ListRenderItem,
+  ListRenderItemInfo,
+} from "@shopify/flash-list";
 
-interface props {
+interface props<T> {
   placeholderText?: string;
-  searchAndReturnElements(str: string): Promise<React.ReactNode[]>;
+  // searchAndReturnElements(str: string): Promise<React.ReactNode[]>;
   useSearchResultContainerOverlay?: boolean;
   maxTWHeight?: number | string;
   allowEmptySearch?: boolean;
   doInitEmptySearch?: boolean;
+  searchAction: (text: string) => Promise<T[]>;
+  renderItem: ListRenderItem<T>;
+  estimatedItemSize: number;
 }
 
 export default function SearchBar({
   placeholderText = "Search",
-  searchAndReturnElements,
+  // searchAndReturnElements,
   useSearchResultContainerOverlay = true,
   maxTWHeight = 60,
   allowEmptySearch = false,
   doInitEmptySearch = false,
-}: props) {
-  const [searchResults, setSearchResults] = useState<React.ReactNode[]>([]);
+  searchAction,
+  renderItem,
+  estimatedItemSize,
+}: props<any>) {
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const searchInput = useRef("");
 
   useEffect(() => {
     if (doInitEmptySearch) {
-      ExerciseSearch("");
+      search("");
     }
   }, []);
 
-  function ExerciseSearch(name: string) {
-    searchAndReturnElements(name).then((nodes) => setSearchResults(nodes));
+  // function search(name: string) {
+  //   searchAndReturnElements(name).then((nodes) => setSearchResults(nodes));
+  // }
+
+  async function search(text: string) {
+    setSearchResults(await searchAction(text));
+    console.log(searchResults);
   }
 
-  function onSearchTextChange(name: string) {
-    searchInput.current = name.trim();
-    if (!allowEmptySearch && name.trim() === "") return;
-    ExerciseSearch(name.trim());
-  }
-
-  function closeSearchResults() {
-    setSearchResults([]);
+  function onSearchTextChange(text: string) {
+    searchInput.current = text.trim();
+    if (!allowEmptySearch && text.trim() === "") return;
+    search(text.trim());
   }
 
   return (
-    <View>
+    <View style={tw`h-full`}>
       {/* Search bar */}
       <View
         style={tw`flex-row items-center justify-between py-2 px-3 bg-front`}
@@ -61,20 +72,23 @@ export default function SearchBar({
             ]}
             placeholder={placeholderText}
             onChangeText={onSearchTextChange}
-            // onEndEditing={closeSearchResults}
           />
 
           {/* OVERLAY SEARCH RESULTS */}
           {useSearchResultContainerOverlay && searchResults.length > 0 && (
             <View
-              style={tw`absolute left-0 right-0 top-[140%] bg-front shadow-md rounded-md max-h-${maxTWHeight} overflow-hidden z-10`}
+              style={tw`absolute left-0 right-0 top-[140%] bg-front shadow-md rounded-md min-h-${maxTWHeight} max-h-${maxTWHeight} overflow-hidden z-50`}
             >
-              <ScrollView>{searchResults?.map((node) => node)}</ScrollView>
+              <FlashList
+                data={searchResults}
+                renderItem={renderItem}
+                estimatedItemSize={estimatedItemSize}
+              />
             </View>
           )}
         </View>
 
-        <TouchableOpacity onPress={() => ExerciseSearch(searchInput.current)}>
+        <TouchableOpacity onPress={() => search(searchInput.current)}>
           <Ionicons
             name={"search-outline"}
             color={CustomColors.primary}
@@ -85,9 +99,12 @@ export default function SearchBar({
 
       {/* NON-OVERLAY SEARCH RESULTS */}
       {!useSearchResultContainerOverlay && (
-        <View style={tw` ${maxTWHeight ? `max-h-${maxTWHeight}` : ""}`}>
-          {/* <FlashList renderItem={}/> */}
-          <ScrollView>{searchResults?.map((node) => node)}</ScrollView>
+        <View style={tw`flex-1 ${maxTWHeight ? `max-h-${maxTWHeight}` : ""}`}>
+          <FlashList
+            data={searchResults}
+            renderItem={renderItem}
+            estimatedItemSize={estimatedItemSize}
+          />
         </View>
       )}
     </View>

@@ -11,15 +11,18 @@ import { WorkoutMetric } from "../../src/components/metricsComponents/workoutMet
 import Search from "../../src/components/SearchBar";
 import { sqlSelectLikeExercisesByName } from "../../src/sqlite/queries";
 import { exercisesTableRow } from "../../src/types/localDBTables";
-import ExerciseSearchResult from "../../src/components/metricsComponents/exerciseSearchResult";
 import ExerciseNameSearchResult from "../../src/components/workoutComponents/exerciseNameSearchResult";
+import { useState } from "react";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function Metrics() {
   const metricsState = useSelector((state: RootState) =>
     selectMetricsState(state)
   );
+  const [isContainerOverlayOpen, setIsContainerOverlayOpen] = useState(false);
 
   async function searchAction(name: string) {
+    setIsContainerOverlayOpen(true);
     return await sqlSelectLikeExercisesByName(name).then(
       (rows: exercisesTableRow[]) => {
         return rows;
@@ -27,7 +30,9 @@ export default function Metrics() {
     );
   }
 
-  function onExerciseNamePress() {}
+  function onExerciseNamePress() {
+    setIsContainerOverlayOpen(false);
+  }
 
   return (
     <SafeAreaView style={tw`flex-1 bg-front`}>
@@ -44,14 +49,6 @@ export default function Metrics() {
       </View>
       {/* WORKOUT HISTORY */}
       <View>
-        {/* <Text
-          style={[
-            tw`text-lg text-primary pl-5 pt-5`,
-            { fontFamily: "RobotoCondensed" },
-          ]}
-        >
-          WORKOUTS
-        </Text> */}
         <FlashList
           estimatedItemSize={250}
           data={metricsState.workoutIds}
@@ -79,10 +76,11 @@ export default function Metrics() {
       {/* EXERCISE HISTORY */}
       <Search
         placeholderText="Search Exercise"
+        isContainerOverlayOpen={isContainerOverlayOpen}
         searchAction={searchAction}
         renderItem={({ item }) => (
           <ExerciseNameSearchResult
-            row={item as exercisesTableRow}
+            row={item}
             onPress={onExerciseNamePress}
             key={"ExerciseSearchResult" + item.exercise_id}
           />

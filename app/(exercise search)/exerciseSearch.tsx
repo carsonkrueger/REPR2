@@ -1,4 +1,4 @@
-import { BackHandler, TextInput, View } from "react-native";
+import { BackHandler } from "react-native";
 import SearchBar from "../../src/components/SearchBar";
 import { sqlSelectLikeExercisesByName } from "../../src/sqlite/queries";
 import { exercisesTableRow } from "../../src/types/localDBTables";
@@ -38,20 +38,6 @@ export default function ExerciseSearch() {
     navigateBack();
   }
 
-  // async function searchAndReturnElements(name: string) {
-  //   return await sqlSelectLikeExercisesByName(name).then(
-  //     (rows: exercisesTableRow[]) => {
-  //       return rows.map((row) => (
-  //         <ExerciseNameSearchResult
-  //           row={row}
-  //           key={"ExerciseSearchResult" + row.exercise_id}
-  //           onPress={onExerciseNamePress}
-  //         />
-  //       ));
-  //     }
-  //   );
-  // }
-
   async function searchAction(name: string) {
     return await sqlSelectLikeExercisesByName(name).then(
       (rows: exercisesTableRow[]) => {
@@ -64,15 +50,13 @@ export default function ExerciseSearch() {
     <SafeAreaView>
       <SearchBar
         placeholderText="Search Exercise"
-        // searchAndReturnElements={searchAndReturnElements}
         useSearchResultContainerOverlay={false}
-        maxTWHeight={"100%"}
         allowEmptySearch={true}
         doInitEmptySearch={true}
         searchAction={searchAction}
         renderItem={({ item }) => (
           <ExerciseNameSearchResult
-            row={item as exercisesTableRow}
+            row={item}
             onPress={onExerciseNamePress}
             key={"ExerciseSearchResult" + item.exercise_id}
           />

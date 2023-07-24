@@ -14,6 +14,7 @@ import * as SpashScreen from "expo-splash-screen";
 
 import {
   getPlatform,
+  getProfile,
   getSession,
   selectProfile,
   setInitLoadedTrue,
@@ -48,6 +49,10 @@ export default function Home() {
   const profile = useSelector((state: RootState) => selectProfile(state));
 
   const [appIsReady, setAppIsReady] = useState(false);
+
+  useEffect(() => {
+    if (profile.userId !== "") dispatch(getProfile(profile.userId));
+  }, [profile.userId]);
 
   useEffect(() => {
     // sqlDropAllTables();

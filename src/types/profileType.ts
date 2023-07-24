@@ -1,13 +1,16 @@
 import { Session } from "@supabase/supabase-js";
 
 export type Profile = {
-  userId: number;
+  userId: string;
   email: string;
   username: string;
   firstname: string;
   lastname: string;
-  isDarkMode: boolean;
   isPremium: boolean;
+  num_posts: number;
+  num_followers: number;
+  num_following: number;
+  isDarkMode: boolean;
   session: Session | null;
   initLoaded: boolean;
   isIos: boolean;

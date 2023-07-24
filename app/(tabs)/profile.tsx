@@ -23,7 +23,7 @@ export default function Profile() {
   return (
     <SafeAreaView style={tw`flex-1 bg-front`}>
       {/* TOP HEADER */}
-      <View style={tw`flex-row px-4 py-3 justify-between`}>
+      <View style={tw`flex-row px-4 py-3 bg-front justify-between z-10`}>
         <Text
           style={[
             tw`text-xl text-center text-primary`,
@@ -45,19 +45,25 @@ export default function Profile() {
       </View>
 
       {/* PROFILE ICON AREA*/}
-      <View style={tw`flex-row pb-5 justify-evenly items-center`}>
+      <View
+        style={tw`flex-row pb-5 bg-front justify-evenly items-center px-2 shadow-md`}
+      >
+        {/* IMAGE */}
         <View
           style={tw`border-[1px] border-light-gray rounded-full h-22 w-22`}
         />
-        <View style={tw`flex-col`}>
+
+        {/* NUM POSTS */}
+        <View style={tw`flex-col min-w-10`}>
           <Text
             style={[
               tw`text-black text-center text-lg`,
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            5
+            {profile.num_posts}
           </Text>
+
           <Text
             style={[
               tw`text-dark-gray text-center`,
@@ -67,14 +73,16 @@ export default function Profile() {
             Posts
           </Text>
         </View>
-        <View style={tw`flex-col`}>
+
+        {/* NUM FOLLOWERS */}
+        <View style={tw`flex-col min-w-10`}>
           <Text
             style={[
               tw`text-black text-center text-lg`,
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            562
+            {profile.num_followers}
           </Text>
           <Text
             style={[
@@ -85,14 +93,16 @@ export default function Profile() {
             Followers
           </Text>
         </View>
-        <View style={tw`flex-col`}>
+
+        {/* NUM FOLLOWING */}
+        <View style={tw`flex-col min-w-10`}>
           <Text
             style={[
               tw`text-black text-center text-lg`,
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            1245
+            {profile.num_following}
           </Text>
           <Text
             style={[

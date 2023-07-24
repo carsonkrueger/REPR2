@@ -13,7 +13,6 @@ import { sqlSelectLikeExercisesByName } from "../../src/sqlite/queries";
 import { exercisesTableRow } from "../../src/types/localDBTables";
 import ExerciseNameSearchResult from "../../src/components/workoutComponents/exerciseNameSearchResult";
 import { useState } from "react";
-import { ScrollView } from "react-native-gesture-handler";
 
 export default function Metrics() {
   const metricsState = useSelector((state: RootState) =>

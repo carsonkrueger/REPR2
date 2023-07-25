@@ -43,12 +43,12 @@ const MyAlert = ({
 
             <View style={tw`flex-row justify-evenly items-center`}>
               <TouchableOpacity
-                style={tw`rounded-md px-2 py-1 bg-front shadow-sm`}
+                style={tw`rounded-md px-2 py-1 bg-danger shadow-sm`}
                 onPress={dangerCommand}
               >
                 <Text
                   style={[
-                    tw`text-danger text-center text-base`,
+                    tw`text-front text-center text-base`,
                     { fontFamily: "RobotoCondensed" },
                   ]}
                 >
@@ -57,12 +57,12 @@ const MyAlert = ({
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={tw`rounded-md bg-primary px-2 py-1 shadow-sm`}
+                style={tw`bg-front px-2 py-1`}
                 onPress={safeCommand}
               >
                 <Text
                   style={[
-                    tw`text-white text-center text-base`,
+                    tw`text-primary text-center text-base`,
                     { fontFamily: "RobotoCondensed" },
                   ]}
                 >

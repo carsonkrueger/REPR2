@@ -13,6 +13,7 @@ import { sqlSelectLikeExercisesByName } from "../../src/sqlite/queries";
 import { exercisesTableRow } from "../../src/types/localDBTables";
 import ExerciseNameSearchResult from "../../src/components/workoutComponents/exerciseNameSearchResult";
 import { useState } from "react";
+import PremiumIcon from "../../src/components/premiumIcon";
 
 export default function Metrics() {
   const metricsState = useSelector((state: RootState) =>
@@ -36,7 +37,7 @@ export default function Metrics() {
   return (
     <SafeAreaView style={tw`flex-1 bg-front`}>
       {/* HEADER */}
-      <View style={tw`py-2 bg-front shadow-md`}>
+      <View style={tw`flex-row px-3 py-2 justify-between bg-front shadow-md`}>
         <Text
           style={[
             tw`text-xl text-center text-primary`,
@@ -45,6 +46,7 @@ export default function Metrics() {
         >
           HISTORY
         </Text>
+        <PremiumIcon />
       </View>
       {/* WORKOUT HISTORY */}
       <View>

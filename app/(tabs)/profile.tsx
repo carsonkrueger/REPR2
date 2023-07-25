@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "../../src/redux/store";
 import { selectProfile } from "../../src/redux/slices/profileSlice";
+import PremiumIcon from "../../src/components/premiumIcon";
 
 export default function Profile() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function Profile() {
   return (
     <SafeAreaView style={tw`flex-1 bg-front`}>
       {/* TOP HEADER */}
-      <View style={tw`flex-row px-4 py-3 bg-front justify-between z-10`}>
+      <View style={tw`flex-row px-3 py-2 bg-front justify-between z-10`}>
         <Text
           style={[
             tw`text-xl text-center text-primary`,
@@ -32,16 +33,19 @@ export default function Profile() {
         >
           {profile.username}
         </Text>
-        <TouchableOpacity
-          style={tw`flex-col justify-end items-center pb-1`}
-          onPress={navigateToSettings}
-        >
-          <Ionicons
-            name={"settings-outline"}
-            color={CustomColors.primary}
-            size={27}
-          />
-        </TouchableOpacity>
+        <View style={tw`flex-row`}>
+          <TouchableOpacity
+            style={tw`flex-col justify-end items-center pb-1 pr-2`}
+            onPress={navigateToSettings}
+          >
+            <Ionicons
+              name={"settings-outline"}
+              color={CustomColors.primary}
+              size={27}
+            />
+          </TouchableOpacity>
+          <PremiumIcon />
+        </View>
       </View>
 
       {/* PROFILE ICON AREA*/}

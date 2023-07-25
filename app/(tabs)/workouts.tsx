@@ -18,6 +18,7 @@ import { sqlSelectAllTemplatesByDateDESC } from "../../src/sqlite/queries";
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
 import { addWorkoutTemplateToBack } from "../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromParseWorkoutTableRow } from "../../src/util/workoutUtils";
+import PremiumIcon from "../../src/components/premiumIcon";
 
 export default function Workouts() {
   const templates: WorkoutTemplate[] = useSelector(
@@ -52,7 +53,7 @@ export default function Workouts() {
   return (
     <SafeAreaView style={tw`flex-1 bg-front `}>
       <View
-        style={tw`py-2 bg-front z-10 ${
+        style={tw`flex-row px-3 py-2 justify-between bg-front z-10 ${
           distanceFromTop <= 18 ? "" : "shadow-md"
         }`}
       >
@@ -64,6 +65,7 @@ export default function Workouts() {
         >
           WORKOUTS
         </Text>
+        <PremiumIcon />
       </View>
 
       <View style={tw`flex-1 px-2`}>

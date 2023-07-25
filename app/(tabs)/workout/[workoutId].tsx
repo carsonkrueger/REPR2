@@ -218,9 +218,9 @@ export default function WorkoutScreen() {
           msg="Are you sure you want to finish your workout?"
           onOutOfBoundsClick={backPress}
           dangerCommand={cancelWorkout}
-          safeCommand={onFinishWorkout}
+          safeCommand={backPress}
           dangerText="Cancel Workout"
-          safeText="Finish Workout"
+          safeText="Continue"
         />
       )}
 
@@ -286,6 +286,19 @@ export default function WorkoutScreen() {
                 </Text>
               </TouchableOpacity>
             )}
+            <TouchableOpacity
+              style={tw` rounded-md px-3 py-1`}
+              onPress={onFinishWorkout}
+            >
+              <Text
+                style={[
+                  tw`text-lg text-primary pt-3`,
+                  { fontFamily: "RobotoCondensed" },
+                ]}
+              >
+                FINISH WORKOUT
+              </Text>
+            </TouchableOpacity>
           </View>
         }
       />

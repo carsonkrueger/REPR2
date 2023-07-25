@@ -12,6 +12,7 @@ import { parseWorkoutTableRow } from "../util/workoutUtils";
 import { getCurDate } from "../util/dates";
 import { ExerciseMetric, WorkoutMetric } from "../types/metricsTypes";
 import exerciseNames from "../util/exerciseNames";
+import sqlQuery from "./newQuery";
 
 const db = SQLite.openDatabase("repr_local");
 
@@ -241,6 +242,7 @@ export async function sqlInsertExerciseHistory(
             bestReps: bestReps,
             exerciseName: exercise.name,
             numSets: exercise.Sets.length,
+            performed: getCurDate(),
           }),
         (_, error) => {
           console.log("Error updating workout template: ", error);
@@ -379,4 +381,10 @@ export async function sqlInsertDefaultExercises() {
       tx.executeSql("INSERT INTO exercises (exercise_name) VALUES (?)", [name])
     )
   );
+}
+
+export async function sqlInsertNewExerciseName(name: string) {
+  sqlQuery("INSERT OR IGNORE INTO exercises (exercise_name) VALUES (?)", [
+    name,
+  ]);
 }

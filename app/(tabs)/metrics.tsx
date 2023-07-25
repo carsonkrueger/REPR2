@@ -8,7 +8,7 @@ import { selectMetricsState } from "../../src/redux/slices/metricsSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../src/redux/store";
 import { WorkoutMetric } from "../../src/components/metricsComponents/workoutMetric";
-import Search from "../../src/components/SearchBar";
+import Search from "../../src/components/searchBar";
 import { sqlSelectLikeExercisesByName } from "../../src/sqlite/queries";
 import { exercisesTableRow } from "../../src/types/localDBTables";
 import ExerciseNameSearchResult from "../../src/components/workoutComponents/exerciseNameSearchResult";

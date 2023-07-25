@@ -1,5 +1,5 @@
 import { BackHandler } from "react-native";
-import SearchBar from "../../src/components/SearchBar";
+import SearchBar from "../../src/components/searchBar";
 import { sqlSelectLikeExercisesByName } from "../../src/sqlite/queries";
 import { exercisesTableRow } from "../../src/types/localDBTables";
 import { SafeAreaView } from "react-native-safe-area-context";

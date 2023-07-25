@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { SplashScreen, useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import tw from "../../src/util/tailwind";
 import CustomColors from "../../src/util/customColors";
@@ -114,6 +114,10 @@ export default function Home() {
     );
   }
 
+  function pushNavigateToPremium() {
+    router.push("premium");
+  }
+
   if (!appIsReady) return null;
 
   return (
@@ -125,10 +129,15 @@ export default function Home() {
           REPR
         </Text>
 
-        <TouchableOpacity>
-          <Ionicons
+        <TouchableOpacity onPress={pushNavigateToPremium}>
+          {/* <Ionicons
             name="chatbubble-outline"
             color={CustomColors.primary}
+            size={27}
+          /> */}
+          <MaterialCommunityIcons
+            name="crown"
+            color={CustomColors.gold}
             size={27}
           />
         </TouchableOpacity>

@@ -1,4 +1,9 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  PayloadAction,
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+} from "@reduxjs/toolkit";
 import { Platform } from "react-native";
 
 import { Profile } from "../../types/profileType";
@@ -23,11 +28,14 @@ const initialSettings: Profile = {
   num_following: 0,
 };
 
-export const getSession = createAsyncThunk("getSession", async () => {
-  const session = await supabase.auth.getSession();
-  if (session.error) throw session.error;
-  return session.data.session;
-});
+export const getSession = createAsyncThunk(
+  "getSession",
+  async (): Promise<Session | null> => {
+    const session = await supabase.auth.getSession();
+    if (session.error) throw session.error;
+    return session.data.session;
+  }
+);
 
 export const getProfile = createAsyncThunk(
   "getProfile",
@@ -92,3 +100,7 @@ export const { toggleDarkMode, setSession, setInitLoadedTrue, getPlatform } =
   profileSlice.actions;
 
 export const selectProfile = (state: RootState) => state.profile;
+export const selectIsPremium = createSelector(
+  selectProfile,
+  (profile) => profile.isPremium
+);

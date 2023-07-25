@@ -2,13 +2,14 @@ import "expo-router/entry";
 
 import { useDispatch } from "react-redux";
 import { SplashScreen, useRouter } from "expo-router";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import tw from "../../src/util/tailwind";
 import * as Font from "expo-font";
 import { useCallback, useEffect, useState } from "react";
 import * as SpashScreen from "expo-splash-screen";
+import { Feather } from "@expo/vector-icons";
 
 import {
   getPlatform,
@@ -37,6 +38,7 @@ import {
   parseWorkoutHistoryTableRow,
 } from "../../src/util/metricsUtils";
 import PremiumIcon from "../../src/components/premiumIcon";
+import { Session } from "@supabase/supabase-js";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,21 +51,19 @@ export default function Home() {
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
-    if (profile.userId !== "") dispatch(getProfile(profile.userId));
-  }, [profile.userId]);
-
-  useEffect(() => {
     // sqlDropAllTables();
     async function prepare() {
       try {
-        if (profile.initLoaded) return;
+        if (profile.initLoaded) return; // if already loaded data, then return
+        dispatch(setInitLoadedTrue());
         await Font.loadAsync({
           RobotoCondensed: require("../../assets/fonts/RobotoCondensed-Regular.ttf"),
         });
-        await dispatch(getSession());
+        await dispatch(getSession()).then(({ payload }) => {
+          dispatch(getProfile((payload as Session).user.id));
+        });
         initWorkoutTemplatesTable();
         loadMetricsData();
-        dispatch(setInitLoadedTrue());
         dispatch(getPlatform());
       } catch (e) {
         console.warn(e);
@@ -125,6 +125,12 @@ export default function Home() {
 
         <PremiumIcon />
       </View>
+
+      <TouchableOpacity
+        style={tw`absolute bottom-18 right-4 items-center justify-center bg-primary rounded-full p-2`}
+      >
+        <Feather name="plus" size={30} color={"#fff"} />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }

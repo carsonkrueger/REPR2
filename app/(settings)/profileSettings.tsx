@@ -28,6 +28,7 @@ export default function Settings() {
 
   return (
     <SafeAreaView style={tw`flex-1 bg-back`}>
+      {/* HEADER */}
       <View
         style={tw`flex-row py-2 bg-front shadow-md justify-center items-center`}
       >
@@ -47,8 +48,17 @@ export default function Settings() {
       <SettingsGroup headerName="Account">
         <SettingsItem itemName="Email" onTap={() => {}} />
         <SettingsItem itemName="Reset Password" onTap={() => {}} />
-        <SettingsItem itemName="Premium" onTap={() => {}} />
+        <SettingsItem itemName="Premium" onTap={() => router.push("premium")} />
         <SettingsItem itemName="Logout" onTap={logout} lastItem={true} />
+      </SettingsGroup>
+
+      <SettingsGroup headerName="Notifications">
+        <SettingsItem
+          itemName="Recieve Friend Notifications"
+          useToggle={true}
+          lastItem={true}
+          onTap={() => {}}
+        />
       </SettingsGroup>
 
       <SettingsGroup headerName="Appearance">

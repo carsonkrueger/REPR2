@@ -1,16 +1,20 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import { Feather } from "@expo/vector-icons";
 import tw from "../../util/tailwind";
 import { useRouter } from "expo-router";
 
-import CustomColors from "../../util/customColors";
+interface props {
+  canCreateWorkout: () => boolean;
+}
 
-const WorkoutTemplateHeaderComponent = () => {
+const WorkoutTemplateHeaderComponent = ({ canCreateWorkout }: props) => {
   const router = useRouter();
 
   const onCreateWorkout = () => {
-    router.push({ pathname: `workout/${-1}`, params: { paramWorkoutId: -1 } });
-    // dispatch(addWorkoutTemplate());
+    if (canCreateWorkout())
+      router.push({
+        pathname: `workout/${-1}`,
+        params: { paramWorkoutId: -1 },
+      });
   };
 
   return (
@@ -21,7 +25,7 @@ const WorkoutTemplateHeaderComponent = () => {
         MY TEMPLATES
       </Text>
       <TouchableOpacity
-        style={tw`bg-primary rounded-md py-1 mt-2`}
+        style={tw`bg-primary rounded-md py-1 mt-2 shadow-md`}
         onPress={onCreateWorkout}
       >
         <Text

@@ -9,6 +9,7 @@ import { WorkoutState } from "../../types/workoutTypes";
 import tw from "../../util/tailwind";
 import { selectWorkout } from "../../redux/slices/workoutSlice";
 import { SafeAreaView } from "react-native";
+import CustomColors from "../../util/customColors";
 
 export default function Nav() {
   const curWorkout: WorkoutState = useSelector((state: RootState) =>
@@ -57,17 +58,28 @@ export default function Nav() {
     <SafeAreaView
       style={tw`absolute px-1 flex-row items-center bottom-0 right-0 left-0 bg-dark-front z-50 py-[14px]`}
     >
+      {/* Workout screen */}
       <View
-        style={tw`absolute left-0 right-0 justify-center items-center pb-10`}
+        style={tw`absolute left-0 right-0 justify-center items-center pb-8`}
       >
-        <View style={tw`bg-front rounded-full overflow-hidden`}>
+        <View
+          style={tw`bg-front rounded-full overflow-hidden border-[1px] ${
+            selectedPos === 2
+              ? "bg-primary border-primary"
+              : "bg-white border-dark-front"
+          }`}
+        >
           <TouchableOpacity
-            style={tw`p-3 justify-center items-center bg-primary`}
+            style={tw`p-3 justify-center items-center`}
             onPress={
               curWorkout.inProgress ? navigateStartWorkout : navigateWorkouts
             }
           >
-            <Ionicons name="barbell-sharp" color={"#fff"} size={27} />
+            <Ionicons
+              name="barbell-sharp"
+              color={selectedPos === 2 ? "#fff" : CustomColors["dark-front"]}
+              size={27}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -77,8 +89,9 @@ export default function Nav() {
         onPress={navigateHome}
       >
         <Ionicons
-          name={`${selectedPos === 0 ? "home" : "home-outline"}`}
-          color={"#3b83f5"}
+          // name={`${selectedPos === 0 ? "home" : "home-outline"}`}
+          name="home"
+          color={selectedPos === 0 ? "#3b83f5" : "#fff"}
           size={27}
         />
       </TouchableOpacity>
@@ -88,8 +101,9 @@ export default function Nav() {
         onPress={navigateSearch}
       >
         <Ionicons
-          name={`${selectedPos === 1 ? "search" : "search-outline"}`}
-          color={"#3b83f5"}
+          // name={`${selectedPos === 1 ? "search" : "search-outline"}`}
+          name="search"
+          color={selectedPos === 1 ? "#3b83f5" : "#fff"}
           size={27}
         />
       </TouchableOpacity>
@@ -101,8 +115,9 @@ export default function Nav() {
         onPress={navigateMetrics}
       >
         <Ionicons
-          name={`${selectedPos === 3 ? "stats-chart" : "stats-chart-outline"}`}
-          color={"#3b83f5"}
+          // name={`${selectedPos === 3 ? "stats-chart" : "stats-chart-outline"}`}
+          name="stats-chart"
+          color={selectedPos === 3 ? "#3b83f5" : "#fff"}
           size={27}
         />
       </TouchableOpacity>
@@ -112,8 +127,9 @@ export default function Nav() {
         onPress={navigateProfile}
       >
         <Ionicons
-          name={`${selectedPos === 4 ? "person" : "person-outline"}`}
-          color={"#3b83f5"}
+          // name={`${selectedPos === 4 ? "person" : "person-outline"}`}
+          name="person"
+          color={selectedPos === 4 ? "#3b83f5" : "#fff"}
           size={27}
         />
       </TouchableOpacity>

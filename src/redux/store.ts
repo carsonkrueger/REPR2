@@ -11,6 +11,7 @@ import {
   metricsStateReducer,
   workoutMetricsReducer,
 } from "./slices/metricsSlice";
+import { postsReducer } from "./slices/postsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     exerciseMetrics: exerciseMetricsReducer,
     workoutMetrics: workoutMetricsReducer,
     metricsState: metricsStateReducer,
+    posts: postsReducer,
   },
 });
 

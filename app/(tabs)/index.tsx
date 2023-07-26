@@ -2,7 +2,7 @@ import "expo-router/entry";
 
 import { useDispatch } from "react-redux";
 import { SplashScreen, useRouter } from "expo-router";
-import { Text, TouchableOpacity, View, Image } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import tw from "../../src/util/tailwind";
@@ -41,6 +41,10 @@ import {
 import PremiumIcon from "../../src/components/premiumIcon";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "../../src/types/supabaseClient";
+import { addPost, selectAllPostsIds } from "../../src/redux/slices/postsSlice";
+import { getCurDate } from "../../src/util/dates";
+import { FlashList } from "@shopify/flash-list";
+import Post from "../../src/components/post";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,9 +53,11 @@ export default function Home() {
   const router = useRouter();
 
   const profile = useSelector((state: RootState) => selectProfile(state));
+  const allPostIds = useSelector((state: RootState) =>
+    selectAllPostsIds(state)
+  );
 
   const [appIsReady, setAppIsReady] = useState(false);
-  const [image, setImage] = useState<ImagePicker.ImagePickerAsset>();
 
   useEffect(() => {
     // sqlDropAllTables();
@@ -122,27 +128,39 @@ export default function Home() {
       aspect: [1, 1],
       quality: 1,
     });
-    if (!result.canceled) setImage(result.assets[0]);
+    if (!result.canceled)
+      dispatch(
+        addPost({
+          post: {
+            createAt: "",
+            id: 0,
+            postId: "",
+            uri: result.assets[0].uri,
+            userId: "",
+            userName: "Mini",
+          },
+        })
+      );
   }
 
-  async function openCamera() {
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-    if (!result.canceled) setImage(result.assets[0]);
-  }
+  // async function openCamera() {
+  //   let result = await ImagePicker.launchCameraAsync({
+  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //     allowsEditing: true,
+  //     aspect: [1, 1],
+  //     quality: 1,
+  //   });
+  //   if (!result.canceled) setImage(result.assets[0]);
+  // }
 
-  async function uploadImage() {
-    const { data, error } = await supabase.storage
-      .from("image_posts")
-      .upload(image!.fileName!, image!.uri!, {
-        cacheControl: "3600",
-        upsert: false,
-      });
-  }
+  // async function uploadImage() {
+  //   const { data, error } = await supabase.storage
+  //     .from("image_posts")
+  //     .upload(image!.fileName!, image!.uri!, {
+  //       cacheControl: "3600",
+  //       upsert: false,
+  //     });
+  // }
 
   if (!appIsReady) return null;
 
@@ -158,7 +176,10 @@ export default function Home() {
         <PremiumIcon />
       </View>
 
-      {image && <Image source={{ uri: image.uri }} style={tw`flex-1`} />}
+      <FlashList
+        data={allPostIds}
+        renderItem={({ item }) => <Post postEntityId={item} />}
+      />
 
       <TouchableOpacity
         style={tw`absolute bottom-18 right-4 items-center justify-center bg-primary rounded-full p-2`}

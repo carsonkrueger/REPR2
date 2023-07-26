@@ -2,7 +2,7 @@ import "expo-router/entry";
 
 import { useDispatch } from "react-redux";
 import { SplashScreen, useRouter } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import tw from "../../src/util/tailwind";
@@ -40,6 +40,7 @@ import {
 } from "../../src/util/metricsUtils";
 import PremiumIcon from "../../src/components/premiumIcon";
 import { Session } from "@supabase/supabase-js";
+import { supabase } from "../../src/types/supabaseClient";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -50,7 +51,7 @@ export default function Home() {
   const profile = useSelector((state: RootState) => selectProfile(state));
 
   const [appIsReady, setAppIsReady] = useState(false);
-  const [image, setImage] = useState<ImagePicker.ImagePickerSuccessResult>();
+  const [image, setImage] = useState<ImagePicker.ImagePickerAsset>();
 
   useEffect(() => {
     // sqlDropAllTables();
@@ -121,7 +122,7 @@ export default function Home() {
       aspect: [1, 1],
       quality: 1,
     });
-    if (!result.canceled) setImage(result);
+    if (!result.canceled) setImage(result.assets[0]);
   }
 
   async function openCamera() {
@@ -131,7 +132,16 @@ export default function Home() {
       aspect: [1, 1],
       quality: 1,
     });
-    if (!result.canceled) setImage(result);
+    if (!result.canceled) setImage(result.assets[0]);
+  }
+
+  async function uploadImage() {
+    const { data, error } = await supabase.storage
+      .from("image_posts")
+      .upload(image!.fileName!, image!.uri!, {
+        cacheControl: "3600",
+        upsert: false,
+      });
   }
 
   if (!appIsReady) return null;
@@ -147,6 +157,8 @@ export default function Home() {
 
         <PremiumIcon />
       </View>
+
+      {image && <Image source={{ uri: image.uri }} style={tw`flex-1`} />}
 
       <TouchableOpacity
         style={tw`absolute bottom-18 right-4 items-center justify-center bg-primary rounded-full p-2`}

@@ -10,6 +10,7 @@ import * as Font from "expo-font";
 import { useCallback, useEffect, useState } from "react";
 import * as SpashScreen from "expo-splash-screen";
 import { Feather } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 
 import {
   getPlatform,
@@ -49,6 +50,7 @@ export default function Home() {
   const profile = useSelector((state: RootState) => selectProfile(state));
 
   const [appIsReady, setAppIsReady] = useState(false);
+  const [image, setImage] = useState<ImagePicker.ImagePickerSuccessResult>();
 
   useEffect(() => {
     // sqlDropAllTables();
@@ -112,6 +114,26 @@ export default function Home() {
     );
   }
 
+  async function openGallery() {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+    if (!result.canceled) setImage(result);
+  }
+
+  async function openCamera() {
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+    if (!result.canceled) setImage(result);
+  }
+
   if (!appIsReady) return null;
 
   return (
@@ -128,6 +150,7 @@ export default function Home() {
 
       <TouchableOpacity
         style={tw`absolute bottom-18 right-4 items-center justify-center bg-primary rounded-full p-2`}
+        onPress={openGallery}
       >
         <Feather name="plus" size={30} color={"#fff"} />
       </TouchableOpacity>

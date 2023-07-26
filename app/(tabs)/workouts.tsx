@@ -138,6 +138,7 @@ export default function Workouts() {
           onScroll={onSetDistanceFromTop}
           estimatedItemSize={110}
           ListFooterComponent={<View style={tw`mb-52`} />}
+          showsVerticalScrollIndicator={false}
         />
       </View>
     </SafeAreaView>

@@ -1,4 +1,4 @@
-export interface profilesTable {
+export interface profilesTableRow {
   user_id: string;
   user_name: string;
   first_name: string;
@@ -13,4 +13,12 @@ export interface userMetaData {
   first_name: string;
   last_name: string;
   user_name: string;
+}
+
+export interface postsTableRow {
+  post_id: string;
+  created_at: string;
+  image_url: string;
+  user_id: string;
+  num_likes: number;
 }

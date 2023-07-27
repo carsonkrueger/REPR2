@@ -41,8 +41,13 @@ import {
 import PremiumIcon from "../../src/components/premiumIcon";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "../../src/types/supabaseClient";
-import { addPost, selectAllPostsIds } from "../../src/redux/slices/postsSlice";
-import { getCurDate } from "../../src/util/dates";
+import {
+  addPost,
+  getNextPost,
+  selectAllPostsIds,
+  selectNextPostId,
+} from "../../src/redux/slices/postsSlice";
+import { getCurDate, getCurLongDate } from "../../src/util/dates";
 import { FlashList } from "@shopify/flash-list";
 import Post from "../../src/components/post";
 
@@ -55,6 +60,9 @@ export default function Home() {
   const profile = useSelector((state: RootState) => selectProfile(state));
   const allPostIds = useSelector((state: RootState) =>
     selectAllPostsIds(state)
+  );
+  const nextPostEntityId = useSelector((state: RootState) =>
+    selectNextPostId(state)
   );
 
   const [appIsReady, setAppIsReady] = useState(false);
@@ -138,9 +146,15 @@ export default function Home() {
             uri: result.assets[0].uri,
             userId: "",
             userName: "Mini",
+            numLikes: 0,
+            isLiked: false,
           },
         })
       );
+  }
+
+  async function onEndOfPageReached() {
+    dispatch(getNextPost({ lastPostCreateAt: getCurLongDate() }));
   }
 
   // async function openCamera() {
@@ -179,6 +193,8 @@ export default function Home() {
       <FlashList
         data={allPostIds}
         renderItem={({ item }) => <Post postEntityId={item} />}
+        onEndReached={onEndOfPageReached}
+        estimatedItemSize={100}
       />
 
       <TouchableOpacity

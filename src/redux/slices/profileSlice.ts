@@ -8,7 +8,7 @@ import { Platform } from "react-native";
 
 import { Profile } from "../../types/profileType";
 import { supabase } from "../../types/supabaseClient";
-import { profilesTable } from "../../types/remoteDBTables";
+import { profilesTableRow } from "../../types/remoteDBTables";
 import { Session } from "@supabase/supabase-js";
 import { RootState } from "../store";
 
@@ -48,7 +48,7 @@ export const getProfile = createAsyncThunk(
       .eq("user_id", userId)
       .single();
     if (error) console.log("Error getting profile: ", error.message);
-    return data as profilesTable;
+    return data as profilesTableRow;
   }
 );
 
@@ -73,23 +73,22 @@ export const profileSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(getSession.fulfilled, (state, action) => {
-        state.session = action.payload;
-        if (action.payload) {
-          state.session = action.payload;
-          state.email = action.payload.user.email ?? "";
-          state.userId = action.payload.user.id;
+      .addCase(getSession.fulfilled, (state, result) => {
+        if (result.payload) {
+          state.session = result.payload;
+          state.email = result.payload.user.email ?? "";
+          state.userId = result.payload.user.id;
         }
       })
-      .addCase(getProfile.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.firstname = action.payload.first_name;
-          state.lastname = action.payload.last_name;
-          state.username = action.payload.user_name;
-          state.isPremium = action.payload.is_premium;
-          state.num_posts = action.payload.num_posts;
-          state.num_followers = action.payload.num_followers;
-          state.num_following = action.payload.num_following;
+      .addCase(getProfile.fulfilled, (state, result) => {
+        if (result.payload) {
+          state.firstname = result.payload.first_name;
+          state.lastname = result.payload.last_name;
+          state.username = result.payload.user_name;
+          state.isPremium = result.payload.is_premium;
+          state.num_posts = result.payload.num_posts;
+          state.num_followers = result.payload.num_followers;
+          state.num_following = result.payload.num_following;
         }
       });
   },

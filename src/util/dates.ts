@@ -23,12 +23,24 @@ const monthNames = {
   "12": "December",
 };
 
-export const getCurDate = () => {
+export function getCurDate() {
   return new Date().toISOString().split("T")[0];
-};
+}
 
-const thDate = (date: string) => {
-  switch (date) {
+export function getCurLongDate() {
+  return `${getCurDate()} ${getHourMinuteSeconds()}`;
+}
+
+function getHourMinuteSeconds() {
+  const date = new Date();
+  return `${date.getUTCHours().toString().padStart(2, "0")}:${date
+    .getUTCMinutes()
+    .toString()
+    .padStart(2, "0")}:${date.getUTCSeconds().toString().padStart(2, "0")}`;
+}
+
+function thDate(dayOfMonth: string) {
+  switch (dayOfMonth) {
     case "11":
     case "12":
     case "13":
@@ -36,7 +48,7 @@ const thDate = (date: string) => {
   }
 
   try {
-    const lastNum = date.charAt(date.length - 1);
+    const lastNum = dayOfMonth.charAt(dayOfMonth.length - 1);
     switch (lastNum) {
       case "1":
         return "st";
@@ -50,11 +62,11 @@ const thDate = (date: string) => {
   } catch (e) {
     return "";
   }
-};
+}
 
-export const convertDateToHuman = (date: string, withYear: boolean = true) => {
+export function convertDateToHuman(date: string, withYear: boolean = true) {
   const [year, month, day] = date.split("-");
   return `${monthNames[month as keyof typeof monthNames]} ${
     Number(day) + thDate(day)
   }${withYear ? `, ${year}` : ""}`;
-};
+}

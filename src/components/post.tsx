@@ -1,11 +1,13 @@
 import { useRef } from "react";
-import { View, Image, Text } from "react-native";
+import { View, Image, Text, TouchableOpacity } from "react-native";
 import { Dimensions } from "react-native";
 import tw from "../util/tailwind";
 import { RootState } from "../redux/store";
 import { selectPostByEntityId } from "../redux/slices/postsSlice";
 import { useSelector } from "react-redux";
 import { EntityId } from "@reduxjs/toolkit";
+import { Ionicons } from "@expo/vector-icons";
+import CustomColors from "../util/customColors";
 
 const postImageRatio = [1, 1];
 
@@ -23,12 +25,38 @@ export default function Post({ postEntityId }: props) {
   );
 
   return (
-    <View style={tw`w-full my-2`}>
-      <Text>{post?.userName}</Text>
-      <Image
-        source={{ uri: post?.uri }}
-        style={tw`w-${windowWidth.current}px h-${postImageHeight.current}px`}
-      />
+    <View style={tw`w-full mb-10`}>
+      <Text style={[tw`p-2 text-dark-gray`, { fontFamily: "RobotoCondensed" }]}>
+        {post?.userName}Username
+      </Text>
+      {post?.uri !== "" && (
+        <Image
+          source={{ uri: post?.uri }}
+          style={tw`w-${windowWidth.current}px h-${postImageHeight.current}px`}
+        />
+      )}
+      {post?.uri === "" && (
+        <View
+          style={tw`w-${windowWidth.current}px h-${postImageHeight.current}px bg-transparent`}
+        />
+      )}
+
+      <View style={tw`flex-row py-2 px-3 justify-between w-25`}>
+        <TouchableOpacity>
+          <Ionicons
+            name={post?.isLiked ? "heart-sharp" : "heart-outline"}
+            color={post?.isLiked ? CustomColors.danger : CustomColors.primary}
+            size={33}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Ionicons
+            name="chatbubble-outline"
+            size={30}
+            color={CustomColors.primary}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

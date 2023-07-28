@@ -6,11 +6,12 @@ export interface Post {
   uri: string;
   userName: string;
   userId: string;
-  createAt: string;
+  createdAt: string;
   numLikes: number;
   isLiked: boolean;
 }
 
 export interface PostsState {
   nextPostEntityId: number;
+  lastPostDate: string;
 }

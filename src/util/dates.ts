@@ -31,6 +31,10 @@ export function getCurLongDate() {
   return `${getCurDate()} ${getHourMinuteSeconds()}`;
 }
 
+export function getCurFullDate() {
+  return new Date().toISOString();
+}
+
 function getHourMinuteSeconds() {
   const date = new Date();
   return `${date.getUTCHours().toString().padStart(2, "0")}:${date

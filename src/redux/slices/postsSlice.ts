@@ -11,8 +11,9 @@ import { RootState } from "../store";
 import { supabase } from "../../types/supabaseClient";
 import { postsTableRow } from "../../types/remoteDBTables";
 import postFromPostTableRow from "../../util/postsUtils";
+import { getCurFullDate } from "../../util/dates";
 
-const initialPostsState: PostsState = { nextPostEntityId: 0 };
+const initialPostsState: PostsState = { nextPostEntityId: 0, lastPostDate: "" };
 
 const postsStateSlice = createSlice({
   name: "postsState",
@@ -27,15 +28,14 @@ const postsStateSlice = createSlice({
 
 export const getNextPost = createAsyncThunk(
   "getNextPost",
-  async (payload: { lastPostCreateAt: string }): Promise<postsTableRow> => {
-    console.log(payload.lastPostCreateAt);
+  async (payload: { lastPostCreatedAt: string }): Promise<postsTableRow> => {
+    console.log(payload.lastPostCreatedAt);
     const { data, error } = await supabase
       .from("posts")
       .select("post_id, created_at, image_url, user_id, num_likes")
-      .lt("created_at", payload.lastPostCreateAt)
+      .lt("created_at", payload.lastPostCreatedAt.replace("T", " "))
       .limit(1)
       .single();
-    console.log(data as postsTableRow);
     if (error) console.log(error);
     return data as postsTableRow;
   }
@@ -44,7 +44,7 @@ export const getNextPost = createAsyncThunk(
 const initialPost: Post = {
   id: 0,
   postId: "",
-  createAt: "",
+  createdAt: "",
   uri: "",
   userId: "",
   userName: "",
@@ -77,7 +77,7 @@ const postsSlice = createSlice({
         postsAdapter.updateOne(state, {
           id: lastPostEntityId,
           changes: {
-            createAt: result.payload.created_at,
+            createdAt: result.payload.created_at,
             numLikes: result.payload.num_likes,
             userId: result.payload.user_id,
             postId: result.payload.post_id,

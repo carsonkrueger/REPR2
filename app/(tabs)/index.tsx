@@ -46,6 +46,7 @@ import {
   getNextPost,
   selectAllPostsIds,
   selectNextPostId,
+  selectPostByEntityId,
 } from "../../src/redux/slices/postsSlice";
 import { getCurDate, getCurLongDate } from "../../src/util/dates";
 import { FlashList } from "@shopify/flash-list";
@@ -64,6 +65,9 @@ export default function Home() {
   const nextPostEntityId = useSelector((state: RootState) =>
     selectNextPostId(state)
   );
+  const lastPostDate =
+    useSelector((state) => selectPostByEntityId(state, allPostIds.length - 1))
+      ?.createdAt ?? getCurLongDate();
 
   const [appIsReady, setAppIsReady] = useState(false);
 
@@ -140,7 +144,7 @@ export default function Home() {
       dispatch(
         addPost({
           post: {
-            createAt: "",
+            createdAt: "",
             id: 0,
             postId: "",
             uri: result.assets[0].uri,
@@ -154,7 +158,7 @@ export default function Home() {
   }
 
   async function onEndOfPageReached() {
-    dispatch(getNextPost({ lastPostCreateAt: getCurLongDate() }));
+    dispatch(getNextPost({ lastPostCreatedAt: lastPostDate }));
   }
 
   // async function openCamera() {

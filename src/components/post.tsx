@@ -60,6 +60,7 @@ export default function Post({ postEntityId }: props) {
             size={33}
           />
         </TouchableOpacity>
+        <Text>{post?.numLikes}</Text>
         <TouchableOpacity>
           <Ionicons
             name="chatbubble-outline"

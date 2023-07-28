@@ -194,7 +194,8 @@ export default function Home() {
         data={allPostIds}
         renderItem={({ item }) => <Post postEntityId={item} />}
         onEndReached={onEndOfPageReached}
-        estimatedItemSize={100}
+        onEndReachedThreshold={2}
+        estimatedItemSize={507}
       />
 
       <TouchableOpacity

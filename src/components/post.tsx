@@ -26,9 +26,20 @@ export default function Post({ postEntityId }: props) {
 
   return (
     <View style={tw`w-full mb-10`}>
-      <Text style={[tw`p-2 text-dark-gray`, { fontFamily: "RobotoCondensed" }]}>
-        {post?.userName}Username
-      </Text>
+      <View style={tw`flex-row items-center px-2 py-2`}>
+        <View
+          style={tw`w-10 h-10 rounded-full border-[1px] border-light-gray mr-2`}
+        />
+        <Text
+          style={[
+            tw` text-dark-gray text-base`,
+            { fontFamily: "RobotoCondensed" },
+          ]}
+        >
+          {post?.userName}
+        </Text>
+      </View>
+
       {post?.uri !== "" && (
         <Image
           source={{ uri: post?.uri }}

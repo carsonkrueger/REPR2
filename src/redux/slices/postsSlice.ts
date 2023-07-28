@@ -28,13 +28,15 @@ const postsStateSlice = createSlice({
 export const getNextPost = createAsyncThunk(
   "getNextPost",
   async (payload: { lastPostCreateAt: string }): Promise<postsTableRow> => {
+    console.log(payload.lastPostCreateAt);
     const { data, error } = await supabase
       .from("posts")
-      .select("*")
+      .select("post_id, created_at, image_url, user_id, num_likes")
       .lt("created_at", payload.lastPostCreateAt)
+      .limit(1)
       .single();
     console.log(data as postsTableRow);
-    if (error) throw error;
+    if (error) console.log(error);
     return data as postsTableRow;
   }
 );

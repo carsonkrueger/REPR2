@@ -29,11 +29,11 @@ const postsStateSlice = createSlice({
 export const getNextPost = createAsyncThunk(
   "getNextPost",
   async (payload: { lastPostCreatedAt: string }): Promise<postsTableRow> => {
-    console.log(payload.lastPostCreatedAt);
     const { data, error } = await supabase
       .from("posts")
       .select("post_id, created_at, image_url, user_id, num_likes")
-      .lt("created_at", payload.lastPostCreatedAt.replace("T", " "))
+      .order("created_at", { ascending: false })
+      .lt("created_at", payload.lastPostCreatedAt)
       .limit(1)
       .single();
     if (error) console.log(error);
@@ -63,26 +63,37 @@ const postsSlice = createSlice({
     addPost(state, action: PayloadAction<{ post: Post }>) {
       postsAdapter.addOne(state, action.payload.post);
     },
+    clearAllPosts(state) {
+      postsAdapter.removeAll(state);
+    },
+    toggleLikePost(state, action: PayloadAction<{ postId: EntityId }>) {
+      const isLiked = state.entities[action.payload.postId]?.isLiked;
+      postsAdapter.updateOne(state, {
+        id: action.payload.postId,
+        changes: { isLiked: !isLiked },
+      });
+    },
   },
   extraReducers(builder) {
     builder
-      .addCase(getNextPost.pending, (state) => {
-        const nextPostEntityId = state.ids.length;
-        const newPost: Post = { ...initialPost, id: nextPostEntityId };
-        postsAdapter.addOne(state, newPost);
-      })
+      // .addCase(getNextPost.pending, (state) => {
+      //   const nextPostEntityId = state.ids.length;
+      //   const newPost: Post = { ...initialPost, id: nextPostEntityId };
+      //   postsAdapter.addOne(state, newPost);
+      // })
       .addCase(getNextPost.fulfilled, (state, result) => {
         if (!result.payload) return;
-        const lastPostEntityId = state.ids.length - 1;
-        postsAdapter.updateOne(state, {
-          id: lastPostEntityId,
-          changes: {
-            createdAt: result.payload.created_at,
-            numLikes: result.payload.num_likes,
-            userId: result.payload.user_id,
-            postId: result.payload.post_id,
-            userName: "giga",
-          },
+        console.log(result.payload.created_at);
+        const nextPostEntityId = state.ids.length;
+        postsAdapter.addOne(state, {
+          id: nextPostEntityId,
+          isLiked: false,
+          uri: "",
+          createdAt: result.payload.created_at,
+          numLikes: result.payload.num_likes,
+          userId: result.payload.user_id,
+          postId: result.payload.post_id,
+          userName: "giga",
         });
       });
   },
@@ -96,7 +107,7 @@ export const selectNextPostId = createSelector(
   (postsState) => postsState.nextPostEntityId
 );
 
-export const { addPost } = postsSlice.actions;
+export const { addPost, clearAllPosts, toggleLikePost } = postsSlice.actions;
 export const postsReducer = postsSlice.reducer;
 
 export const selectAllPosts = (state: RootState) => state.posts;

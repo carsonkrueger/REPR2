@@ -43,12 +43,13 @@ import { Session } from "@supabase/supabase-js";
 import { supabase } from "../../src/types/supabaseClient";
 import {
   addPost,
+  clearAllPosts,
   getNextPost,
   selectAllPostsIds,
   selectNextPostId,
   selectPostByEntityId,
 } from "../../src/redux/slices/postsSlice";
-import { getCurDate, getCurLongDate } from "../../src/util/dates";
+import { getCurDate, getCurFullDate } from "../../src/util/dates";
 import { FlashList } from "@shopify/flash-list";
 import Post from "../../src/components/post";
 
@@ -67,9 +68,10 @@ export default function Home() {
   );
   const lastPostDate =
     useSelector((state) => selectPostByEntityId(state, allPostIds.length - 1))
-      ?.createdAt ?? getCurLongDate();
+      ?.createdAt ?? getCurFullDate();
 
   const [appIsReady, setAppIsReady] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     // sqlDropAllTables();
@@ -161,6 +163,14 @@ export default function Home() {
     dispatch(getNextPost({ lastPostCreatedAt: lastPostDate }));
   }
 
+  async function onPageRefesh() {
+    setIsRefreshing(true);
+    dispatch(clearAllPosts());
+    dispatch(getNextPost({ lastPostCreatedAt: getCurFullDate() })).finally(() =>
+      setIsRefreshing(false)
+    );
+  }
+
   // async function openCamera() {
   //   let result = await ImagePicker.launchCameraAsync({
   //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -200,6 +210,8 @@ export default function Home() {
         onEndReached={onEndOfPageReached}
         onEndReachedThreshold={2}
         estimatedItemSize={507}
+        refreshing={isRefreshing}
+        onRefresh={onPageRefesh}
       />
 
       <TouchableOpacity

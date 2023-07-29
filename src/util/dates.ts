@@ -27,9 +27,9 @@ export function getCurDate() {
   return new Date().toISOString().split("T")[0];
 }
 
-export function getCurLongDate() {
-  return `${getCurDate()} ${getHourMinuteSeconds()}`;
-}
+// export function getCurLongDate() {
+//   return `${getCurDate()} ${getHourMinuteSeconds()}`;
+// }
 
 export function getCurFullDate() {
   return new Date().toISOString();

@@ -10,21 +10,19 @@ import { Post, PostsState } from "../../types/postTypes";
 import { RootState } from "../store";
 import { supabase } from "../../types/supabaseClient";
 import { postsTableRow } from "../../types/remoteDBTables";
-import postFromPostTableRow from "../../util/postsUtils";
-import { getCurFullDate } from "../../util/dates";
 
-const initialPostsState: PostsState = { nextPostEntityId: 0, lastPostDate: "" };
+// const initialPostsState: PostsState = { nextPostEntityId: 0, lastPostDate: "" };
 
-const postsStateSlice = createSlice({
-  name: "postsState",
-  initialState: initialPostsState,
-  reducers: {},
-  extraReducers(builder) {
-    builder.addCase(postsSlice.actions.addPost, (state) => {
-      state.nextPostEntityId += 1;
-    });
-  },
-});
+// const postsStateSlice = createSlice({
+//   name: "postsState",
+//   initialState: initialPostsState,
+//   reducers: {},
+//   extraReducers(builder) {
+//     builder.addCase(postsSlice.actions.addPost, (state) => {
+//       state.nextPostEntityId += 1;
+//     });
+//   },
+// });
 
 export const getNextPost = createAsyncThunk(
   "getNextPost",
@@ -40,17 +38,6 @@ export const getNextPost = createAsyncThunk(
     return data as postsTableRow;
   }
 );
-
-const initialPost: Post = {
-  id: 0,
-  postId: "",
-  createdAt: "",
-  uri: "",
-  userId: "",
-  userName: "",
-  numLikes: 0,
-  isLiked: false,
-};
 
 const postsAdapter = createEntityAdapter<Post>({
   selectId: (post) => post.id,
@@ -75,37 +62,30 @@ const postsSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder
-      // .addCase(getNextPost.pending, (state) => {
-      //   const nextPostEntityId = state.ids.length;
-      //   const newPost: Post = { ...initialPost, id: nextPostEntityId };
-      //   postsAdapter.addOne(state, newPost);
-      // })
-      .addCase(getNextPost.fulfilled, (state, result) => {
-        if (!result.payload) return;
-        console.log(result.payload.created_at);
-        const nextPostEntityId = state.ids.length;
-        postsAdapter.addOne(state, {
-          id: nextPostEntityId,
-          isLiked: false,
-          uri: "",
-          createdAt: result.payload.created_at,
-          numLikes: result.payload.num_likes,
-          userId: result.payload.user_id,
-          postId: result.payload.post_id,
-          userName: "giga",
-        });
+    builder.addCase(getNextPost.fulfilled, (state, result) => {
+      if (!result.payload) return;
+      const nextPostEntityId = state.ids.length;
+      postsAdapter.addOne(state, {
+        id: nextPostEntityId,
+        isLiked: false,
+        uri: "",
+        createdAt: result.payload.created_at,
+        numLikes: result.payload.num_likes,
+        userId: result.payload.user_id,
+        postId: result.payload.post_id,
+        userName: "Username",
       });
+    });
   },
 });
 
-export const postsStateReducer = postsStateSlice.reducer;
-export const selectPostsState = (state: RootState) => state.postsState;
+// export const postsStateReducer = postsStateSlice.reducer;
+// export const selectPostsState = (state: RootState) => state.postsState;
 
-export const selectNextPostId = createSelector(
-  [selectPostsState],
-  (postsState) => postsState.nextPostEntityId
-);
+// export const selectNextPostId = createSelector(
+//   [selectPostsState],
+//   (postsState) => postsState.nextPostEntityId
+// );
 
 export const { addPost, clearAllPosts, toggleLikePost } = postsSlice.actions;
 export const postsReducer = postsSlice.reducer;

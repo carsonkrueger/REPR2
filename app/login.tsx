@@ -14,11 +14,17 @@ import tw from "../src/util/tailwind";
 import CustomColors from "../src/util/customColors";
 import { supabase } from "../src/types/supabaseClient";
 import { useDispatch } from "react-redux";
-import { setSession } from "../src/redux/slices/profileSlice";
+import {
+  getProfile,
+  getSession,
+  setSession,
+} from "../src/redux/slices/profileSlice";
+import { AppDispatch } from "../src/redux/store";
+import { Session } from "@supabase/supabase-js";
 
 export default function Login() {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -40,7 +46,7 @@ export default function Login() {
     throw Error("Input validation error: " + msg);
   }
 
-  const login = async () => {
+  async function login() {
     setIsLoading(true);
     try {
       // Check input validation
@@ -74,9 +80,12 @@ export default function Login() {
       }
     }
 
-    if (data.session) dispatch(setSession({ session: data.session }));
+    if (data.session)
+      await dispatch(getSession()).then(async ({ payload }) => {
+        await dispatch(getProfile((payload as Session).user.id));
+      });
     router.back();
-  };
+  }
 
   return (
     <SafeAreaView style={tw`flex-1 bg-front`}>

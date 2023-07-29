@@ -1,14 +1,14 @@
 import "expo-router/entry";
 
 import { useDispatch } from "react-redux";
-import { SplashScreen, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import tw from "../../src/util/tailwind";
 import * as Font from "expo-font";
 import { useCallback, useEffect, useState } from "react";
-import * as SpashScreen from "expo-splash-screen";
+import * as SplashScreen from "expo-splash-screen";
 import { Feather } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 
@@ -40,16 +40,14 @@ import {
 } from "../../src/util/metricsUtils";
 import PremiumIcon from "../../src/components/premiumIcon";
 import { Session } from "@supabase/supabase-js";
-import { supabase } from "../../src/types/supabaseClient";
 import {
   addPost,
   clearAllPosts,
   getNextPost,
   selectAllPostsIds,
-  selectNextPostId,
   selectPostByEntityId,
 } from "../../src/redux/slices/postsSlice";
-import { getCurDate, getCurFullDate } from "../../src/util/dates";
+import { getCurFullDate } from "../../src/util/dates";
 import { FlashList } from "@shopify/flash-list";
 import Post from "../../src/components/post";
 
@@ -62,9 +60,6 @@ export default function Home() {
   const profile = useSelector((state: RootState) => selectProfile(state));
   const allPostIds = useSelector((state: RootState) =>
     selectAllPostsIds(state)
-  );
-  const nextPostEntityId = useSelector((state: RootState) =>
-    selectNextPostId(state)
   );
   const lastPostDate =
     useSelector((state) => selectPostByEntityId(state, allPostIds.length - 1))
@@ -82,12 +77,12 @@ export default function Home() {
         await Font.loadAsync({
           RobotoCondensed: require("../../assets/fonts/RobotoCondensed-Regular.ttf"),
         });
-        await dispatch(getSession()).then(({ payload }) => {
-          dispatch(getProfile((payload as Session).user.id));
-        });
         initWorkoutTemplatesTable();
         loadMetricsData();
         dispatch(getPlatform());
+        await dispatch(getSession()).then(async ({ payload }) => {
+          await dispatch(getProfile((payload as Session).user.id));
+        });
       } catch (e) {
         console.warn(e);
       } finally {
@@ -103,7 +98,7 @@ export default function Home() {
       router.push("login");
 
     if (appIsReady) {
-      await SpashScreen.hideAsync();
+      await SplashScreen.hideAsync();
     }
   }, [appIsReady]);
 

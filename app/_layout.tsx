@@ -13,13 +13,9 @@ export default function Layout() {
           name="login"
           options={{
             headerShown: false,
-            animation: "slide_from_left",
           }}
         />
-        <Stack.Screen
-          name="signup"
-          options={{ headerShown: false, animation: "slide_from_right" }}
-        />
+        <Stack.Screen name="signup" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(settings)" options={{ headerShown: false }} />
         <Stack.Screen name="(premium)" options={{ headerShown: false }} />

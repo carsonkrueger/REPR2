@@ -23,6 +23,9 @@ const monthNames = {
   "12": "December",
 };
 
+const millesecondsInAHour = 3600000;
+const millesecondsInAMinute = 60000;
+
 export function getCurDate() {
   return new Date().toISOString().split("T")[0];
 }
@@ -73,4 +76,14 @@ export function convertDateToHuman(date: string, withYear: boolean = true) {
   return `${monthNames[month as keyof typeof monthNames]} ${
     Number(day) + thDate(day)
   }${withYear ? `, ${year}` : ""}`;
+}
+
+export function convertMsToHrMin(milleseconds: number): {
+  hours: number;
+  minutes: number;
+} {
+  const hours = ~~(milleseconds / millesecondsInAHour); // ~~ <-- truncates to integer
+  milleseconds %= millesecondsInAHour;
+  const minutes = ~~(milleseconds / millesecondsInAMinute);
+  return { hours: hours, minutes: minutes };
 }

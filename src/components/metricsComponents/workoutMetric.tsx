@@ -4,7 +4,7 @@ import { selectWorkoutMetricById } from "../../redux/slices/metricsSlice";
 import { View, Text } from "react-native";
 import tw from "../../util/tailwind";
 import { EntityId } from "@reduxjs/toolkit";
-import { convertDateToHuman } from "../../util/dates";
+import { convertDateToHuman, convertMsToHrMin } from "../../util/dates";
 import { ExerciseMetric } from "./exerciseMetric";
 import { EvilIcons, AntDesign } from "@expo/vector-icons";
 import CustomColors from "../../util/customColors";
@@ -18,6 +18,11 @@ export function WorkoutMetric({ workoutMetricId }: props) {
   const workoutMetric = useSelector((state: RootState) =>
     selectWorkoutMetricById(state, workoutMetricId)
   );
+
+  function getWorkoutTime() {
+    const { hours, minutes } = convertMsToHrMin(workoutMetric!.workoutTime);
+    return `${hours}:${minutes.toString().padStart(2, "0")}`;
+  }
 
   return (
     <View
@@ -67,7 +72,7 @@ export function WorkoutMetric({ workoutMetricId }: props) {
                 { fontFamily: "RobotoCondensed" },
               ]}
             >
-              {Number(workoutMetric?.workoutTime) / 1000}
+              {getWorkoutTime()}
             </Text>
           </View>
         </View>

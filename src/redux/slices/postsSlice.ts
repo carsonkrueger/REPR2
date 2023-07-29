@@ -9,7 +9,12 @@ import {
 import { Post, PostsState } from "../../types/postTypes";
 import { RootState } from "../store";
 import { supabase } from "../../types/supabaseClient";
-import { postsTableRow, profilesTableRow } from "../../types/remoteDBTables";
+import {
+  likesTableRow,
+  postsTableRow,
+  profilesTableRow,
+} from "../../types/remoteDBTables";
+import { getCurFullDate } from "../../util/dates";
 
 // const initialPostsState: PostsState = { nextPostEntityId: 0, lastPostDate: "" };
 
@@ -28,18 +33,53 @@ export const getNextPost = createAsyncThunk(
   "getNextPost",
   async (payload: {
     lastPostCreatedAt: string;
-  }): Promise<postsTableRow & Partial<profilesTableRow>> => {
+  }): Promise<postsTableRow & { profiles: Partial<profilesTableRow> }> => {
     const { data, error } = await supabase
       .from("posts")
       .select(
-        "post_id, created_at, image_url, user_id, num_likes, profiles ( user_id, user_name )"
+        `post_id, created_at, image_url, user_id, num_likes, description, profiles ( user_id, user_name )`
       )
       .order("created_at", { ascending: false })
       .lt("created_at", payload.lastPostCreatedAt)
       .limit(1)
       .single();
-    if (error) console.log(error);
-    return data as postsTableRow & Partial<profilesTableRow>;
+    if (error) console.warn(error);
+    return data as postsTableRow & { profiles: Partial<profilesTableRow> };
+  }
+);
+
+export const getDidLikePost = createAsyncThunk(
+  "getDidLikePost",
+  async (payload: { postId: string; userId: string }) => {
+    const { data, error } = await supabase
+      .from("likes")
+      .select("post_id, user_id")
+      .eq("user_id", payload.userId)
+      .eq("post_id", payload.postId)
+      .maybeSingle();
+    if (error) console.warn(error);
+    if (data) return true;
+    else return false;
+  }
+);
+
+export const toggleLikePost = createAsyncThunk(
+  "toggleLikePost",
+  async (payload: { userId: string; post: Post }) => {
+    if (payload.post.isLiked) {
+      const { error } = await supabase.from("likes").upsert({
+        post_id: payload.post.postId,
+        user_id: payload.userId,
+      });
+      if (error) console.warn(error);
+    } else if (!payload.post.isLiked) {
+      const { error } = await supabase
+        .from("likes")
+        .delete()
+        .eq("user_id", payload.userId)
+        .eq("post_id", payload.post.postId);
+      if (error) console.warn(error);
+    }
   }
 );
 
@@ -57,29 +97,31 @@ const postsSlice = createSlice({
     clearAllPosts(state) {
       postsAdapter.removeAll(state);
     },
-    toggleLikePost(state, action: PayloadAction<{ postId: EntityId }>) {
-      const isLiked = state.entities[action.payload.postId]?.isLiked;
-      postsAdapter.updateOne(state, {
-        id: action.payload.postId,
-        changes: { isLiked: !isLiked },
-      });
-    },
   },
   extraReducers(builder) {
-    builder.addCase(getNextPost.fulfilled, (state, result) => {
-      if (!result.payload) return;
-      const nextPostEntityId = state.ids.length;
-      postsAdapter.addOne(state, {
-        id: nextPostEntityId,
-        isLiked: false,
-        uri: "",
-        createdAt: result.payload.created_at,
-        numLikes: result.payload.num_likes,
-        userId: result.payload.user_id,
-        postId: result.payload.post_id,
-        userName: result.payload.user_name!,
+    builder
+      .addCase(getNextPost.fulfilled, (state, result) => {
+        if (!result.payload) return;
+        console.log(result.payload);
+        const nextPostEntityId = state.ids.length;
+        postsAdapter.addOne(state, {
+          id: nextPostEntityId,
+          isLiked: false,
+          uri: "",
+          createdAt: result.payload.created_at,
+          numLikes: result.payload.num_likes,
+          userId: result.payload.user_id,
+          postId: result.payload.post_id,
+          userName: result.payload.profiles.user_name!,
+          description: result.payload.description,
+        });
+      })
+      .addCase(toggleLikePost.pending, (state, action) => {
+        postsAdapter.updateOne(state, {
+          id: action.meta.arg.post.id,
+          changes: { isLiked: !action.meta.arg.post.isLiked },
+        });
       });
-    });
   },
 });
 
@@ -91,7 +133,7 @@ const postsSlice = createSlice({
 //   (postsState) => postsState.nextPostEntityId
 // );
 
-export const { addPost, clearAllPosts, toggleLikePost } = postsSlice.actions;
+export const { addPost, clearAllPosts } = postsSlice.actions;
 export const postsReducer = postsSlice.reducer;
 
 export const selectAllPosts = (state: RootState) => state.posts;

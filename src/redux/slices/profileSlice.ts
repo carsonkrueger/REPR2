@@ -103,3 +103,7 @@ export const selectIsPremium = createSelector(
   selectProfile,
   (profile) => profile.isPremium
 );
+export const selectUserId = createSelector(
+  selectProfile,
+  (profile) => profile.userId
+);

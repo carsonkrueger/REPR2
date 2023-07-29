@@ -203,7 +203,7 @@ export default function Home() {
         data={allPostIds}
         renderItem={({ item }) => <Post postEntityId={item} />}
         onEndReached={onEndOfPageReached}
-        onEndReachedThreshold={2}
+        onEndReachedThreshold={0.5}
         estimatedItemSize={507}
         refreshing={isRefreshing}
         onRefresh={onPageRefesh}

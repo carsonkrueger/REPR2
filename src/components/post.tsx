@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { View, Image, Text, TouchableOpacity } from "react-native";
 import { Dimensions } from "react-native";
 import tw from "../util/tailwind";
-import { RootState } from "../redux/store";
+import { AppDispatch, RootState } from "../redux/store";
 import {
   selectPostByEntityId,
   toggleLikePost,
@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import CustomColors from "../util/customColors";
 import { useDispatch } from "react-redux";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { selectUserId } from "../redux/slices/profileSlice";
 
 const postImageRatio = [1, 1];
 
@@ -21,37 +22,50 @@ interface props {
 }
 
 export default function Post({ postEntityId }: props) {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const windowWidth = useRef(Dimensions.get("window").width);
   const postImageHeight = useRef(
     windowWidth.current * (postImageRatio[0] / postImageRatio[1])
   );
   const post = useSelector((state: RootState) =>
     selectPostByEntityId(state, postEntityId)
-  );
+  )!;
+  const userId = useSelector((state: RootState) => selectUserId(state));
 
   async function onDoubleTap() {
     togglePostIsLiked();
   }
 
   async function togglePostIsLiked() {
-    dispatch(toggleLikePost({ postId: post!.id }));
+    dispatch(toggleLikePost({ post: post, userId: userId }));
   }
 
   return (
     <View style={tw`w-full mb-10`}>
-      <View style={tw`flex-row items-center px-2 py-2`}>
-        <View
-          style={tw`w-10 h-10 rounded-full border-[1px] border-light-gray mr-2`}
-        />
-        <Text
-          style={[
-            tw` text-dark-gray text-base`,
-            { fontFamily: "RobotoCondensed" },
-          ]}
-        >
-          {post?.userName}
-        </Text>
+      <View style={tw`flex-row justify-between px-2 py-2`}>
+        <TouchableOpacity style={tw`flex-row items-center`}>
+          <View
+            style={tw`w-10 h-10 rounded-full border-[1px] border-light-gray mr-2`}
+          />
+          <Text
+            style={[
+              tw` text-dark-gray text-base`,
+              { fontFamily: "RobotoCondensed" },
+            ]}
+          >
+            {post?.userName}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={tw`flex-row items-center`}>
+          <Text
+            style={[
+              tw`text-primary text-base`,
+              { fontFamily: "RobotoCondensed" },
+            ]}
+          >
+            Follow
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {post?.uri !== "" && (
@@ -70,24 +84,14 @@ export default function Post({ postEntityId }: props) {
         </TouchableWithoutFeedback>
       )}
 
-      <View style={tw`flex-row py-2 px-3 justify-between w-28`}>
-        <View style={tw`flex-row items-center`}>
-          <TouchableOpacity onPress={togglePostIsLiked}>
-            <Ionicons
-              name={post?.isLiked ? "heart-sharp" : "heart-outline"}
-              color={post?.isLiked ? CustomColors.danger : CustomColors.primary}
-              size={33}
-            />
-          </TouchableOpacity>
-          <Text
-            style={[
-              tw`text-xs text-primary`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
-          >
-            {post?.numLikes}
-          </Text>
-        </View>
+      <View style={tw`flex-row pt-2 px-3 justify-between w-36`}>
+        <TouchableOpacity onPress={togglePostIsLiked}>
+          <Ionicons
+            name={post?.isLiked ? "heart-sharp" : "heart-outline"}
+            color={post?.isLiked ? CustomColors.danger : CustomColors.primary}
+            size={33}
+          />
+        </TouchableOpacity>
 
         <TouchableOpacity>
           <Ionicons
@@ -96,7 +100,37 @@ export default function Post({ postEntityId }: props) {
             color={CustomColors.primary}
           />
         </TouchableOpacity>
+
+        <TouchableOpacity>
+          <Ionicons
+            name="flag-outline"
+            size={30}
+            color={CustomColors.primary}
+          />
+        </TouchableOpacity>
       </View>
+
+      <Text
+        style={[
+          tw`px-4 text-sm text-primary`,
+          { fontFamily: "RobotoCondensed" },
+        ]}
+      >
+        {post?.numLikes} Likes
+      </Text>
+
+      {post?.description && (
+        <TouchableOpacity style={[tw` rounded-lg p-1 mt-1 mx-3 max-h-17`, ,]}>
+          <Text
+            style={[
+              tw`text-sm text-dark-gray`,
+              { fontFamily: "RobotoCondensed" },
+            ]}
+          >
+            {post?.description}
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

@@ -9,6 +9,7 @@ export interface Post {
   createdAt: string;
   numLikes: number;
   isLiked: boolean;
+  description?: string;
 }
 
 export interface PostsState {

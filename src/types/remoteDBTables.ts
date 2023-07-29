@@ -21,4 +21,12 @@ export interface postsTableRow {
   image_url: string;
   user_id: string;
   num_likes: number;
+  description?: string;
+}
+
+export interface likesTableRow {
+  like_id: string;
+  post_id: string;
+  user_id: string;
+  liked_at: string;
 }

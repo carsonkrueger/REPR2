@@ -50,12 +50,12 @@ export const getNextPost = createAsyncThunk(
 
 export const getDidLikePost = createAsyncThunk(
   "getDidLikePost",
-  async (payload: { postId: string; userId: string }) => {
+  async (payload: { post: Post; userId: string }) => {
     const { data, error } = await supabase
       .from("likes")
       .select("post_id, user_id")
       .eq("user_id", payload.userId)
-      .eq("post_id", payload.postId)
+      .eq("post_id", payload.post.postId)
       .maybeSingle();
     if (error) console.warn(error);
     if (data) return true;
@@ -66,13 +66,13 @@ export const getDidLikePost = createAsyncThunk(
 export const toggleLikePost = createAsyncThunk(
   "toggleLikePost",
   async (payload: { userId: string; post: Post }) => {
-    if (payload.post.isLiked) {
+    if (!payload.post.isLiked) {
       const { error } = await supabase.from("likes").upsert({
         post_id: payload.post.postId,
         user_id: payload.userId,
       });
       if (error) console.warn(error);
-    } else if (!payload.post.isLiked) {
+    } else {
       const { error } = await supabase
         .from("likes")
         .delete()
@@ -102,7 +102,6 @@ const postsSlice = createSlice({
     builder
       .addCase(getNextPost.fulfilled, (state, result) => {
         if (!result.payload) return;
-        console.log(result.payload);
         const nextPostEntityId = state.ids.length;
         postsAdapter.addOne(state, {
           id: nextPostEntityId,
@@ -120,6 +119,12 @@ const postsSlice = createSlice({
         postsAdapter.updateOne(state, {
           id: action.meta.arg.post.id,
           changes: { isLiked: !action.meta.arg.post.isLiked },
+        });
+      })
+      .addCase(getDidLikePost.fulfilled, (state, action) => {
+        postsAdapter.updateOne(state, {
+          id: action.meta.arg.post.id,
+          changes: { isLiked: action.payload },
         });
       });
   },

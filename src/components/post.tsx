@@ -1,9 +1,10 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { View, Image, Text, TouchableOpacity } from "react-native";
 import { Dimensions } from "react-native";
 import tw from "../util/tailwind";
 import { AppDispatch, RootState } from "../redux/store";
 import {
+  getDidLikePost,
   selectPostByEntityId,
   toggleLikePost,
 } from "../redux/slices/postsSlice";
@@ -31,6 +32,10 @@ export default function Post({ postEntityId }: props) {
     selectPostByEntityId(state, postEntityId)
   )!;
   const userId = useSelector((state: RootState) => selectUserId(state));
+
+  useEffect(() => {
+    dispatch(getDidLikePost({ post: post, userId: userId }));
+  }, []);
 
   async function onDoubleTap() {
     togglePostIsLiked();

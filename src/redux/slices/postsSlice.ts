@@ -9,7 +9,7 @@ import {
 import { Post, PostsState } from "../../types/postTypes";
 import { RootState } from "../store";
 import { supabase } from "../../types/supabaseClient";
-import { postsTableRow } from "../../types/remoteDBTables";
+import { postsTableRow, profilesTableRow } from "../../types/remoteDBTables";
 
 // const initialPostsState: PostsState = { nextPostEntityId: 0, lastPostDate: "" };
 
@@ -26,16 +26,20 @@ import { postsTableRow } from "../../types/remoteDBTables";
 
 export const getNextPost = createAsyncThunk(
   "getNextPost",
-  async (payload: { lastPostCreatedAt: string }): Promise<postsTableRow> => {
+  async (payload: {
+    lastPostCreatedAt: string;
+  }): Promise<postsTableRow & Partial<profilesTableRow>> => {
     const { data, error } = await supabase
       .from("posts")
-      .select("post_id, created_at, image_url, user_id, num_likes")
+      .select(
+        "post_id, created_at, image_url, user_id, num_likes, profiles ( user_id, user_name )"
+      )
       .order("created_at", { ascending: false })
       .lt("created_at", payload.lastPostCreatedAt)
       .limit(1)
       .single();
     if (error) console.log(error);
-    return data as postsTableRow;
+    return data as postsTableRow & Partial<profilesTableRow>;
   }
 );
 
@@ -73,7 +77,7 @@ const postsSlice = createSlice({
         numLikes: result.payload.num_likes,
         userId: result.payload.user_id,
         postId: result.payload.post_id,
-        userName: "Username",
+        userName: result.payload.user_name!,
       });
     });
   },

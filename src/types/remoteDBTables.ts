@@ -30,3 +30,9 @@ export interface likesTableRow {
   user_id: string;
   liked_at: string;
 }
+
+export interface followingTableRow {
+  follow_id: string;
+  user_id: string;
+  followed_user_id: string;
+}

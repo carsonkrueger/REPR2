@@ -133,25 +133,11 @@ export default function Home() {
   async function openGallery() {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      selectionLimit: 3,
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
     });
-    if (!result.canceled)
-      dispatch(
-        addPost({
-          post: {
-            createdAt: "",
-            id: 0,
-            postId: "",
-            uri: result.assets[0].uri,
-            userId: "",
-            userName: "Mini",
-            numLikes: 0,
-            isLiked: false,
-          },
-        })
-      );
   }
 
   async function onEndOfPageReached() {
@@ -207,6 +193,7 @@ export default function Home() {
         estimatedItemSize={507}
         refreshing={isRefreshing}
         onRefresh={onPageRefesh}
+        ListFooterComponent={<View style={tw`mb-50`} />}
       />
 
       <TouchableOpacity

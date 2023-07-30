@@ -10,6 +10,7 @@ import { Post, PostsState } from "../../types/postTypes";
 import { RootState } from "../store";
 import { supabase } from "../../types/supabaseClient";
 import {
+  followingTableRow,
   likesTableRow,
   postsTableRow,
   profilesTableRow,
@@ -33,7 +34,9 @@ export const getNextPost = createAsyncThunk(
   "getNextPost",
   async (payload: {
     lastPostCreatedAt: string;
-  }): Promise<postsTableRow & { profiles: Partial<profilesTableRow> }> => {
+  }): Promise<
+    (postsTableRow & { profiles: Partial<profilesTableRow> }) | null
+  > => {
     const { data, error } = await supabase
       .from("posts")
       .select(
@@ -43,6 +46,7 @@ export const getNextPost = createAsyncThunk(
       .lt("created_at", payload.lastPostCreatedAt)
       .limit(1)
       .single();
+    if (error?.code === "PGRST116") return null;
     if (error) console.warn(error);
     return data as postsTableRow & { profiles: Partial<profilesTableRow> };
   }
@@ -83,6 +87,43 @@ export const toggleLikePost = createAsyncThunk(
   }
 );
 
+export const getIsFollowing = createAsyncThunk(
+  "getIsFollowing",
+  async (payload: { userId: string; post: Post }) => {
+    console.log("getting following");
+    const { data, error } = await supabase
+      .from("following")
+      .select("*")
+      .eq("user_id", payload.userId)
+      .eq("followed_user_id", payload.post.userId)
+      .maybeSingle();
+    if (error) console.warn(error);
+    if (data) return true;
+    else return false;
+  }
+);
+
+export const toggleIsFollowing = createAsyncThunk(
+  "getIsFollowing",
+  async (payload: { userId: string; post: Post }) => {
+    console.log("toggling is following");
+    if (payload.post.isFollowing) {
+      const { error } = await supabase
+        .from("following")
+        .delete()
+        .eq("user_id", payload.userId)
+        .eq("followed_user_id", payload.post.userId);
+      if (error) console.warn(error);
+    } else {
+      const { error } = await supabase.from("following").upsert({
+        user_id: payload.userId,
+        followed_user_id: payload.post.userId,
+      } as Partial<followingTableRow>);
+      if (error) console.warn(error);
+    }
+  }
+);
+
 const postsAdapter = createEntityAdapter<Post>({
   selectId: (post) => post.id,
 });
@@ -112,6 +153,7 @@ const postsSlice = createSlice({
           userId: result.payload.user_id,
           postId: result.payload.post_id,
           userName: result.payload.profiles.user_name!,
+          isFollowing: false,
           description: result.payload.description,
         });
       })
@@ -125,6 +167,18 @@ const postsSlice = createSlice({
         postsAdapter.updateOne(state, {
           id: action.meta.arg.post.id,
           changes: { isLiked: action.payload },
+        });
+      })
+      .addCase(getIsFollowing.fulfilled, (state, action) => {
+        postsAdapter.updateOne(state, {
+          id: action.meta.arg.post.id,
+          changes: { isFollowing: action.payload },
+        });
+      })
+      .addCase(toggleIsFollowing.pending, (state, action) => {
+        postsAdapter.updateOne(state, {
+          id: action.meta.arg.post.id,
+          changes: { isFollowing: !action.meta.arg.post.isFollowing },
         });
       });
   },

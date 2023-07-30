@@ -1,11 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { View, Image, Text, TouchableOpacity } from "react-native";
 import { Dimensions } from "react-native";
 import tw from "../util/tailwind";
 import { AppDispatch, RootState } from "../redux/store";
 import {
   getDidLikePost,
+  getIsFollowing,
   selectPostByEntityId,
+  toggleIsFollowing,
   toggleLikePost,
 } from "../redux/slices/postsSlice";
 import { useSelector } from "react-redux";
@@ -33,8 +35,14 @@ export default function Post({ postEntityId }: props) {
   )!;
   const userId = useSelector((state: RootState) => selectUserId(state));
 
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    dispatch(getDidLikePost({ post: post, userId: userId }));
+    async function prepare() {
+      dispatch(getDidLikePost({ post: post, userId: userId }));
+      dispatch(getIsFollowing({ post: post, userId: userId }));
+    }
+    prepare().finally(() => setIsLoading(false));
   }, []);
 
   async function onDoubleTap() {
@@ -45,8 +53,13 @@ export default function Post({ postEntityId }: props) {
     dispatch(toggleLikePost({ post: post, userId: userId }));
   }
 
+  async function togglePostIsFollowing() {
+    dispatch(toggleIsFollowing({ post: post, userId: userId }));
+  }
+
   return (
     <View style={tw`w-full mb-10`}>
+      {/* Header */}
       <View style={tw`flex-row justify-between px-2 py-2`}>
         <TouchableOpacity style={tw`flex-row items-center`}>
           <View
@@ -61,18 +74,23 @@ export default function Post({ postEntityId }: props) {
             {post?.userName}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={tw`flex-row items-center`}>
+        <TouchableOpacity
+          style={tw`flex-row items-center`}
+          onPress={togglePostIsFollowing}
+          disabled={isLoading}
+        >
           <Text
             style={[
               tw`text-primary text-base`,
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            Follow
+            {post.isFollowing ? "Unfollow" : "Follow"}
           </Text>
         </TouchableOpacity>
       </View>
 
+      {/* Image content */}
       {post?.uri !== "" && (
         <TouchableWithoutFeedback>
           <Image
@@ -89,29 +107,28 @@ export default function Post({ postEntityId }: props) {
         </TouchableWithoutFeedback>
       )}
 
-      <View style={tw`flex-row pt-2 px-3 justify-between w-36`}>
-        <TouchableOpacity onPress={togglePostIsLiked}>
-          <Ionicons
-            name={post?.isLiked ? "heart-sharp" : "heart-outline"}
-            color={post?.isLiked ? CustomColors.danger : CustomColors.primary}
-            size={33}
-          />
-        </TouchableOpacity>
+      {/* like/comment/flag */}
+      <View style={tw`flex-row justify-between px-3 pt-2`}>
+        <View style={tw`flex-row justify-between w-20`}>
+          <TouchableOpacity onPress={togglePostIsLiked} disabled={isLoading}>
+            <Ionicons
+              name={post?.isLiked ? "heart-sharp" : "heart-outline"}
+              color={post?.isLiked ? CustomColors.danger : CustomColors.primary}
+              size={33}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity>
+            <Ionicons
+              name="chatbubble-outline"
+              size={30}
+              color={CustomColors.primary}
+            />
+          </TouchableOpacity>
+        </View>
 
         <TouchableOpacity>
-          <Ionicons
-            name="chatbubble-outline"
-            size={30}
-            color={CustomColors.primary}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity>
-          <Ionicons
-            name="flag-outline"
-            size={30}
-            color={CustomColors.primary}
-          />
+          <Ionicons name="flag-outline" size={30} color={CustomColors.danger} />
         </TouchableOpacity>
       </View>
 
@@ -124,6 +141,7 @@ export default function Post({ postEntityId }: props) {
         {post?.numLikes} Likes
       </Text>
 
+      {/* description */}
       {post?.description && (
         <TouchableOpacity style={[tw` rounded-lg p-1 mt-1 mx-3 max-h-17`, ,]}>
           <Text

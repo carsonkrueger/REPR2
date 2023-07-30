@@ -35,7 +35,9 @@ export function getCurDate() {
 // }
 
 export function getCurFullDate() {
-  return new Date().toISOString();
+  const str = new Date().toISOString().split(".")[0];
+  str.concat(".000000+00:00");
+  return str;
 }
 
 function getHourMinuteSeconds() {

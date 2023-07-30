@@ -9,21 +9,14 @@ import {
 import { Post } from "../../types/postTypes";
 import { RootState } from "../store";
 import { supabase } from "../../types/supabaseClient";
-import {
-  followingTableRow,
-  postsTableRow,
-  profilesTableRow,
-} from "../../types/remoteDBTables";
 
 export const getNextPost = createAsyncThunk(
   "getNextPost",
-  async (payload: {
-    lastPostCreatedAt: string;
-  }): Promise<(postsTableRow & { profiles: profilesTableRow[] }) | null> => {
+  async (payload: { lastPostCreatedAt: string }) => {
     const { data, error } = await supabase
       .from("posts")
       .select(
-        `post_id, created_at, image_url, user_id, num_likes, description, profiles ( user_id, user_name, first_name, last_name, num_followers, num_following, num_posts, is_premium )`
+        `post_id, created_at, image_url, user_id, num_likes, description, profiles (user_id, user_name, first_name, last_name, num_followers, num_following, num_posts, is_premium)`
       )
       .order("created_at", { ascending: false })
       .lt("created_at", payload.lastPostCreatedAt)
@@ -31,7 +24,8 @@ export const getNextPost = createAsyncThunk(
       .single();
     if (error?.code === "PGRST116") return null;
     if (error) console.warn(error);
-    return data as postsTableRow & { profiles: profilesTableRow[] };
+
+    return data;
   }
 );
 

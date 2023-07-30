@@ -18,7 +18,6 @@ import { userFromProfileTableRow } from "../../util/postsUtils";
 export const getIsFollowing = createAsyncThunk(
   "getIsFollowing",
   async (payload: { userId: string; user: User }) => {
-    console.log("getting following");
     const { data, error } = await supabase
       .from("following")
       .select("*")
@@ -32,9 +31,8 @@ export const getIsFollowing = createAsyncThunk(
 );
 
 export const toggleIsFollowing = createAsyncThunk(
-  "getIsFollowing",
+  "toggleIsFollowing",
   async (payload: { userId: string; user: User }) => {
-    console.log("toggling is following");
     if (payload.user.isFollowing) {
       const { error } = await supabase
         .from("following")
@@ -63,10 +61,17 @@ const usersSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(getNextPost.fulfilled, (state, action) => {
-        if (state.entities[action.payload?.profiles[0].user_id!]) return; // if user already exists, return
+        if (
+          state.entities[
+            (action.payload?.profiles as unknown as profilesTableRow).user_id
+          ]
+        )
+          return; // if user already exists, return
         usersAdapter.addOne(
           state,
-          userFromProfileTableRow(action.payload?.profiles[0]!)
+          userFromProfileTableRow(
+            action.payload?.profiles as unknown as profilesTableRow
+          )
         );
       })
       .addCase(getIsFollowing.fulfilled, (state, action) => {

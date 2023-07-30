@@ -6,41 +6,24 @@ import {
   createSelector,
   createSlice,
 } from "@reduxjs/toolkit";
-import { Post, PostsState } from "../../types/postTypes";
+import { Post } from "../../types/postTypes";
 import { RootState } from "../store";
 import { supabase } from "../../types/supabaseClient";
 import {
   followingTableRow,
-  likesTableRow,
   postsTableRow,
   profilesTableRow,
 } from "../../types/remoteDBTables";
-import { getCurFullDate } from "../../util/dates";
-
-// const initialPostsState: PostsState = { nextPostEntityId: 0, lastPostDate: "" };
-
-// const postsStateSlice = createSlice({
-//   name: "postsState",
-//   initialState: initialPostsState,
-//   reducers: {},
-//   extraReducers(builder) {
-//     builder.addCase(postsSlice.actions.addPost, (state) => {
-//       state.nextPostEntityId += 1;
-//     });
-//   },
-// });
 
 export const getNextPost = createAsyncThunk(
   "getNextPost",
   async (payload: {
     lastPostCreatedAt: string;
-  }): Promise<
-    (postsTableRow & { profiles: Partial<profilesTableRow> }) | null
-  > => {
+  }): Promise<(postsTableRow & { profiles: profilesTableRow[] }) | null> => {
     const { data, error } = await supabase
       .from("posts")
       .select(
-        `post_id, created_at, image_url, user_id, num_likes, description, profiles ( user_id, user_name )`
+        `post_id, created_at, image_url, user_id, num_likes, description, profiles ( user_id, user_name, first_name, last_name, num_followers, num_following, num_posts, is_premium )`
       )
       .order("created_at", { ascending: false })
       .lt("created_at", payload.lastPostCreatedAt)
@@ -48,7 +31,7 @@ export const getNextPost = createAsyncThunk(
       .single();
     if (error?.code === "PGRST116") return null;
     if (error) console.warn(error);
-    return data as postsTableRow & { profiles: Partial<profilesTableRow> };
+    return data as postsTableRow & { profiles: profilesTableRow[] };
   }
 );
 
@@ -87,43 +70,6 @@ export const toggleLikePost = createAsyncThunk(
   }
 );
 
-export const getIsFollowing = createAsyncThunk(
-  "getIsFollowing",
-  async (payload: { userId: string; post: Post }) => {
-    console.log("getting following");
-    const { data, error } = await supabase
-      .from("following")
-      .select("*")
-      .eq("user_id", payload.userId)
-      .eq("followed_user_id", payload.post.userId)
-      .maybeSingle();
-    if (error) console.warn(error);
-    if (data) return true;
-    else return false;
-  }
-);
-
-export const toggleIsFollowing = createAsyncThunk(
-  "getIsFollowing",
-  async (payload: { userId: string; post: Post }) => {
-    console.log("toggling is following");
-    if (payload.post.isFollowing) {
-      const { error } = await supabase
-        .from("following")
-        .delete()
-        .eq("user_id", payload.userId)
-        .eq("followed_user_id", payload.post.userId);
-      if (error) console.warn(error);
-    } else {
-      const { error } = await supabase.from("following").upsert({
-        user_id: payload.userId,
-        followed_user_id: payload.post.userId,
-      } as Partial<followingTableRow>);
-      if (error) console.warn(error);
-    }
-  }
-);
-
 const postsAdapter = createEntityAdapter<Post>({
   selectId: (post) => post.id,
 });
@@ -152,8 +98,6 @@ const postsSlice = createSlice({
           numLikes: result.payload.num_likes,
           userId: result.payload.user_id,
           postId: result.payload.post_id,
-          userName: result.payload.profiles.user_name!,
-          isFollowing: false,
           description: result.payload.description,
         });
       })
@@ -167,18 +111,6 @@ const postsSlice = createSlice({
         postsAdapter.updateOne(state, {
           id: action.meta.arg.post.id,
           changes: { isLiked: action.payload },
-        });
-      })
-      .addCase(getIsFollowing.fulfilled, (state, action) => {
-        postsAdapter.updateOne(state, {
-          id: action.meta.arg.post.id,
-          changes: { isFollowing: action.payload },
-        });
-      })
-      .addCase(toggleIsFollowing.pending, (state, action) => {
-        postsAdapter.updateOne(state, {
-          id: action.meta.arg.post.id,
-          changes: { isFollowing: !action.meta.arg.post.isFollowing },
         });
       });
   },

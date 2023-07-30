@@ -5,9 +5,7 @@ import tw from "../util/tailwind";
 import { AppDispatch, RootState } from "../redux/store";
 import {
   getDidLikePost,
-  getIsFollowing,
   selectPostByEntityId,
-  toggleIsFollowing,
   toggleLikePost,
 } from "../redux/slices/postsSlice";
 import { useSelector } from "react-redux";
@@ -17,6 +15,11 @@ import CustomColors from "../util/customColors";
 import { useDispatch } from "react-redux";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { selectUserId } from "../redux/slices/profileSlice";
+import {
+  getIsFollowing,
+  selectUserByUserId,
+  toggleIsFollowing,
+} from "../redux/slices/usersSlice";
 
 const postImageRatio = [1, 1];
 
@@ -33,6 +36,9 @@ export default function Post({ postEntityId }: props) {
   const post = useSelector((state: RootState) =>
     selectPostByEntityId(state, postEntityId)
   )!;
+  const postUser = useSelector((state: RootState) =>
+    selectUserByUserId(state, post.userId)
+  )!;
   const userId = useSelector((state: RootState) => selectUserId(state));
 
   const [isLoading, setIsLoading] = useState(true);
@@ -40,7 +46,7 @@ export default function Post({ postEntityId }: props) {
   useEffect(() => {
     async function prepare() {
       dispatch(getDidLikePost({ post: post, userId: userId }));
-      dispatch(getIsFollowing({ post: post, userId: userId }));
+      dispatch(getIsFollowing({ user: postUser, userId: userId }));
     }
     prepare().finally(() => setIsLoading(false));
   }, []);
@@ -54,7 +60,7 @@ export default function Post({ postEntityId }: props) {
   }
 
   async function togglePostIsFollowing() {
-    dispatch(toggleIsFollowing({ post: post, userId: userId }));
+    dispatch(toggleIsFollowing({ user: postUser, userId: userId }));
   }
 
   return (
@@ -71,7 +77,7 @@ export default function Post({ postEntityId }: props) {
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            {post?.userName}
+            {postUser.userName}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -85,7 +91,7 @@ export default function Post({ postEntityId }: props) {
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            {post.isFollowing ? "Unfollow" : "Follow"}
+            {postUser.isFollowing ? "Unfollow" : "Follow"}
           </Text>
         </TouchableOpacity>
       </View>

@@ -122,7 +122,6 @@ export default function WorkoutScreen() {
 
       dispatch(resetWorkout());
 
-      router.back();
       router.replace("/workouts");
     }
   }, [finishPressed]);
@@ -144,7 +143,6 @@ export default function WorkoutScreen() {
 
   function cancelWorkout() {
     dispatch(resetWorkout());
-    router.back();
     router.replace("/workouts");
   }
 

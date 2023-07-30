@@ -10,6 +10,7 @@ import tw from "../../util/tailwind";
 import { selectWorkout } from "../../redux/slices/workoutSlice";
 import { SafeAreaView } from "react-native";
 import CustomColors from "../../util/customColors";
+import { index } from "d3";
 
 export default function Nav() {
   const curWorkout: WorkoutState = useSelector((state: RootState) =>
@@ -31,27 +32,35 @@ export default function Nav() {
   };
 
   function navigateHome() {
-    replaceNavigateTo("/", 0);
+    // replaceNavigateTo("/", 0);
+    if (selectedPos == 0) return;
+    router.back();
+    setSelectedPos(0);
   }
 
   function navigateSearch() {
-    replaceNavigateTo("search", 1);
+    if (selectedPos === 0) pushNavigateTo("search", 1);
+    else replaceNavigateTo("search", 1);
   }
 
   function navigateWorkouts() {
-    replaceNavigateTo("workouts", 2);
+    if (selectedPos === 0) pushNavigateTo("workouts", 2);
+    else replaceNavigateTo("workouts", 2);
   }
 
   function navigateStartWorkout() {
-    pushNavigateTo(`/workout/${curWorkout.id}`, 2);
+    if (selectedPos === 0) pushNavigateTo(`/workout/${curWorkout.id}`, 2);
+    else replaceNavigateTo(`/workout/${curWorkout.id}`, 2);
   }
 
   function navigateMetrics() {
-    replaceNavigateTo("metrics", 3);
+    if (selectedPos === 0) pushNavigateTo("metrics", 3);
+    else replaceNavigateTo("metrics", 3);
   }
 
   function navigateProfile() {
-    replaceNavigateTo("profile", 4);
+    if (selectedPos === 0) pushNavigateTo("profile", 4);
+    else replaceNavigateTo("profile", 4);
   }
 
   return (

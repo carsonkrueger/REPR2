@@ -33,7 +33,7 @@ export default function WorkoutTemplateComponent({ templateId }: props) {
         dispatch(setWorkout(t.workout_state));
         dispatch(setExercises(t.exercises));
         dispatch(setSets(t.sets));
-        router.push({
+        router.replace({
           pathname: `workout/${t.workout_id}`,
           params: { paramWorkoutId: t.workout_id },
         });

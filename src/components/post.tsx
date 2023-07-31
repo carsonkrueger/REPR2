@@ -60,19 +60,25 @@ export default function Post({ postEntityId }: props) {
     <View style={tw`w-full mb-10`}>
       {/* Header */}
       <View style={tw`flex-row justify-between px-3 py-2`}>
-        <TouchableOpacity style={tw`flex-row items-center`}>
-          <View
-            style={tw`w-10 h-10 rounded-full border-[1px] border-light-gray mr-2`}
-          />
-          <Text
-            style={[
-              tw` text-dark-gray text-base`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
-          >
-            {postUser.userName}
-          </Text>
-        </TouchableOpacity>
+        <View style={tw`flex-row items-center`}>
+          <TouchableOpacity>
+            <View
+              style={tw`w-10 h-10 rounded-full border-[1px] border-light-gray mr-2`}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity>
+            <Text
+              style={[
+                tw` text-dark-gray text-base`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              {postUser.userName}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <TouchableOpacity
           style={tw`flex-row items-center`}
           onPress={togglePostIsFollowing}

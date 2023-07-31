@@ -7,10 +7,6 @@ import {
 } from "@reduxjs/toolkit";
 import { User } from "../../types/userType";
 import { supabase } from "../../types/supabaseClient";
-import {
-  followingTableRow,
-  profilesTableRow,
-} from "../../types/remoteDBTables";
 import { getNextPost } from "./postsSlice";
 import { RootState } from "../store";
 import { userFromProfileTableRow } from "../../util/postsUtils";
@@ -42,9 +38,9 @@ export const toggleIsFollowing = createAsyncThunk(
       if (error) console.warn(error);
     } else {
       const { error } = await supabase.from("following").upsert({
-        user_id: payload.userId,
         followed_user_id: payload.user.userId,
-      } as Partial<followingTableRow>);
+        user_id: payload.userId,
+      });
       if (error) console.warn(error);
     }
   }
@@ -61,17 +57,11 @@ const usersSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(getNextPost.fulfilled, (state, action) => {
-        if (
-          state.entities[
-            (action.payload?.profiles as unknown as profilesTableRow).user_id
-          ]
-        )
+        if (state.entities[(action.payload?.profiles as ProfileRow).user_id])
           return; // if user already exists, return
         usersAdapter.addOne(
           state,
-          userFromProfileTableRow(
-            action.payload?.profiles as unknown as profilesTableRow
-          )
+          userFromProfileTableRow(action.payload?.profiles as ProfileRow)
         );
       })
       .addCase(getIsFollowing.fulfilled, (state, action) => {

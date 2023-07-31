@@ -1,6 +1,6 @@
 import { Session } from "@supabase/supabase-js";
 
-export type Profile = {
+export type ProfileSettings = {
   userId: string;
   email: string;
   username: string;

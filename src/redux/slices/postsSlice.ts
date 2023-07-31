@@ -9,6 +9,7 @@ import {
 import { Post } from "../../types/postTypes";
 import { RootState } from "../store";
 import { supabase } from "../../types/supabaseClient";
+import { postFromPostTableRow } from "../../util/postsUtils";
 
 export const getNextPost = createAsyncThunk(
   "getNextPost",
@@ -22,7 +23,7 @@ export const getNextPost = createAsyncThunk(
       .lt("created_at", payload.lastPostCreatedAt)
       .limit(1)
       .single();
-    if (error?.code === "PGRST116") return null;
+    if (error?.code === "PGRST116") return undefined;
     if (error) console.warn(error);
 
     return data;
@@ -84,16 +85,11 @@ const postsSlice = createSlice({
       .addCase(getNextPost.fulfilled, (state, result) => {
         if (!result.payload) return;
         const nextPostEntityId = state.ids.length;
-        postsAdapter.addOne(state, {
-          id: nextPostEntityId,
-          isLiked: false,
-          uri: "",
-          createdAt: result.payload.created_at,
-          numLikes: result.payload.num_likes,
-          userId: result.payload.user_id,
-          postId: result.payload.post_id,
-          description: result.payload.description,
-        });
+        const postRow: PostRow = result.payload;
+        postsAdapter.addOne(
+          state,
+          postFromPostTableRow(postRow, nextPostEntityId)
+        );
       })
       .addCase(toggleLikePost.pending, (state, action) => {
         postsAdapter.updateOne(state, {

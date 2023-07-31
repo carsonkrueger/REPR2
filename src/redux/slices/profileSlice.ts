@@ -6,13 +6,12 @@ import {
 } from "@reduxjs/toolkit";
 import { Platform } from "react-native";
 
-import { Profile } from "../../types/profileType";
+import { ProfileSettings } from "../../types/profileSettingsType";
 import { supabase } from "../../types/supabaseClient";
-import { profilesTableRow } from "../../types/remoteDBTables";
 import { Session } from "@supabase/supabase-js";
 import { RootState } from "../store";
 
-const initialSettings: Profile = {
+const initialSettings: ProfileSettings = {
   userId: "",
   email: "",
   username: "",
@@ -48,7 +47,7 @@ export const getProfile = createAsyncThunk(
       .eq("user_id", userId)
       .single();
     if (error) console.log("Error getting profile: ", error.message);
-    return data as profilesTableRow;
+    return data as ProfileRow;
   }
 );
 

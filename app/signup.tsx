@@ -129,6 +129,7 @@ export default function SignUp() {
       {/* EMAIL ALERT */}
       {doEmailAlert && (
         <MySafeAlert
+          onOutOfBoundsClick={() => {}}
           children={
             <>
               <View

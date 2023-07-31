@@ -9,10 +9,10 @@ import { CreatePostSelectionType } from "../../src/types/createPostSelectionType
 import { SafeAreaView } from "react-native-safe-area-context";
 import NavigateBackButton from "../../src/components/navigateBackButton";
 import { maxDescriptionCharLen } from "../../src/util/postConstraints";
-import { postsTableRow } from "../../src/types/remoteDBTables";
 import { useSelector } from "react-redux";
 import { RootState } from "../../src/redux/store";
 import { selectUserId } from "../../src/redux/slices/profileSlice";
+import { v4 as uuid } from "uuid";
 
 export default function CreatePost() {
   const router = useRouter();
@@ -66,21 +66,22 @@ export default function CreatePost() {
 
   async function uploadImage() {
     if (!image) return;
-    const { data, error } = await supabase.storage
-      .from("image_posts")
-      .upload(image.fileName!, image.uri, {
-        cacheControl: "3600",
-        upsert: true,
-      });
-    if (error) console.warn(error);
+    setIsUploading(true);
 
-    const newPost: Partial<postsTableRow> = {
+    const { data, error } = await supabase.storage
+      .from("images")
+      .upload(`posts/${uuid()}`, image.uri, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+    if (error) console.warn("ERROR UPLOADING IMAGE:", error);
+
+    const postError = await supabase.from("posts").insert({
       description: description,
-      image_url: data?.path,
+      image_url: data!.path,
       user_id: userId,
-    };
-    const error2 = await supabase.from("posts").insert(newPost);
-    if (error2) console.warn(error2);
+    });
+    if (postError) console.warn("ERROR INSERTING POST:", postError);
 
     navigateBack();
   }

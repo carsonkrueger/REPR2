@@ -28,7 +28,7 @@ import {
 } from "../../redux/slices/workoutSlice";
 import Clock from "./ClockComponent";
 import CustomColors from "../../util/customColors";
-import { Profile } from "../../types/profileType";
+import { Profile } from "../../types/profileSettingsType";
 import { selectProfile } from "../../redux/slices/profileSlice";
 import { useRouter } from "expo-router";
 

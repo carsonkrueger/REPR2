@@ -1,6 +1,7 @@
 import "react-native-url-polyfill/auto";
 import * as SecureStore from "expo-secure-store";
 import { createClient } from "@supabase/supabase-js";
+import { Database } from "./database.types";
 
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
@@ -14,7 +15,7 @@ const ExpoSecureStoreAdapter = {
   },
 };
 
-export const supabase = createClient(
+export const supabase = createClient<Database>(
   "https://tvfpapotstohiuiydymm.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2ZnBhcG90c3RvaGl1aXlkeW1tIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODgwODI4MjgsImV4cCI6MjAwMzY1ODgyOH0.krmtxPWhsp_2AQqZdRHHWHPc_XR87QEwFON4hy5faGo",
   {

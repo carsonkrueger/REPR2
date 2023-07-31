@@ -21,7 +21,7 @@ import {
 } from "../../redux/slices/workoutSlice";
 import { cleanNumStr } from "../../util/workoutUtils";
 import CustomColors from "../../util/customColors";
-import { Profile } from "../../types/profileType";
+import { Profile } from "../../types/profileSettingsType";
 import { selectProfile } from "../../redux/slices/profileSlice";
 import { XS_VIBRATE } from "../../util/vibrations";
 

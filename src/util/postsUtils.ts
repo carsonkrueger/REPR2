@@ -1,12 +1,8 @@
 import { EntityId } from "@reduxjs/toolkit";
 import { Post } from "../types/postTypes";
-import { postsTableRow, profilesTableRow } from "../types/remoteDBTables";
 import { User } from "../types/userType";
 
-export function postFromPostTableRow(
-  row: postsTableRow,
-  entityId: EntityId
-): Post {
+export function postFromPostTableRow(row: PostRow, entityId: EntityId): Post {
   return {
     id: entityId,
     postId: row.post_id,
@@ -15,11 +11,11 @@ export function postFromPostTableRow(
     numLikes: row.num_likes,
     uri: "",
     isLiked: false,
-    description: row.description,
+    description: row.description ?? "",
   };
 }
 
-export function userFromProfileTableRow(row: profilesTableRow): User {
+export function userFromProfileTableRow(row: ProfileRow): User {
   return {
     userId: row.user_id,
     userName: row.user_name,

@@ -11,6 +11,7 @@ import { toggleDarkMode } from "../../src/redux/slices/profileSlice";
 import { supabase } from "../../src/types/supabaseClient";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
+import NavigateBackButton from "../../src/components/navigateBackButton";
 
 export default function Settings() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function Settings() {
     router.push("login");
   }
 
-  function navigateBack() {
+  function backPress() {
     router.back();
   }
 
@@ -32,9 +33,11 @@ export default function Settings() {
       <View
         style={tw`flex-row py-2 bg-front shadow-md justify-center items-center`}
       >
-        <TouchableOpacity style={tw`absolute left-1`} onPress={navigateBack}>
-          <Ionicons name="md-chevron-back" color={"#3b83f5"} size={30} />
-        </TouchableOpacity>
+        <NavigateBackButton
+          style={tw`absolute left-1`}
+          onBackPress={backPress}
+        />
+
         <Text
           style={[
             tw`text-xl text-center text-primary`,

@@ -14,11 +14,7 @@ import tw from "../src/util/tailwind";
 import CustomColors from "../src/util/customColors";
 import { supabase } from "../src/types/supabaseClient";
 import { useDispatch } from "react-redux";
-import {
-  getProfile,
-  getSession,
-  setSession,
-} from "../src/redux/slices/profileSlice";
+import { getProfile, getSession } from "../src/redux/slices/profileSlice";
 import { AppDispatch } from "../src/redux/store";
 import { Session } from "@supabase/supabase-js";
 

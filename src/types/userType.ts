@@ -1,5 +1,3 @@
-import { EntityId } from "@reduxjs/toolkit";
-
 export interface User {
   userId: string;
   userName: string;

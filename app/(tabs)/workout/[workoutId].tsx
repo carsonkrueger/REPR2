@@ -50,6 +50,7 @@ import {
   addWorkoutHistoryToFront,
 } from "../../../src/redux/slices/metricsSlice";
 import { ExerciseMetric, WorkoutMetric } from "../../../src/types/metricsTypes";
+import NavigateBackButton from "../../../src/components/navigateBackButton";
 
 export default function WorkoutScreen() {
   const { paramWorkoutId } = useLocalSearchParams();
@@ -228,9 +229,7 @@ export default function WorkoutScreen() {
           distanceFromTop <= 18 ? "" : "shadow-md"
         }`}
       >
-        <TouchableOpacity onPress={backPress}>
-          <Ionicons name="md-chevron-back" color={"#3b83f5"} size={30} />
-        </TouchableOpacity>
+        <NavigateBackButton onBackPress={backPress} />
 
         <TextInput
           style={[

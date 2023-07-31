@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { View, Image, Text, TouchableOpacity } from "react-native";
-import { Dimensions } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import tw from "../util/tailwind";
 import { AppDispatch, RootState } from "../redux/store";
 import {
@@ -13,15 +12,13 @@ import { EntityId } from "@reduxjs/toolkit";
 import { Ionicons } from "@expo/vector-icons";
 import CustomColors from "../util/customColors";
 import { useDispatch } from "react-redux";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { selectUserId } from "../redux/slices/profileSlice";
 import {
   getIsFollowing,
   selectUserByUserId,
   toggleIsFollowing,
 } from "../redux/slices/usersSlice";
-
-const postImageRatio = [1, 1];
+import PostImage from "./postImage";
 
 interface props {
   postEntityId: EntityId;
@@ -29,10 +26,6 @@ interface props {
 
 export default function Post({ postEntityId }: props) {
   const dispatch = useDispatch<AppDispatch>();
-  const windowWidth = useRef(Dimensions.get("window").width);
-  const postImageHeight = useRef(
-    windowWidth.current * (postImageRatio[0] / postImageRatio[1])
-  );
   const post = useSelector((state: RootState) =>
     selectPostByEntityId(state, postEntityId)
   )!;
@@ -66,7 +59,7 @@ export default function Post({ postEntityId }: props) {
   return (
     <View style={tw`w-full mb-10`}>
       {/* Header */}
-      <View style={tw`flex-row justify-between px-2 py-2`}>
+      <View style={tw`flex-row justify-between px-3 py-2`}>
         <TouchableOpacity style={tw`flex-row items-center`}>
           <View
             style={tw`w-10 h-10 rounded-full border-[1px] border-light-gray mr-2`}
@@ -97,21 +90,7 @@ export default function Post({ postEntityId }: props) {
       </View>
 
       {/* Image content */}
-      {post?.uri !== "" && (
-        <TouchableWithoutFeedback>
-          <Image
-            source={{ uri: post?.uri }}
-            style={tw`w-${windowWidth.current}px h-${postImageHeight.current}px`}
-          />
-        </TouchableWithoutFeedback>
-      )}
-      {post?.uri === "" && (
-        <TouchableWithoutFeedback>
-          <View
-            style={tw`w-${windowWidth.current}px h-${postImageHeight.current}px bg-transparent`}
-          />
-        </TouchableWithoutFeedback>
-      )}
+      <PostImage uri={post.uri} />
 
       {/* like/comment/flag */}
       <View style={tw`flex-row justify-between px-3 pt-2`}>

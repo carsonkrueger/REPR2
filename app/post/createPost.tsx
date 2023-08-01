@@ -68,13 +68,23 @@ export default function CreatePost() {
     if (!image || !image.base64) return;
     setIsUploading(true);
 
+    const fileName = image.uri.replace(/^.*[\\\/]/, "");
+
+    const formData = new FormData();
+    formData.append("files", {
+      uri: image.uri!,
+      name: fileName,
+      type: image.type ?? "image",
+    } as unknown as Blob);
+
     const { data, error } = await supabase.storage
       .from("images")
-      .upload(`${userId}/${uuid()}`, image.base64!, {
+      .upload(`${userId}/${uuid()}`, formData, {
         cacheControl: "3600",
         upsert: false,
       });
     if (error) console.warn("ERROR UPLOADING IMAGE:", error);
+    console.log(data?.path);
 
     const response = await supabase.from("posts").insert({
       description: description,

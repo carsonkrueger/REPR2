@@ -65,23 +65,23 @@ export default function CreatePost() {
   }
 
   async function uploadImage() {
-    if (!image) return;
+    if (!image || !image.base64) return;
     setIsUploading(true);
 
     const { data, error } = await supabase.storage
       .from("images")
-      .upload(`posts/${uuid()}`, image.uri, {
+      .upload(`${userId}/${uuid()}`, image.base64!, {
         cacheControl: "3600",
         upsert: false,
       });
     if (error) console.warn("ERROR UPLOADING IMAGE:", error);
 
-    const postError = await supabase.from("posts").insert({
+    const response = await supabase.from("posts").insert({
       description: description,
       image_url: data!.path,
       user_id: userId,
     });
-    if (postError) console.warn("ERROR INSERTING POST:", postError);
+    if (response.error) console.warn("ERROR INSERTING POST:", response.error);
 
     navigateBack();
   }

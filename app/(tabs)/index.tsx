@@ -49,12 +49,13 @@ import {
   clearAllPosts,
   getNextPost,
   selectAllPostsIds,
-  selectPostByEntityId,
+  selectPostById,
 } from "../../src/redux/slices/postsSlice";
 import { getCurFullDate } from "../../src/util/dates";
 import { FlashList } from "@shopify/flash-list";
 import Post from "../../src/components/post";
 import { CreatePostSelectionType } from "../../src/types/createPostSelectionType";
+import CustomColors from "../../src/util/customColors";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -66,9 +67,11 @@ export default function Home() {
   const allPostIds = useSelector((state: RootState) =>
     selectAllPostsIds(state)
   );
+  // const lastPostDate = getCurFullDate();
   const lastPostDate =
-    useSelector((state) => selectPostByEntityId(state, allPostIds.length - 1))
-      ?.createdAt ?? getCurFullDate();
+    useSelector((state) =>
+      selectPostById(state, allPostIds[allPostIds.length - 1])
+    )?.createdAt ?? getCurFullDate();
 
   const [appIsReady, setAppIsReady] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -183,12 +186,20 @@ export default function Home() {
           REPR
         </Text>
 
-        <PremiumIcon />
+        <View style={tw`flex-row justify-between w-15`}>
+          <TouchableOpacity
+            style={tw`items-center justify-center `}
+            onPress={onGalleryCreatePostPress}
+          >
+            <Feather name="plus" size={27} color={CustomColors.primary} />
+          </TouchableOpacity>
+          <PremiumIcon />
+        </View>
       </View>
 
       <FlashList
         data={allPostIds}
-        renderItem={({ item }) => <Post postEntityId={item} />}
+        renderItem={({ item }) => <Post postId={item} />}
         onEndReached={onEndOfPageReached}
         onEndReachedThreshold={0.5}
         estimatedItemSize={507}
@@ -198,12 +209,12 @@ export default function Home() {
         onScroll={onSetDistanceFromTop}
       />
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={tw`absolute bottom-18 right-4 items-center justify-center bg-primary rounded-full p-2`}
         onPress={onGalleryCreatePostPress}
       >
         <Feather name="plus" size={30} color={"#fff"} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </SafeAreaView>
   );
 }

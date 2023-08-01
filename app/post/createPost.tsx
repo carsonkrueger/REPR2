@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../src/redux/store";
 import { selectUserId } from "../../src/redux/slices/profileSlice";
 import { v4 as uuid } from "uuid";
+import CustomColors from "../../src/util/customColors";
 
 export default function CreatePost() {
   const router = useRouter();
@@ -26,15 +27,21 @@ export default function CreatePost() {
   useEffect(() => {
     switch (selectionType) {
       case CreatePostSelectionType.camera: {
+        ImagePicker.getCameraPermissionsAsync();
         openCamera();
         break;
       }
       case CreatePostSelectionType.gallery: {
+        ImagePicker.getMediaLibraryPermissionsAsync();
         openGallery();
         break;
       }
     }
   }, []);
+
+  async function navigateBack() {
+    router.back();
+  }
 
   async function openCamera() {
     let result = await ImagePicker.launchCameraAsync({
@@ -43,6 +50,7 @@ export default function CreatePost() {
       aspect: [1, 1],
       quality: 1,
       allowsMultipleSelection: false,
+      base64: true,
     });
     if (!result.canceled) setImage(result.assets[0]);
     else if (result.canceled) navigateBack();
@@ -55,43 +63,38 @@ export default function CreatePost() {
       aspect: [1, 1],
       quality: 1,
       allowsMultipleSelection: false,
+      base64: true,
     });
     if (!result.canceled) setImage(result.assets[0]);
     else if (result.canceled) navigateBack();
   }
 
-  async function navigateBack() {
-    router.back();
-  }
-
   async function uploadImage() {
-    if (!image || !image.base64) return;
+    if (!image) return;
     setIsUploading(true);
 
-    const fileName = image.uri.replace(/^.*[\\\/]/, "");
+    const fileName = image.uri.replace(`^.*[\\\/]/`, "");
 
-    const formData = new FormData();
-    formData.append("files", {
-      uri: image.uri!,
+    let formData = new FormData();
+    formData.append("file", {
+      uri: image.uri,
       name: fileName,
       type: image.type ?? "image",
-    } as unknown as Blob);
+    } as unknown as File);
 
-    const { data, error } = await supabase.storage
+    const imageUUID = uuid();
+
+    const { error } = await supabase.storage
       .from("images")
-      .upload(`${userId}/${uuid()}`, formData, {
-        cacheControl: "3600",
-        upsert: false,
-      });
+      .upload(`${userId}/${imageUUID}`, formData);
     if (error) console.warn("ERROR UPLOADING IMAGE:", error);
-    console.log(data?.path);
 
-    const response = await supabase.from("posts").insert({
+    const postError = await supabase.from("posts").insert({
       description: description,
-      image_url: data!.path,
+      image_url: imageUUID,
       user_id: userId,
     });
-    if (response.error) console.warn("ERROR INSERTING POST:", response.error);
+    if (postError.error) console.warn("ERROR INSERTING POST:", postError.error);
 
     navigateBack();
   }
@@ -103,51 +106,69 @@ export default function CreatePost() {
   return (
     <SafeAreaView style={tw`flex-1 bg-front`}>
       {/* Header */}
-      <View style={tw`pr-3 pl-1 py-3 flex-row justify-between items-center`}>
+      <View
+        style={tw`pr-3 pl-1 py-3 mb-1 flex-row justify-between items-center shadow-md`}
+      >
+        {/* Left side */}
         <View style={tw`flex-row items-center`}>
-          <NavigateBackButton onBackPress={navigateBack} />
+          <NavigateBackButton
+            onBackPress={navigateBack}
+            disabled={isUploading}
+          />
+        </View>
+
+        {/* Center */}
+        <View
+          style={tw`absolute flex-row left-0 right-0 justify-center items-center`}
+        >
           <Text
             style={[
-              tw`text-lg  text-dark-gray`,
+              tw`text-lg text-center text-dark-gray`,
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            CREATE
+            NEW POST
           </Text>
         </View>
 
-        <TouchableOpacity onPress={uploadImage}>
+        {/* Right side */}
+        <TouchableOpacity onPress={uploadImage} disabled={isUploading}>
           <Text
             style={[
               tw`text-lg  text-primary`,
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            POST
+            Share
           </Text>
         </TouchableOpacity>
       </View>
+
       {/* Content Image */}
       <PostImage uri={image?.uri ?? ""} />
 
-      {/* Description */}
-      <Text
-        style={[
-          tw`pl-3 pt-2 text-base text-primary`,
-          { fontFamily: "RobotoCondensed" },
-        ]}
-      >
-        Description
-      </Text>
-      <TextInput
-        style={[
-          tw`bg-transparent rounded-sm text-base mx-3 my-2 flex-wrap flex-1`,
-          { fontFamily: "RobotoCondensed" },
-        ]}
-        maxLength={maxDescriptionCharLen}
-        onChangeText={onDescriptionChange}
-        editable={!isUploading}
-      />
+      <View style={tw`flex-1`}>
+        {/* Description */}
+        <TextInput
+          style={[
+            tw`rounded-sm text-base mx-3 my-4 px-3 py-2 text-dark-gray min-h-14 max-h-full`,
+            { fontFamily: "RobotoCondensed", textAlignVertical: "top" },
+          ]}
+          maxLength={maxDescriptionCharLen}
+          onChangeText={onDescriptionChange}
+          editable={!isUploading}
+          placeholder="Write a caption..."
+          placeholderTextColor={CustomColors["light-gray"]}
+          numberOfLines={2}
+          multiline={true}
+          scrollEnabled={true}
+        />
+        <Text style={tw`absolute top-2 right-5 text-sm text-light-gray`}>
+          {description.length === 0
+            ? ""
+            : `${description.length}/${maxDescriptionCharLen}`}
+        </Text>
+      </View>
     </SafeAreaView>
   );
 }

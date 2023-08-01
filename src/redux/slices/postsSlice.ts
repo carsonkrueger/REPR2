@@ -66,7 +66,7 @@ export const toggleLikePost = createAsyncThunk(
 );
 
 const postsAdapter = createEntityAdapter<Post>({
-  selectId: (post) => post.id,
+  selectId: (post) => post.postId,
 });
 
 const postsSlice = createSlice({
@@ -84,22 +84,18 @@ const postsSlice = createSlice({
     builder
       .addCase(getNextPost.fulfilled, (state, result) => {
         if (!result.payload) return;
-        const nextPostEntityId = state.ids.length;
-        const postRow: PostRow = result.payload;
-        postsAdapter.addOne(
-          state,
-          postFromPostTableRow(postRow, nextPostEntityId)
-        );
+        if (state.entities[result.payload.post_id]) return; // if post already exists, return
+        postsAdapter.addOne(state, postFromPostTableRow(result.payload));
       })
       .addCase(toggleLikePost.pending, (state, action) => {
         postsAdapter.updateOne(state, {
-          id: action.meta.arg.post.id,
+          id: action.meta.arg.post.postId,
           changes: { isLiked: !action.meta.arg.post.isLiked },
         });
       })
       .addCase(getDidLikePost.fulfilled, (state, action) => {
         postsAdapter.updateOne(state, {
-          id: action.meta.arg.post.id,
+          id: action.meta.arg.post.postId,
           changes: { isLiked: action.payload },
         });
       });
@@ -122,7 +118,7 @@ export const selectAllPostsIds = createSelector(
   [selectAllPosts],
   (posts) => posts.ids
 );
-export const selectPostByEntityId = createSelector(
-  [selectAllPosts, (_, postEntityId: EntityId) => postEntityId],
-  (posts, postEntityId) => posts.entities[postEntityId]
+export const selectPostById = createSelector(
+  [selectAllPosts, (_, postId: EntityId) => postId],
+  (posts, postId) => posts.entities[postId]
 );

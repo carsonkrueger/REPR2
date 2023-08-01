@@ -26,7 +26,7 @@ const MyAlert = ({
   return (
     <TouchableWithoutFeedback onPress={onOutOfBoundsClick}>
       <View
-        style={tw`z-100 absolute top-0 right-0 bottom-0 left-0  justify-center items-center`}
+        style={tw`z-100 absolute top-0 right-0 bottom-0 left-0 justify-center items-center bg-transparent`}
       >
         <TouchableWithoutFeedback>
           <View

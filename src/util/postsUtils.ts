@@ -2,9 +2,8 @@ import { EntityId } from "@reduxjs/toolkit";
 import { Post } from "../types/postTypes";
 import { User } from "../types/userType";
 
-export function postFromPostTableRow(row: PostRow, entityId: EntityId): Post {
+export function postFromPostTableRow(row: PostRow): Post {
   return {
-    id: entityId,
     postId: row.post_id,
     createdAt: row.created_at,
     userId: row.user_id,

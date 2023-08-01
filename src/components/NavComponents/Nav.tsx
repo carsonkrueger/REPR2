@@ -65,7 +65,7 @@ export default function Nav() {
 
   return (
     <SafeAreaView
-      style={tw`absolute px-1 flex-row items-center bottom-0 right-0 left-0 bg-dark-front z-50 py-[14px]`}
+      style={tw`absolute px-1 flex-row items-center bottom-2 right-3 left-3 bg-dark-front z-50 py-[14px] rounded-full`}
     >
       {/* Workout screen */}
       <View
@@ -79,7 +79,7 @@ export default function Nav() {
           }`}
         >
           <TouchableOpacity
-            style={tw`p-3 justify-center items-center`}
+            style={tw`p-[0.7rem] justify-center items-center`}
             onPress={
               curWorkout.inProgress ? navigateStartWorkout : navigateWorkouts
             }
@@ -101,7 +101,7 @@ export default function Nav() {
           // name={`${selectedPos === 0 ? "home" : "home-outline"}`}
           name="home"
           color={selectedPos === 0 ? "#3b83f5" : "#fff"}
-          size={27}
+          size={25}
         />
       </TouchableOpacity>
 
@@ -113,7 +113,7 @@ export default function Nav() {
           // name={`${selectedPos === 1 ? "search" : "search-outline"}`}
           name="search"
           color={selectedPos === 1 ? "#3b83f5" : "#fff"}
-          size={27}
+          size={25}
         />
       </TouchableOpacity>
 
@@ -127,7 +127,7 @@ export default function Nav() {
           // name={`${selectedPos === 3 ? "stats-chart" : "stats-chart-outline"}`}
           name="stats-chart"
           color={selectedPos === 3 ? "#3b83f5" : "#fff"}
-          size={27}
+          size={25}
         />
       </TouchableOpacity>
 
@@ -139,7 +139,7 @@ export default function Nav() {
           // name={`${selectedPos === 4 ? "person" : "person-outline"}`}
           name="person"
           color={selectedPos === 4 ? "#3b83f5" : "#fff"}
-          size={27}
+          size={25}
         />
       </TouchableOpacity>
     </SafeAreaView>

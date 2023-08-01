@@ -8,7 +8,7 @@ export default function Layout() {
   return (
     <Provider store={store}>
       <StatusBar backgroundColor="#fff" style="dark" />
-      <Stack>
+      <Stack screenOptions={{ animation: "fade" }}>
         <Stack.Screen
           name="login"
           options={{

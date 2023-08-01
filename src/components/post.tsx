@@ -4,11 +4,10 @@ import tw from "../util/tailwind";
 import { AppDispatch, RootState } from "../redux/store";
 import {
   getDidLikePost,
-  selectPostByEntityId,
+  selectPostById,
   toggleLikePost,
 } from "../redux/slices/postsSlice";
 import { useSelector } from "react-redux";
-import { EntityId } from "@reduxjs/toolkit";
 import { Ionicons } from "@expo/vector-icons";
 import CustomColors from "../util/customColors";
 import { useDispatch } from "react-redux";
@@ -19,15 +18,16 @@ import {
   toggleIsFollowing,
 } from "../redux/slices/usersSlice";
 import PostImage from "./postImage";
+import { EntityId } from "@reduxjs/toolkit";
 
 interface props {
-  postEntityId: EntityId;
+  postId: EntityId;
 }
 
-export default function Post({ postEntityId }: props) {
+export default function Post({ postId }: props) {
   const dispatch = useDispatch<AppDispatch>();
   const post = useSelector((state: RootState) =>
-    selectPostByEntityId(state, postEntityId)
+    selectPostById(state, postId)
   )!;
   const postUser = useSelector((state: RootState) =>
     selectUserByUserId(state, post.userId)

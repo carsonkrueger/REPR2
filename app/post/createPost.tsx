@@ -14,6 +14,7 @@ import { RootState } from "../../src/redux/store";
 import { selectUserId } from "../../src/redux/slices/profileSlice";
 import { v4 as uuid } from "uuid";
 import CustomColors from "../../src/util/customColors";
+import { uploadToSupabase } from "../../src/util/dataURItoBlob";
 
 export default function CreatePost() {
   const router = useRouter();
@@ -72,30 +73,12 @@ export default function CreatePost() {
   async function uploadImage() {
     if (!image) return;
     setIsUploading(true);
-
-    const fileName = image.uri.replace(`^.*[\\\/]/`, "");
-
-    let formData = new FormData();
-    formData.append("file", {
-      uri: image.uri,
-      name: fileName,
-      type: image.type ?? "image",
-    } as unknown as File);
-
-    const imageUUID = uuid();
-
-    const { error } = await supabase.storage
-      .from("images")
-      .upload(`${userId}/${imageUUID}`, formData);
-    if (error) console.warn("ERROR UPLOADING IMAGE:", error);
-
-    const postError = await supabase.from("posts").insert({
-      description: description,
-      image_url: imageUUID,
-      user_id: userId,
-    });
-    if (postError.error) console.warn("ERROR INSERTING POST:", postError.error);
-
+    await uploadToSupabase(
+      image.uri,
+      "post_images",
+      `${userId}/${uuid()}`,
+      "jpg"
+    );
     navigateBack();
   }
 

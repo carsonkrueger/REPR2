@@ -8,16 +8,6 @@ export async function uploadToSupabase(
   imageExtension = "jpg"
 ): Promise<string | null> {
   try {
-    // const base64Str = base64Image.includes("base64,")
-    //   ? base64Image.substring(base64Image.indexOf("base64,") + "base64,".length)
-    //   : base64Image;
-    // const res = decode(base64Str);
-
-    // if (!(res.byteLength > 0)) {
-    //   console.error("[uploadToSupabase] ArrayBuffer is null");
-    //   return null;
-    // }
-
     const { data, error } = await supabase.storage
       .from(bucketName)
       .upload(pathUrl, decode(base64Image), {
@@ -40,13 +30,3 @@ export async function uploadToSupabase(
     return null;
   }
 }
-
-// export function base64ToArrayBuffer(base64: string) {
-//   const binaryString = atob(base64);
-//   const len = binaryString.length;
-//   const bytes = new Uint8Array(len);
-//   for (let i = 0; i < len; i++) {
-//     bytes[i] = binaryString.charCodeAt(i);
-//   }
-//   return bytes.buffer;
-// }

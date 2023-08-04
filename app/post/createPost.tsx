@@ -76,19 +76,12 @@ export default function CreatePost() {
 
     const imageUuid = uuid();
 
-    await supabase
-      .from("posts")
-      .insert({
-        user_id: userId,
-        description: description !== "" ? description : null,
-        image_id: imageUuid,
-      });
-    await uploadToSupabase(
-      image.uri,
-      "images",
-      `${userId}/${imageUuid}`,
-      "jpeg"
-    );
+    supabase.from("posts").insert({
+      user_id: userId,
+      description: description !== "" ? description : null,
+      image_id: imageUuid,
+    });
+    uploadToSupabase(image.base64!, "images", `${userId}/${imageUuid}`, "jpeg");
 
     // const arrayBuffer = base64ToArrayBuffer(image.base64!)
     // const {data} = supabase.storage.from("image_posts")

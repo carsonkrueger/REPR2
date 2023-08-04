@@ -10,6 +10,7 @@ import { Post } from "../../types/postTypes";
 import { RootState } from "../store";
 import { supabase } from "../../types/supabaseClient";
 import { postFromPostTableRow } from "../../util/postsUtils";
+import { encode } from "base64-arraybuffer";
 
 export const getNextPost = createAsyncThunk(
   "getNextPost",
@@ -28,13 +29,20 @@ export const getNextPost = createAsyncThunk(
     if (error) console.warn(error);
 
     // get image for post if image_id exists
+    let base64 = null;
     if (data?.image_id) {
       const res = await supabase.storage
         .from("images")
         .download(`${data.user_id}/${data.image_id}`);
       if (res.error) console.warn("ERROR WITH FETCHING IMAGE:", res.error);
       if (!res.data) console.warn("ERROR, IMAGE NOT FOUND");
-      console.log("data:", JSON.stringify(res.data));
+      // console.log(
+      //   JSON.stringify(
+      //     res.data
+      //       ?.arrayBuffer()
+      //       .then((buf) => console.log("BUFFER FOUND:", encode(buf)))
+      //   )
+      // );
     }
     return data;
   }

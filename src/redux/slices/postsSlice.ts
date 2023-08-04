@@ -14,10 +14,11 @@ import { postFromPostTableRow } from "../../util/postsUtils";
 export const getNextPost = createAsyncThunk(
   "getNextPost",
   async (payload: { lastPostCreatedAt: string }) => {
+    // get post
     const { data, error } = await supabase
       .from("posts")
       .select(
-        `post_id, created_at, image_url, user_id, num_likes, description, profiles (user_id, user_name, first_name, last_name, num_followers, num_following, num_posts, is_premium)`
+        `post_id, created_at, image_id, user_id, shared_workout_id, num_likes, description, profiles (user_id, user_name, first_name, last_name, num_followers, num_following, num_posts, is_premium)`
       )
       .order("created_at", { ascending: false })
       .lt("created_at", payload.lastPostCreatedAt)
@@ -26,6 +27,15 @@ export const getNextPost = createAsyncThunk(
     if (error?.code === "PGRST116") return undefined;
     if (error) console.warn(error);
 
+    // get image for post if image_id exists
+    if (data?.image_id) {
+      const res = await supabase.storage
+        .from("images")
+        .download(`${data.user_id}/${data.image_id}`);
+      if (res.error) console.warn("ERROR WITH FETCHING IMAGE:", res.error);
+      if (!res.data) console.warn("ERROR, IMAGE NOT FOUND");
+      console.log("data:", JSON.stringify(res.data));
+    }
     return data;
   }
 );
@@ -86,6 +96,7 @@ const postsSlice = createSlice({
         if (!result.payload) return;
         if (state.entities[result.payload.post_id]) return; // if post already exists, return
         postsAdapter.addOne(state, postFromPostTableRow(result.payload));
+        // const image = await supabase.storage.from("images").download(`${result.payload.user_id}/${result.payload.image_id}`)
       })
       .addCase(toggleLikePost.pending, (state, action) => {
         postsAdapter.updateOne(state, {

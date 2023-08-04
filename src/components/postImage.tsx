@@ -9,18 +9,18 @@ import { postImageRatio } from "../util/postImageRatio";
 import tw from "../util/tailwind";
 
 interface props {
-  uri: string;
+  base64?: string;
   onDoublePress?: () => void;
 }
 
-export default function PostImage({ uri, onDoublePress }: props) {
+export default function PostImage({ base64, onDoublePress }: props) {
   const windowWidth = useRef(Dimensions.get("window").width);
   const postImageHeight = useRef(
     windowWidth.current * (postImageRatio[0] / postImageRatio[1])
   );
 
   // Missing uri
-  if (uri === "" || !uri)
+  if (!base64)
     return (
       <TouchableWithoutFeedback>
         <View
@@ -33,7 +33,7 @@ export default function PostImage({ uri, onDoublePress }: props) {
   return (
     <TouchableWithoutFeedback>
       <Image
-        source={{ uri: uri }}
+        source={{ uri: `data:image/jpeg;base64,${base64}` }}
         style={tw`w-${windowWidth.current}px h-${postImageHeight.current}px`}
       />
     </TouchableWithoutFeedback>

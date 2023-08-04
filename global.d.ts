@@ -1,5 +1,6 @@
 import { Database as DB } from "./src/types/database.types";
 
+//// npx supabase gen types typescript --project-id {reference id} > src/types/database.types.ts
 declare global {
   type Database = DB;
   type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];

@@ -3,7 +3,6 @@ import { Text, TouchableOpacity, View, TextInput } from "react-native";
 import PostImage from "../../src/components/postImage";
 import tw from "../../src/util/tailwind";
 import * as ImagePicker from "expo-image-picker";
-import { supabase } from "../../src/types/supabaseClient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { CreatePostSelectionType } from "../../src/types/createPostSelectionType";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,7 +13,8 @@ import { RootState } from "../../src/redux/store";
 import { selectUserId } from "../../src/redux/slices/profileSlice";
 import { v4 as uuid } from "uuid";
 import CustomColors from "../../src/util/customColors";
-import { uploadToSupabase } from "../../src/util/dataURItoBlob";
+import { uploadToSupabase } from "../../src/util/uploadToSupabase";
+import { supabase } from "../../src/types/supabaseClient";
 
 export default function CreatePost() {
   const router = useRouter();
@@ -73,12 +73,27 @@ export default function CreatePost() {
   async function uploadImage() {
     if (!image) return;
     setIsUploading(true);
+
+    const imageUuid = uuid();
+
+    await supabase
+      .from("posts")
+      .insert({
+        user_id: userId,
+        description: description !== "" ? description : null,
+        image_id: imageUuid,
+      });
     await uploadToSupabase(
       image.uri,
-      "post_images",
-      `${userId}/${uuid()}`,
-      "jpg"
+      "images",
+      `${userId}/${imageUuid}`,
+      "jpeg"
     );
+
+    // const arrayBuffer = base64ToArrayBuffer(image.base64!)
+    // const {data} = supabase.storage.from("image_posts")
+
+    setIsUploading(false);
     navigateBack();
   }
 
@@ -128,7 +143,7 @@ export default function CreatePost() {
       </View>
 
       {/* Content Image */}
-      <PostImage uri={image?.uri ?? ""} />
+      <PostImage base64={image?.base64 ?? undefined} />
 
       <View style={tw`flex-1`}>
         {/* Description */}

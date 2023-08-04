@@ -73,8 +73,14 @@ function thDate(dayOfMonth: string) {
   }
 }
 
-export function convertDateToHuman(date: string, withYear: boolean = true) {
-  const [year, month, day] = date.split("-");
+export function convertDateToHuman(
+  date: string,
+  withYear: boolean = true,
+  delimiter: string = "-"
+) {
+  date = date.split("T")[0];
+
+  const [year, month, day] = date.split(delimiter);
   return `${monthNames[month as keyof typeof monthNames]} ${
     Number(day) + thDate(day)
   }${withYear ? `, ${year}` : ""}`;
@@ -88,4 +94,14 @@ export function convertMsToHrMin(milleseconds: number): {
   milleseconds %= millesecondsInAHour;
   const minutes = ~~(milleseconds / millesecondsInAMinute);
   return { hours: hours, minutes: minutes };
+}
+
+export function daysAgo(date: string) {
+  const prevDate = new Date(date);
+  const todayDate = new Date();
+
+  const msDif = todayDate.getTime() - prevDate.getTime();
+  const daysDif = Math.floor(msDif / (1000 * 3600 * 24));
+
+  return daysDif;
 }

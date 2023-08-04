@@ -57,6 +57,7 @@ const usersSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(getNextPost.fulfilled, (state, action) => {
+        if (!action.payload) return;
         if (state.entities[(action.payload?.profiles as ProfileRow).user_id])
           return; // if user already exists, return
         usersAdapter.addOne(

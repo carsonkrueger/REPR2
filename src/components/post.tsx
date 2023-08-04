@@ -19,6 +19,8 @@ import {
 } from "../redux/slices/usersSlice";
 import PostImage from "./postImage";
 import { EntityId } from "@reduxjs/toolkit";
+import { convertDateToHuman, daysAgo } from "../util/dates";
+import { encode } from "base64-arraybuffer";
 
 interface props {
   postId: EntityId;
@@ -56,8 +58,21 @@ export default function Post({ postId }: props) {
     dispatch(toggleIsFollowing({ user: postUser, userId: userId }));
   }
 
+  function getDayWeeksAgo(): string {
+    const daysSince = daysAgo(post.createdAt);
+    if (daysSince >= 7) {
+      const weeks = Math.floor(daysSince / 7);
+      if (weeks === 1) return "1 week ago";
+      else return `${weeks} week ago`;
+    } else {
+      if (daysSince === 0) return "Today";
+      else if (daysSince === 1) return "1 day ago";
+      else return `${daysSince} days ago`;
+    }
+  }
+
   return (
-    <View style={tw`w-full mb-10`}>
+    <View style={tw`w-full mb-8`}>
       {/* Header */}
       <View style={tw`flex-row justify-between px-3 py-2`}>
         <View style={tw`flex-row items-center`}>
@@ -79,24 +94,26 @@ export default function Post({ postId }: props) {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          style={tw`flex-row items-center`}
-          onPress={togglePostIsFollowing}
-          disabled={isLoading}
-        >
-          <Text
-            style={[
-              tw`text-primary text-base`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
+        {postUser.userId !== userId && (
+          <TouchableOpacity
+            style={tw`flex-row items-center`}
+            onPress={togglePostIsFollowing}
+            disabled={isLoading}
           >
-            {postUser.isFollowing ? "Unfollow" : "Follow"}
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                tw`text-primary text-base`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              {postUser.isFollowing ? "Unfollow" : "Follow"}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Image content */}
-      <PostImage uri={post.uri} />
+      <PostImage base64={post.base64Image} />
 
       {/* like/comment/flag */}
       <View style={tw`flex-row justify-between px-3 pt-2`}>
@@ -123,14 +140,21 @@ export default function Post({ postId }: props) {
         </TouchableOpacity>
       </View>
 
-      <Text
-        style={[
-          tw`px-4 text-sm text-primary`,
-          { fontFamily: "RobotoCondensed" },
-        ]}
-      >
-        {post?.numLikes} Likes
-      </Text>
+      <View style={tw`px-4 flex-row justify-between`}>
+        <Text
+          style={[tw`text-xs text-primary`, { fontFamily: "RobotoCondensed" }]}
+        >
+          {post?.numLikes} Likes
+        </Text>
+        <Text
+          style={[
+            tw`text-xs text-light-gray`,
+            { fontFamily: "RobotoCondensed" },
+          ]}
+        >
+          {getDayWeeksAgo()}
+        </Text>
+      </View>
 
       {/* description */}
       {post?.description && (

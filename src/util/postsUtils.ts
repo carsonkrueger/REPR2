@@ -8,7 +8,8 @@ export function postFromPostTableRow(row: PostRow): Post {
     createdAt: row.created_at,
     userId: row.user_id,
     numLikes: row.num_likes,
-    uri: "",
+    imageId: row.image_id ?? undefined,
+    sharedWorkoutId: row.shared_workout_id ?? undefined,
     isLiked: false,
     description: row.description ?? "",
   };

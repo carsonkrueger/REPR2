@@ -53,7 +53,7 @@ import {
 } from "../../src/redux/slices/postsSlice";
 import { getCurFullDate } from "../../src/util/dates";
 import { FlashList } from "@shopify/flash-list";
-import Post from "../../src/components/post";
+import Post from "../../src/components/postComponents/post";
 import { CreatePostSelectionType } from "../../src/types/createPostSelectionType";
 import CustomColors from "../../src/util/customColors";
 
@@ -143,10 +143,10 @@ export default function Home() {
     dispatch(getNextPost({ lastPostCreatedAt: lastPostDate }));
   }
 
-  async function onPageRefesh() {
+  function onPageRefesh() {
     setIsRefreshing(true);
     dispatch(clearAllPosts());
-    await getNextPostLocal();
+    getNextPostLocal();
     setIsRefreshing(false);
   }
 
@@ -189,13 +189,13 @@ export default function Home() {
           REPR
         </Text>
 
-        <View style={tw`flex-row justify-between w-15`}>
-          <TouchableOpacity
-            style={tw`items-center justify-center `}
+        <View style={tw`flex-row`}>
+          {/* <TouchableOpacity
+            style={tw`items-center justify-center mr-2`}
             onPress={onGalleryCreatePostPress}
           >
             <Feather name="plus" size={27} color={CustomColors.primary} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <PremiumIcon />
         </View>
       </View>
@@ -212,12 +212,12 @@ export default function Home() {
         onScroll={onSetDistanceFromTop}
       />
 
-      {/* <TouchableOpacity
-        style={tw`absolute bottom-18 right-4 items-center justify-center bg-primary rounded-full p-2`}
+      <TouchableOpacity
+        style={tw`absolute bottom-19 right-4 items-center justify-center bg-primary rounded-full p-[.4rem]`}
         onPress={onGalleryCreatePostPress}
       >
         <Feather name="plus" size={30} color={"#fff"} />
-      </TouchableOpacity> */}
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }

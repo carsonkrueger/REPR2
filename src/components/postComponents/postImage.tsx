@@ -5,8 +5,8 @@ import {
   Dimensions,
   View,
 } from "react-native";
-import { postImageRatio } from "../util/postImageRatio";
-import tw from "../util/tailwind";
+import { postImageRatio } from "../../util/postImageRatio";
+import tw from "../../util/tailwind";
 
 interface props {
   base64?: string;

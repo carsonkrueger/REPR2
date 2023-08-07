@@ -21,7 +21,7 @@ import {
 } from "../../redux/slices/workoutSlice";
 import { cleanNumStr } from "../../util/workoutUtils";
 import CustomColors from "../../util/customColors";
-import { Profile } from "../../types/profileSettingsType";
+import { ProfileSettings } from "../../types/profileSettingsType";
 import { selectProfile } from "../../redux/slices/profileSlice";
 import { XS_VIBRATE } from "../../util/vibrations";
 
@@ -37,7 +37,7 @@ export default function WorkoutSetComponent({
   const workoutSet: WorkoutSet = useSelector((state: RootState) =>
     selectSetById(state, setId)
   );
-  const profile: Profile = useSelector((state: RootState) =>
+  const profile: ProfileSettings = useSelector((state: RootState) =>
     selectProfile(state)
   );
   const dispatch = useDispatch<AppDispatch>();

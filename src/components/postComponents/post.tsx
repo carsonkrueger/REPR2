@@ -1,33 +1,35 @@
 import { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import tw from "../util/tailwind";
-import { AppDispatch, RootState } from "../redux/store";
+import tw from "../../util/tailwind";
+import { AppDispatch, RootState } from "../../redux/store";
 import {
   getBase64Image,
   getDidLikePost,
   selectPostById,
   toggleLikePost,
-} from "../redux/slices/postsSlice";
+} from "../../redux/slices/postsSlice";
 import { useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
-import CustomColors from "../util/customColors";
+import CustomColors from "../../util/customColors";
 import { useDispatch } from "react-redux";
-import { selectUserId } from "../redux/slices/profileSlice";
+import { selectUserId } from "../../redux/slices/profileSlice";
 import {
   getIsFollowing,
   selectUserByUserId,
   toggleIsFollowing,
-} from "../redux/slices/usersSlice";
+} from "../../redux/slices/usersSlice";
 import PostImage from "./postImage";
 import { EntityId } from "@reduxjs/toolkit";
-import { daysAgo } from "../util/dates";
-import { supabase } from "../types/supabaseClient";
+import { daysAgo } from "../../util/dates";
+import { supabase } from "../../types/supabaseClient";
+import { useRouter } from "expo-router";
 
 interface props {
   postId: EntityId;
 }
 
 export default function Post({ postId }: props) {
+  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const post = useSelector((state: RootState) =>
     selectPostById(state, postId)
@@ -55,6 +57,13 @@ export default function Post({ postId }: props) {
 
   async function onDoubleTap() {
     togglePostIsLiked();
+  }
+
+  async function onUsernamePress() {
+    router.push({
+      pathname: `post/${post.postId}`,
+      params: { postId: post.postId },
+    });
   }
 
   async function togglePostIsLiked() {
@@ -89,7 +98,7 @@ export default function Post({ postId }: props) {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onUsernamePress}>
             <Text
               style={[
                 tw` text-dark-gray text-base`,

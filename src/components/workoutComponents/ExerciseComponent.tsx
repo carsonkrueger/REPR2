@@ -28,8 +28,6 @@ import {
 } from "../../redux/slices/workoutSlice";
 import Clock from "./ClockComponent";
 import CustomColors from "../../util/customColors";
-import { Profile } from "../../types/profileSettingsType";
-import { selectProfile } from "../../redux/slices/profileSlice";
 import { useRouter } from "expo-router";
 
 interface props {
@@ -46,9 +44,6 @@ export default function ExerciseComponent({ exerciseId }: props) {
   );
   const exercise: Exercise = useSelector((state: RootState) =>
     selectExerciseById(state, exerciseId)
-  );
-  const profile: Profile = useSelector((state: RootState) =>
-    selectProfile(state)
   );
 
   const toggleMenu = () => {

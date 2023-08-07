@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View, TextInput } from "react-native";
-import PostImage from "../../src/components/postImage";
+import PostImage from "../../src/components/postComponents/postImage";
 import tw from "../../src/util/tailwind";
 import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";

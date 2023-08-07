@@ -24,6 +24,7 @@ export const getNextPost = createAsyncThunk(
       .lt("created_at", payload.lastPostCreatedAt)
       .limit(1)
       .single();
+
     if (error?.code === "PGRST116") return undefined;
     if (error) console.warn(error);
 

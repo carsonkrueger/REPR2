@@ -20,7 +20,7 @@ export const getIsFollowing = createAsyncThunk(
       .eq("user_id", payload.userId)
       .eq("followed_user_id", payload.user.userId)
       .maybeSingle();
-    if (error) console.warn(error);
+    if (error) throw error;
     if (data) return true;
     else return false;
   }
@@ -35,13 +35,13 @@ export const toggleIsFollowing = createAsyncThunk(
         .delete()
         .eq("user_id", payload.userId)
         .eq("followed_user_id", payload.user.userId);
-      if (error) console.warn(error);
+      if (error) throw error;
     } else {
       const { error } = await supabase.from("following").upsert({
         followed_user_id: payload.user.userId,
         user_id: payload.userId,
       });
-      if (error) console.warn(error);
+      if (error) throw error;
     }
   }
 );

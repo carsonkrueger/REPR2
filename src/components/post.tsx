@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import tw from "../util/tailwind";
 import { AppDispatch, RootState } from "../redux/store";
 import {
+  getBase64Image,
   getDidLikePost,
   selectPostById,
   toggleLikePost,
@@ -19,8 +20,8 @@ import {
 } from "../redux/slices/usersSlice";
 import PostImage from "./postImage";
 import { EntityId } from "@reduxjs/toolkit";
-import { convertDateToHuman, daysAgo } from "../util/dates";
-import { encode } from "base64-arraybuffer";
+import { daysAgo } from "../util/dates";
+import { supabase } from "../types/supabaseClient";
 
 interface props {
   postId: EntityId;
@@ -39,12 +40,18 @@ export default function Post({ postId }: props) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // get image for post if image_id exists
+    if (post.imageId) dispatch(getBase64Image(post));
+  }, []);
+
+  useEffect(() => {
     async function prepare() {
+      if (userId === "") return;
       dispatch(getDidLikePost({ post: post, userId: userId }));
       dispatch(getIsFollowing({ user: postUser, userId: userId }));
     }
     prepare().finally(() => setIsLoading(false));
-  }, []);
+  }, [userId]);
 
   async function onDoubleTap() {
     togglePostIsLiked();

@@ -89,11 +89,11 @@ export default function Home() {
         initWorkoutTemplatesTable();
         loadMetricsData();
         dispatch(getPlatform());
-        await dispatch(getSession()).then(async ({ payload }) => {
-          await dispatch(getProfile((payload as Session).user.id));
-        });
-      } catch (e) {
-        console.warn(e);
+
+        const session = await dispatch(getSession());
+        if (session) dispatch(getProfile((session.payload as Session).user.id));
+      } catch (error) {
+        throw error;
       } finally {
         setAppIsReady(true);
       }
@@ -146,9 +146,12 @@ export default function Home() {
   async function onPageRefesh() {
     setIsRefreshing(true);
     dispatch(clearAllPosts());
-    dispatch(getNextPost({ lastPostCreatedAt: getCurFullDate() })).finally(() =>
-      setIsRefreshing(false)
-    );
+    await getNextPostLocal();
+    setIsRefreshing(false);
+  }
+
+  async function getNextPostLocal() {
+    dispatch(getNextPost({ lastPostCreatedAt: lastPostDate }));
   }
 
   async function onCameraCreatePostPress() {

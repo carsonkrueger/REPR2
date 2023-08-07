@@ -73,15 +73,19 @@ export default function CreatePost() {
   async function uploadImage() {
     if (!image) return;
     setIsUploading(true);
-
     const imageUuid = uuid();
 
-    supabase.from("posts").insert({
+    await supabase.from("posts").insert({
       user_id: userId,
       description: description !== "" ? description : null,
       image_id: imageUuid,
     });
-    uploadToSupabase(image.base64!, "images", `${userId}/${imageUuid}`, "jpeg");
+    await uploadToSupabase(
+      image.base64!,
+      "images",
+      `${userId}/${imageUuid}`,
+      getFileExtensionType(image.uri)
+    );
 
     // const arrayBuffer = base64ToArrayBuffer(image.base64!)
     // const {data} = supabase.storage.from("image_posts")
@@ -92,6 +96,10 @@ export default function CreatePost() {
 
   function onDescriptionChange(text: string) {
     setDescription(text);
+  }
+
+  function getFileExtensionType(filePath: string): string | undefined {
+    return filePath.split(".").pop();
   }
 
   return (

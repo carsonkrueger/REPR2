@@ -10,7 +10,6 @@ import { Post } from "../../types/postTypes";
 import { RootState } from "../store";
 import { supabase } from "../../types/supabaseClient";
 import { postFromPostTableRow } from "../../util/postsUtils";
-import { encode } from "base64-arraybuffer";
 
 export const getNextPost = createAsyncThunk(
   "getNextPost",
@@ -28,23 +27,39 @@ export const getNextPost = createAsyncThunk(
     if (error?.code === "PGRST116") return undefined;
     if (error) console.warn(error);
 
-    // get image for post if image_id exists
-    let base64 = null;
-    if (data?.image_id) {
-      const res = await supabase.storage
-        .from("images")
-        .download(`${data.user_id}/${data.image_id}`);
-      if (res.error) console.warn("ERROR WITH FETCHING IMAGE:", res.error);
-      if (!res.data) console.warn("ERROR, IMAGE NOT FOUND");
-      // console.log(
-      //   JSON.stringify(
-      //     res.data
-      //       ?.arrayBuffer()
-      //       .then((buf) => console.log("BUFFER FOUND:", encode(buf)))
-      //   )
-      // );
-    }
     return data;
+  }
+);
+
+export const getBase64Image = createAsyncThunk(
+  "getBase64Image",
+  async (post: Post) => {
+    if (post.imageId) {
+      const { data, error } = await supabase.storage
+        .from("images")
+        .download(`${post.userId}/${post.imageId}`);
+
+      if (error) {
+        console.error("Error downloading image:", error);
+      } else if (data) {
+        try {
+          return new Promise<string>((resolve, reject) => {
+            const fr = new FileReader();
+            fr.readAsDataURL(data);
+            fr.onload = function () {
+              resolve(fr.result as string);
+            };
+            fr.onerror = function () {
+              reject("error");
+            };
+          });
+        } catch (error) {
+          console.error("Error reading image:", error);
+        }
+      } else {
+        console.error("No data or error returned");
+      }
+    }
   }
 );
 
@@ -65,7 +80,7 @@ export const getDidLikePost = createAsyncThunk(
 
 export const toggleLikePost = createAsyncThunk(
   "toggleLikePost",
-  async (payload: { userId: string; post: Post }) => {
+  async (payload: { post: Post; userId: string }) => {
     if (!payload.post.isLiked) {
       const { error } = await supabase.from("likes").upsert({
         post_id: payload.post.postId,
@@ -116,6 +131,13 @@ const postsSlice = createSlice({
         postsAdapter.updateOne(state, {
           id: action.meta.arg.post.postId,
           changes: { isLiked: action.payload },
+        });
+      })
+      .addCase(getBase64Image.fulfilled, (state, action) => {
+        if (!action.payload) return;
+        postsAdapter.updateOne(state, {
+          id: action.meta.arg.postId,
+          changes: { base64Image: action.payload },
         });
       });
   },

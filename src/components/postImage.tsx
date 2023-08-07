@@ -33,7 +33,7 @@ export default function PostImage({ base64, onDoublePress }: props) {
   return (
     <TouchableWithoutFeedback>
       <Image
-        source={{ uri: `data:image/jpeg;base64,${base64}` }}
+        source={{ uri: base64 }}
         style={tw`w-${windowWidth.current}px h-${postImageHeight.current}px`}
       />
     </TouchableWithoutFeedback>

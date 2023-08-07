@@ -46,7 +46,7 @@ export const getProfile = createAsyncThunk(
       )
       .eq("user_id", userId)
       .single();
-    if (error) console.log("Error getting profile: ", error.message);
+    if (error) throw error;
     return data as ProfileRow;
   }
 );

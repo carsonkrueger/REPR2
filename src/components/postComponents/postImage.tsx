@@ -11,12 +11,17 @@ import tw from "../../util/tailwind";
 interface props {
   base64?: string;
   onDoublePress?: () => void;
+  imageScale?: number;
 }
 
-export default function PostImage({ base64, onDoublePress }: props) {
-  const windowWidth = useRef(Dimensions.get("window").width);
+export default function PostImage({
+  base64,
+  onDoublePress,
+  imageScale = 1,
+}: props) {
+  const windowWidth = useRef(Dimensions.get("window").width * imageScale);
   const postImageHeight = useRef(
-    windowWidth.current * (postImageRatio[0] / postImageRatio[1])
+    windowWidth.current * (postImageRatio[0] / postImageRatio[1]) * imageScale
   );
 
   // Missing uri

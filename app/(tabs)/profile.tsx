@@ -10,6 +10,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../src/redux/store";
 import { selectProfile } from "../../src/redux/slices/profileSlice";
 import PremiumIcon from "../../src/components/premiumIcon";
+import { FlashList } from "@shopify/flash-list";
+import SmallPost from "../../src/components/postComponents/smallPost";
 
 export default function Profile() {
   const router = useRouter();
@@ -31,7 +33,7 @@ export default function Profile() {
             { fontFamily: "RobotoCondensed" },
           ]}
         >
-          {profile.username}
+          {profile.user.userName}
         </Text>
         <View style={tw`flex-row`}>
           <TouchableOpacity
@@ -65,7 +67,7 @@ export default function Profile() {
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            {profile.num_posts}
+            {profile.user.numPosts}
           </Text>
 
           <Text
@@ -86,7 +88,7 @@ export default function Profile() {
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            {profile.num_followers}
+            {profile.user.numFollowers}
           </Text>
           <Text
             style={[
@@ -106,7 +108,7 @@ export default function Profile() {
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            {profile.num_following}
+            {profile.user.numFollowing}
           </Text>
           <Text
             style={[
@@ -118,6 +120,15 @@ export default function Profile() {
           </Text>
         </View>
       </View>
+
+      {/* POST IMAGES */}
+      <FlashList
+        data={profile.user.postIds}
+        renderItem={({ item }) => (
+          <SmallPost postId={item} key={"smallPost" + item} />
+        )}
+        estimatedItemSize={100}
+      />
     </SafeAreaView>
   );
 }

@@ -21,14 +21,14 @@ import {
 import PostImage from "./postImage";
 import { EntityId } from "@reduxjs/toolkit";
 import { daysAgo } from "../../util/dates";
-import { supabase } from "../../types/supabaseClient";
 import { useRouter } from "expo-router";
 
 interface props {
   postId: EntityId;
+  useCommentIcon?: boolean;
 }
 
-export default function Post({ postId }: props) {
+export default function Post({ postId, useCommentIcon = true }: props) {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const post = useSelector((state: RootState) =>
@@ -42,8 +42,8 @@ export default function Post({ postId }: props) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // get image for post if image_id exists
-    if (post.imageId) dispatch(getBase64Image(post));
+    // get image for post if image_id exists and base64Image does not exist
+    if (post.imageId && !post.base64Image) dispatch(getBase64Image(post));
   }, []);
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function Post({ postId }: props) {
     togglePostIsLiked();
   }
 
-  async function onUsernamePress() {
+  function navigateToViewPost() {
     router.push({
       pathname: `post/${post.postId}`,
       params: { postId: post.postId },
@@ -79,10 +79,10 @@ export default function Post({ postId }: props) {
     if (daysSince >= 7) {
       const weeks = Math.floor(daysSince / 7);
       if (weeks === 1) return "1 week ago";
-      else return `${weeks} week ago`;
+      else return `${weeks} weeks ago`;
     } else {
       if (daysSince === 0) return "Today";
-      else if (daysSince === 1) return "1 day ago";
+      else if (daysSince === 1) return "Yesterday";
       else return `${daysSince} days ago`;
     }
   }
@@ -98,7 +98,7 @@ export default function Post({ postId }: props) {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={onUsernamePress}>
+          <TouchableOpacity>
             <Text
               style={[
                 tw` text-dark-gray text-base`,
@@ -141,14 +141,16 @@ export default function Post({ postId }: props) {
               size={33}
             />
           </TouchableOpacity>
-
-          <TouchableOpacity>
-            <Ionicons
-              name="chatbubble-outline"
-              size={30}
-              color={CustomColors.primary}
-            />
-          </TouchableOpacity>
+          {/* Comments icon */}
+          {useCommentIcon && (
+            <TouchableOpacity onPress={navigateToViewPost}>
+              <Ionicons
+                name="chatbubble-outline"
+                size={30}
+                color={CustomColors.primary}
+              />
+            </TouchableOpacity>
+          )}
         </View>
 
         <TouchableOpacity>
@@ -174,7 +176,10 @@ export default function Post({ postId }: props) {
 
       {/* description */}
       {post?.description && (
-        <TouchableOpacity style={[tw` rounded-lg p-1 mt-1 mx-3 max-h-17`, ,]}>
+        <TouchableOpacity
+          style={tw` rounded-lg p-1 mt-1 mx-3 max-h-17`}
+          onPress={navigateToViewPost}
+        >
           <Text
             style={[
               tw`text-sm text-dark-gray`,

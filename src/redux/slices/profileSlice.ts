@@ -10,21 +10,28 @@ import { ProfileSettings } from "../../types/profileSettingsType";
 import { supabase } from "../../types/supabaseClient";
 import { Session } from "@supabase/supabase-js";
 import { RootState } from "../store";
+import { User } from "../../types/userType";
+
+const initialUser: User = {
+  userId: "",
+  numPosts: 0,
+  numFollowers: 0,
+  numFollowing: 0,
+  userName: "",
+  firstName: "",
+  lastName: "",
+  isPremium: false,
+  isFollowing: false,
+  postIds: [],
+};
 
 const initialSettings: ProfileSettings = {
-  userId: "",
   email: "",
-  username: "",
-  firstname: "",
-  lastname: "",
-  isPremium: false,
   isDarkMode: false,
   session: null,
   initLoaded: false,
   isIos: true,
-  num_posts: 0,
-  num_followers: 0,
-  num_following: 0,
+  user: initialUser,
 };
 
 export const getSession = createAsyncThunk(
@@ -61,7 +68,7 @@ export const profileSlice = createSlice({
     setSession(state, action: PayloadAction<{ session: Session }>) {
       state.session = action.payload.session;
       state.email = action.payload.session.user.email ?? "";
-      state.userId = action.payload.session.user.id;
+      state.user.userId = action.payload.session.user.id;
     },
     setInitLoadedTrue(state) {
       state.initLoaded = true;
@@ -76,18 +83,18 @@ export const profileSlice = createSlice({
         if (result.payload) {
           state.session = result.payload;
           state.email = result.payload.user.email ?? "";
-          state.userId = result.payload.user.id;
+          state.user.userId = result.payload.user.id;
         }
       })
       .addCase(getProfile.fulfilled, (state, result) => {
         if (result.payload) {
-          state.firstname = result.payload.first_name;
-          state.lastname = result.payload.last_name;
-          state.username = result.payload.user_name;
-          state.isPremium = result.payload.is_premium;
-          state.num_posts = result.payload.num_posts;
-          state.num_followers = result.payload.num_followers;
-          state.num_following = result.payload.num_following;
+          state.user.firstName = result.payload.first_name;
+          state.user.lastName = result.payload.last_name;
+          state.user.userName = result.payload.user_name;
+          state.user.isPremium = result.payload.is_premium;
+          state.user.numPosts = result.payload.num_posts;
+          state.user.numFollowers = result.payload.num_followers;
+          state.user.numFollowing = result.payload.num_following;
         }
       });
   },
@@ -100,9 +107,9 @@ export const { toggleDarkMode, setSession, setInitLoadedTrue, getPlatform } =
 export const selectProfile = (state: RootState) => state.profile;
 export const selectIsPremium = createSelector(
   selectProfile,
-  (profile) => profile.isPremium
+  (profile) => profile.user.isPremium
 );
 export const selectUserId = createSelector(
   selectProfile,
-  (profile) => profile.userId
+  (profile) => profile.user.userId
 );

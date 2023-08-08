@@ -6,6 +6,7 @@ export interface User {
   numFollowers: number;
   numFollowing: number;
   numPosts: number;
+  postIds: string[];
   isPremium: boolean;
   isFollowing: boolean;
 }

@@ -64,6 +64,23 @@ export const getBase64Image = createAsyncThunk(
   }
 );
 
+export const getNext10UserPosts = createAsyncThunk(
+  "getAllUsersPosts",
+  async (payload: { userId: string; indexStart: number }) => {
+    const { data, error } = await supabase
+      .from("posts")
+      .select("*")
+      .eq("user_id", payload.userId)
+      .order("created_at", { ascending: false })
+      .range(payload.indexStart, payload.indexStart + 10);
+
+    if (error) console.error(error);
+    else if (data) {
+      return data;
+    }
+  }
+);
+
 export const getDidLikePost = createAsyncThunk(
   "getDidLikePost",
   async (payload: { post: Post; userId: string }) => {
@@ -139,6 +156,13 @@ const postsSlice = createSlice({
         postsAdapter.updateOne(state, {
           id: action.meta.arg.postId,
           changes: { base64Image: action.payload },
+        });
+      })
+      .addCase(getNext10UserPosts.fulfilled, (state, action) => {
+        if (!action.payload || action.payload.length === 0) return;
+        action.payload.map((post) => {
+          if (!state.entities[post.post_id])
+            postsAdapter.addOne(state, postFromPostTableRow(post));
         });
       });
   },

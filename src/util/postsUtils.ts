@@ -1,4 +1,3 @@
-import { EntityId } from "@reduxjs/toolkit";
 import { Post } from "../types/postTypes";
 import { User } from "../types/userType";
 
@@ -15,7 +14,10 @@ export function postFromPostTableRow(row: PostRow): Post {
   };
 }
 
-export function userFromProfileTableRow(row: ProfileRow): User {
+export function userFromProfileTableRow(
+  row: ProfileRow,
+  postIds: string[] = []
+): User {
   return {
     userId: row.user_id,
     userName: row.user_name,
@@ -26,5 +28,6 @@ export function userFromProfileTableRow(row: ProfileRow): User {
     numPosts: row.num_posts,
     isPremium: row.is_premium,
     isFollowing: false,
+    postIds: postIds,
   };
 }

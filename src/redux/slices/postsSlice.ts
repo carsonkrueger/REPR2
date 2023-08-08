@@ -26,7 +26,7 @@ export const getNextPost = createAsyncThunk(
       .single();
 
     if (error?.code === "PGRST116") return undefined;
-    if (error) console.warn(error);
+    if (error) console.error(error);
 
     return data;
   }
@@ -65,19 +65,21 @@ export const getBase64Image = createAsyncThunk(
 );
 
 export const getNext10UserPosts = createAsyncThunk(
-  "getAllUsersPosts",
+  "getNext10UserPosts",
   async (payload: { userId: string; indexStart: number }) => {
     const { data, error } = await supabase
       .from("posts")
-      .select("*")
+      .select(
+        "post_id, created_at, image_id, user_id, shared_workout_id, num_likes, description, profiles (user_id, user_name, first_name, last_name, num_followers, num_following, num_posts, is_premium)"
+      )
       .eq("user_id", payload.userId)
       .order("created_at", { ascending: false })
-      .range(payload.indexStart, payload.indexStart + 10);
+      .range(payload.indexStart, payload.indexStart + 10)
+      .limit(10);
 
-    if (error) console.error(error);
-    else if (data) {
-      return data;
-    }
+    if (error) return undefined;
+
+    return data;
   }
 );
 

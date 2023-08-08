@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { BackHandler, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -7,20 +7,55 @@ import CustomColors from "../../src/util/customColors";
 import { useRouter } from "expo-router";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { RootState } from "../../src/redux/store";
+import { AppDispatch, RootState } from "../../src/redux/store";
 import { selectProfile } from "../../src/redux/slices/profileSlice";
 import PremiumIcon from "../../src/components/premiumIcon";
 import { FlashList } from "@shopify/flash-list";
 import SmallPost from "../../src/components/postComponents/smallPost";
+import { useEffect, useRef } from "react";
+import { getNext10UserPosts } from "../../src/redux/slices/postsSlice";
+
+const POST_INCREMENT_AMOUNT = 10;
 
 export default function Profile() {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const profile = useSelector((state: RootState) => selectProfile(state));
+  const nextPostIndex = useRef(0);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => true
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   function navigateToSettings() {
     router.push("profileSettings");
+  }
+
+  // useEffect(() => {
+  //   dispatch(
+  //     getNext10UserPosts({
+  //       userId: profile.user.userId,
+  //       indexStart: nextPostIndex.current,
+  //     })
+  //   );
+  //   nextPostIndex.current = POST_INCREMENT_AMOUNT;
+  // }, []);
+
+  function onEndOfPageReached() {
+    console.log("end reached");
+    dispatch(
+      getNext10UserPosts({
+        userId: profile.user.userId,
+        indexStart: nextPostIndex.current,
+      })
+    );
+    nextPostIndex.current += POST_INCREMENT_AMOUNT;
   }
 
   return (
@@ -128,6 +163,7 @@ export default function Profile() {
           <SmallPost postId={item} key={"smallPost" + item} />
         )}
         estimatedItemSize={100}
+        onEndReached={onEndOfPageReached}
       />
     </SafeAreaView>
   );

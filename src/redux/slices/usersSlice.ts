@@ -6,7 +6,7 @@ import {
 } from "@reduxjs/toolkit";
 import { User } from "../../types/userType";
 import { supabase } from "../../types/supabaseClient";
-import { getNextPost } from "./postsSlice";
+import { getNext10UserPosts, getNextPost } from "./postsSlice";
 import { RootState } from "../store";
 import { userFromProfileTableRow } from "../../util/postsUtils";
 
@@ -57,12 +57,27 @@ const usersSlice = createSlice({
     builder
       .addCase(getNextPost.fulfilled, (state, action) => {
         if (!action.payload) return;
-        if (state.entities[(action.payload?.profiles as ProfileRow).user_id])
-          return; // if user already exists, return
-        usersAdapter.addOne(
-          state,
-          userFromProfileTableRow(action.payload?.profiles as ProfileRow)
-        );
+        // if user does not exist, add user
+        if (!state.entities[(action.payload?.profiles)!.user_id]) {
+          usersAdapter.addOne(
+            state,
+            userFromProfileTableRow(action.payload?.profiles!, [
+              action.payload.post_id,
+            ])
+          );
+        }
+        // else user does exist and postId doesn't already exist, add postId to their postIds[]
+        else if (
+          !state.entities[action.payload.user_id]?.postIds.includes(
+            action.payload.post_id
+          )
+        ) {
+          const prevPostIds = state.entities[action.payload.user_id]!.postIds;
+          usersAdapter.updateOne(state, {
+            id: action.payload.user_id,
+            changes: { postIds: [...prevPostIds, action.payload.post_id] },
+          });
+        }
       })
       .addCase(getIsFollowing.fulfilled, (state, action) => {
         usersAdapter.updateOne(state, {
@@ -75,6 +90,27 @@ const usersSlice = createSlice({
           id: action.meta.arg.user.userId,
           changes: { isFollowing: !action.meta.arg.user.isFollowing },
         });
+      })
+      .addCase(getNext10UserPosts.fulfilled, (state, action) => {
+        if (!action.payload || action.payload.length === 0) return;
+
+        console.log("payload:", action.payload);
+
+        const allPostIds = action.payload.map((post) => post.post_id);
+        // if userId does not exist, add user
+        if (!state.entities[action.payload[0].user_id]) {
+          usersAdapter.addOne(
+            state,
+            userFromProfileTableRow(action.payload[0].profiles!, allPostIds)
+          );
+        }
+        // else userId does exist, update postIds[] on user
+        else {
+          usersAdapter.updateOne(state, {
+            id: action.payload[0].user_id,
+            changes: { postIds: allPostIds },
+          });
+        }
       });
   },
 });

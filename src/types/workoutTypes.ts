@@ -1,4 +1,4 @@
-import { EntityId, EntityState } from "@reduxjs/toolkit";
+import { EntityId } from "@reduxjs/toolkit";
 
 export interface WorkoutSet {
   id: EntityId;

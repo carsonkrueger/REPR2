@@ -5,6 +5,7 @@ import {
   Text,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  BackHandler,
 } from "react-native";
 import tw from "../../src/util/tailwind";
 import { FlashList } from "@shopify/flash-list";
@@ -50,6 +51,13 @@ export default function Workouts() {
           );
         }
       );
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => true
+    );
+
+    return () => backHandler.remove();
   }, []);
 
   function onSetDistanceFromTop(

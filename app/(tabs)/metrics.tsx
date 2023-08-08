@@ -1,8 +1,7 @@
-import { View, Text } from "react-native";
+import { View, Text, BackHandler } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import tw from "../../src/util/tailwind";
-import CustomColors from "../../src/util/customColors";
 import { FlashList } from "@shopify/flash-list";
 import { selectMetricsState } from "../../src/redux/slices/metricsSlice";
 import { useSelector } from "react-redux";
@@ -12,7 +11,7 @@ import Search from "../../src/components/searchBar";
 import { sqlSelectLikeExercisesByName } from "../../src/sqlite/queries";
 import { exercisesTableRow } from "../../src/types/localDBTables";
 import ExerciseNameSearchResult from "../../src/components/workoutComponents/exerciseNameSearchResult";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PremiumIcon from "../../src/components/premiumIcon";
 
 export default function Metrics() {
@@ -20,6 +19,15 @@ export default function Metrics() {
     selectMetricsState(state)
   );
   const [isContainerOverlayOpen, setIsContainerOverlayOpen] = useState(false);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => true
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   async function searchAction(name: string) {
     setIsContainerOverlayOpen(true);

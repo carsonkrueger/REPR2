@@ -14,6 +14,7 @@ import { FlashList } from "@shopify/flash-list";
 import SmallPost from "../../src/components/postComponents/smallPost";
 import { useEffect, useRef } from "react";
 import { getNext10UserPosts } from "../../src/redux/slices/postsSlice";
+import { selectUserByUserId } from "../../src/redux/slices/usersSlice";
 
 const POST_INCREMENT_AMOUNT = 10;
 
@@ -22,6 +23,10 @@ export default function Profile() {
   const dispatch = useDispatch<AppDispatch>();
 
   const profile = useSelector((state: RootState) => selectProfile(state));
+  const user = useSelector((state) =>
+    selectUserByUserId(state, profile.user.userId)
+  )!;
+
   const nextPostIndex = useRef(0);
 
   useEffect(() => {
@@ -48,7 +53,6 @@ export default function Profile() {
   // }, []);
 
   function onEndOfPageReached() {
-    console.log("end reached");
     dispatch(
       getNext10UserPosts({
         userId: profile.user.userId,
@@ -158,12 +162,14 @@ export default function Profile() {
 
       {/* POST IMAGES */}
       <FlashList
-        data={profile.user.postIds}
+        contentContainerStyle={tw`flex-row`}
+        data={user.postIds}
         renderItem={({ item }) => (
           <SmallPost postId={item} key={"smallPost" + item} />
         )}
         estimatedItemSize={100}
         onEndReached={onEndOfPageReached}
+        numColumns={3}
       />
     </SafeAreaView>
   );

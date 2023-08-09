@@ -33,12 +33,8 @@ export default function SmallPost({ postId }: props) {
   }
 
   return (
-    <TouchableOpacity
-      style={tw`border-light-gray border-[1px]`}
-      onPress={navigateToViewPost}
-    >
+    <TouchableOpacity style={tw`p-[1px]`} onPress={navigateToViewPost}>
       {/* Image content */}
-      <Text>{post.postId}</Text>
       <PostImage base64={post.base64Image} imageScale={0.33} />
     </TouchableOpacity>
   );

@@ -21,7 +21,7 @@ export default function PostImage({
 }: props) {
   const windowWidth = useRef(Dimensions.get("window").width * imageScale);
   const postImageHeight = useRef(
-    windowWidth.current * (postImageRatio[0] / postImageRatio[1]) * imageScale
+    windowWidth.current * (postImageRatio[0] / postImageRatio[1])
   );
 
   // Missing uri

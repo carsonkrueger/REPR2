@@ -94,8 +94,6 @@ const usersSlice = createSlice({
       .addCase(getNext10UserPosts.fulfilled, (state, action) => {
         if (!action.payload || action.payload.length === 0) return;
 
-        console.log("payload:", action.payload);
-
         const allPostIds = action.payload.map((post) => post.post_id);
         // if userId does not exist, add user
         if (!state.entities[action.payload[0].user_id]) {

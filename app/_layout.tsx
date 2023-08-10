@@ -21,6 +21,7 @@ export default function Layout() {
         <Stack.Screen name="(premium)" options={{ headerShown: false }} />
         <Stack.Screen name="post/createPost" options={{ headerShown: false }} />
         <Stack.Screen name="post/[postId]" options={{ headerShown: false }} />
+        <Stack.Screen name="user/[userId]" options={{ headerShown: false }} />
         <Stack.Screen
           name="(exercise search)"
           options={{ headerShown: false }}

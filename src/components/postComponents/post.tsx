@@ -66,6 +66,13 @@ export default function Post({ postId, useCommentIcon = true }: props) {
     });
   }
 
+  function navigateToUser() {
+    router.push({
+      pathname: `user/${post.userId}`,
+      params: { userIdParam: post.userId },
+    });
+  }
+
   async function togglePostIsLiked() {
     dispatch(toggleLikePost({ post: post, userId: userId }));
   }
@@ -92,13 +99,15 @@ export default function Post({ postId, useCommentIcon = true }: props) {
       {/* Header */}
       <View style={tw`flex-row justify-between px-3 py-2`}>
         <View style={tw`flex-row items-center`}>
-          <TouchableOpacity>
+          {/* User avatar */}
+          <TouchableOpacity onPress={navigateToUser}>
             <View
               style={tw`w-10 h-10 rounded-full border-[1px] border-light-gray mr-2`}
             />
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          {/* Username */}
+          <TouchableOpacity onPress={navigateToUser}>
             <Text
               style={[
                 tw` text-dark-gray text-base`,
@@ -110,6 +119,7 @@ export default function Post({ postId, useCommentIcon = true }: props) {
           </TouchableOpacity>
         </View>
 
+        {/* Follow button */}
         {postUser.userId !== userId && (
           <TouchableOpacity
             style={tw`flex-row items-center`}

@@ -94,19 +94,24 @@ const usersSlice = createSlice({
       .addCase(getNext10UserPosts.fulfilled, (state, action) => {
         if (!action.payload || action.payload.length === 0) return;
 
-        const allPostIds = action.payload.map((post) => post.post_id);
+        const next10PostIds = action.payload.map((post) => post.post_id);
+
         // if userId does not exist, add user
         if (!state.entities[action.payload[0].user_id]) {
           usersAdapter.addOne(
             state,
-            userFromProfileTableRow(action.payload[0].profiles!, allPostIds)
+            userFromProfileTableRow(action.payload[0].profiles!, next10PostIds)
           );
         }
         // else userId does exist, update postIds[] on user
         else {
+          const prevPostIds =
+            state.entities[action.payload[0].user_id]!.postIds;
           usersAdapter.updateOne(state, {
             id: action.payload[0].user_id,
-            changes: { postIds: allPostIds },
+            changes: {
+              postIds: [...new Set([...prevPostIds, ...next10PostIds])],
+            },
           });
         }
       });

@@ -1,20 +1,20 @@
 import { BackHandler, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
 
 import tw from "../../src/util/tailwind";
-import CustomColors from "../../src/util/customColors";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../src/redux/store";
-import { selectProfile } from "../../src/redux/slices/profileSlice";
-import PremiumIcon from "../../src/components/premiumIcon";
+import { selectUserId } from "../../src/redux/slices/profileSlice";
 import { FlashList } from "@shopify/flash-list";
 import SmallPost from "../../src/components/postComponents/smallPost";
 import { useEffect, useRef } from "react";
 import { getNext10UserPosts } from "../../src/redux/slices/postsSlice";
-import { selectUserByUserId } from "../../src/redux/slices/usersSlice";
+import {
+  selectUserByUserId,
+  toggleIsFollowing,
+} from "../../src/redux/slices/usersSlice";
 
 const POST_INCREMENT_AMOUNT = 10;
 
@@ -22,25 +22,28 @@ export default function Profile() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
-  const profile = useSelector((state: RootState) => selectProfile(state));
+  const { userIdParam } = useLocalSearchParams<{ userIdParam: string }>();
+  const userId = useSelector((state: RootState) => selectUserId(state));
+
   const user = useSelector((state) =>
-    selectUserByUserId(state, profile.user.userId)
+    selectUserByUserId(state, userIdParam as string)
   )!;
 
   const nextPostIndex = useRef(0);
 
   useEffect(() => {
+    const backAction = () => {
+      router.back();
+      return true;
+    };
+
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
-      () => true
+      backAction
     );
 
     return () => backHandler.remove();
   }, []);
-
-  function navigateToSettings() {
-    router.push("profileSettings");
-  }
 
   // useEffect(() => {
   //   dispatch(
@@ -52,10 +55,14 @@ export default function Profile() {
   //   nextPostIndex.current = POST_INCREMENT_AMOUNT;
   // }, []);
 
+  async function togglePostIsFollowing() {
+    dispatch(toggleIsFollowing({ user: user, userId: userId }));
+  }
+
   function onEndOfPageReached() {
     dispatch(
       getNext10UserPosts({
-        userId: profile.user.userId,
+        userId: userIdParam as string,
         indexStart: nextPostIndex.current,
       })
     );
@@ -72,10 +79,26 @@ export default function Profile() {
             { fontFamily: "RobotoCondensed" },
           ]}
         >
-          {profile.user.userName}
+          {user.userName}
         </Text>
         <View style={tw`flex-row`}>
-          <TouchableOpacity
+          {/* Follow button */}
+          {user.userId !== userIdParam && (
+            <TouchableOpacity
+              style={tw`flex-row items-center`}
+              onPress={togglePostIsFollowing}
+            >
+              <Text
+                style={[
+                  tw`text-primary text-base`,
+                  { fontFamily: "RobotoCondensed" },
+                ]}
+              >
+                {user.isFollowing ? "Unfollow" : "Follow"}
+              </Text>
+            </TouchableOpacity>
+          )}
+          {/* <TouchableOpacity
             style={tw`flex-col justify-end items-center pb-1 pr-2`}
             onPress={navigateToSettings}
           >
@@ -85,7 +108,7 @@ export default function Profile() {
               size={27}
             />
           </TouchableOpacity>
-          <PremiumIcon />
+          <PremiumIcon /> */}
         </View>
       </View>
 
@@ -106,7 +129,7 @@ export default function Profile() {
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            {profile.user.numPosts}
+            {user.numPosts}
           </Text>
 
           <Text
@@ -127,7 +150,7 @@ export default function Profile() {
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            {profile.user.numFollowers}
+            {user.numFollowers}
           </Text>
           <Text
             style={[
@@ -147,7 +170,7 @@ export default function Profile() {
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            {profile.user.numFollowing}
+            {user.numFollowing}
           </Text>
           <Text
             style={[

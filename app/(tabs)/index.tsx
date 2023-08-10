@@ -210,6 +210,7 @@ export default function Home() {
         onRefresh={onPageRefesh}
         ListFooterComponent={<View style={tw`mb-50`} />}
         onScroll={onSetDistanceFromTop}
+        showsVerticalScrollIndicator={false}
       />
 
       <TouchableOpacity

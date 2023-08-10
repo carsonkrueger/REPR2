@@ -22,6 +22,7 @@ import PostImage from "./postImage";
 import { EntityId } from "@reduxjs/toolkit";
 import { daysAgo } from "../../util/dates";
 import { useRouter } from "expo-router";
+import ProfileIcon from "../profileIcon";
 
 interface props {
   postId: EntityId;
@@ -78,7 +79,7 @@ export default function Post({ postId, useCommentIcon = true }: props) {
   }
 
   async function togglePostIsFollowing() {
-    dispatch(toggleIsFollowing({ user: postUser, userId: userId }));
+    dispatch(toggleIsFollowing({ followedUser: postUser, userId: userId }));
   }
 
   function getDayWeeksAgo(): string {
@@ -100,11 +101,7 @@ export default function Post({ postId, useCommentIcon = true }: props) {
       <View style={tw`flex-row justify-between px-3 py-2`}>
         <View style={tw`flex-row items-center`}>
           {/* User avatar */}
-          <TouchableOpacity onPress={navigateToUser}>
-            <View
-              style={tw`w-10 h-10 rounded-full border-[1px] border-light-gray mr-2`}
-            />
-          </TouchableOpacity>
+          <ProfileIcon style={tw`mr-3`} radius={10} onPress={navigateToUser}/>
 
           {/* Username */}
           <TouchableOpacity onPress={navigateToUser}>

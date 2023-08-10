@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomColors from "../../src/util/customColors";
 import PremiumItem from "../../src/components/premiumItem";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function premium() {
   const router = useRouter();
@@ -12,8 +13,15 @@ export default function premium() {
   function navigateBack() {
     router.back();
   }
+
+  function onGetPremiumClick() {
+    router.push("purchase");
+  }
+
   return (
-    <View style={tw`bg-primary flex-1 flex-col justify-evenly items-center`}>
+    <SafeAreaView
+      style={tw`bg-primary flex-1 flex-col justify-evenly items-center`}
+    >
       <View>
         <MaterialCommunityIcons
           name="crown"
@@ -32,6 +40,7 @@ export default function premium() {
       <View>
         <TouchableOpacity
           style={tw`bg-gold px-8 py-2 m-1 text-lg rounded-full`}
+          onPress={onGetPremiumClick}
         >
           <Text
             style={[
@@ -54,6 +63,6 @@ export default function premium() {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }

@@ -92,7 +92,7 @@ export default function Workouts() {
             { fontFamily: "RobotoCondensed" },
           ]}
         >
-          WORKOUTS
+          WORKOUT
         </Text>
         <PremiumIcon />
       </View>

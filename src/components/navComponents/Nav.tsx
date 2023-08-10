@@ -10,7 +10,6 @@ import tw from "../../util/tailwind";
 import { selectWorkout } from "../../redux/slices/workoutSlice";
 import { SafeAreaView } from "react-native";
 import CustomColors from "../../util/customColors";
-import { index } from "d3";
 
 export default function Nav() {
   const curWorkout: WorkoutState = useSelector((state: RootState) =>

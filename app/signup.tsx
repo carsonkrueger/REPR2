@@ -14,6 +14,7 @@ import tw from "../src/util/tailwind";
 import CustomColors from "../src/util/customColors";
 import { supabase } from "../src/types/supabaseClient";
 import MySafeAlert from "../src/components/MySafeAlert";
+import FormInput from "../src/components/formInput";
 
 export default function SignUp() {
   const router = useRouter();
@@ -168,124 +169,88 @@ export default function SignUp() {
         )}
 
         {/* USER NAME */}
-        <View
-          style={tw`py-1 px-2 flex-row rounded-full items-center bg-front shadow-sm overflow-hidden `}
-        >
-          <TextInput
-            style={[
-              tw`flex-1 px-2 py-1 text-lg text-primary selection:bg-primary`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
-            placeholder="User Name"
-            placeholderTextColor={"#a8cfff"}
-            onChangeText={(text) => setUserName(text.trim())}
-            editable={!isLoading}
-          />
-        </View>
+        <FormInput
+          placeholder="User Name"
+          placeholderTextColor={"#a8cfff"}
+          onChangeText={(text) => setUserName(text.trim())}
+          editable={!isLoading}
+        />
 
         {/* FIRST/LAST NAME */}
         <View style={tw`mt-4 flex-row justify-between`}>
-          <View
-            style={tw`flex-1 py-1 px-2 mr-1 flex-row rounded-full items-center bg-front shadow-sm overflow-hidden `}
-          >
-            <TextInput
-              style={[
-                tw`flex-1 px-2 py-1 text-lg text-primary selection:bg-primary`,
-                { fontFamily: "RobotoCondensed" },
-              ]}
-              placeholder="First Name"
-              placeholderTextColor={"#a8cfff"}
-              onChangeText={(text) => setFirstName(text.trim())}
-              editable={!isLoading}
-            />
-          </View>
-
-          <View
-            style={tw`flex-1 py-1 px-2 ml-1 flex-row rounded-full items-center bg-front shadow-sm overflow-hidden `}
-          >
-            <TextInput
-              style={[
-                tw`flex-1 px-2 py-1 text-lg text-primary selection:bg-primary`,
-                { fontFamily: "RobotoCondensed" },
-              ]}
-              placeholder="Last Name"
-              placeholderTextColor={"#a8cfff"}
-              onChangeText={(text) => setLastName(text.trim())}
-              editable={!isLoading}
-            />
-          </View>
+          {/* First name */}
+          <FormInput
+            style={tw`mr-2 flex-1`}
+            placeholder="First Name"
+            placeholderTextColor={"#a8cfff"}
+            onChangeText={(text) => setFirstName(text.trim())}
+            editable={!isLoading}
+          />
+          {/* Last name */}
+          <FormInput
+            style={tw`flex-1`}
+            placeholder="Last Name"
+            placeholderTextColor={"#a8cfff"}
+            onChangeText={(text) => setLastName(text.trim())}
+            editable={!isLoading}
+          />
         </View>
 
         {/* EMAIL */}
-        <View
-          style={tw`mt-4 py-1 px-2 flex-row rounded-full items-center bg-front shadow-sm overflow-hidden `}
-        >
-          <TextInput
-            inputMode="email"
-            style={[
-              tw`flex-1 px-2 py-1 text-lg text-primary selection:bg-primary`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
-            placeholder="Email"
-            placeholderTextColor={"#a8cfff"}
-            onChangeText={(text) => setEmail(text.trim())}
-            editable={!isLoading}
-          />
-          <Feather
-            name="mail"
-            color={CustomColors.primary}
-            size={20}
-            style={tw`pr-2`}
-          />
-        </View>
+        <FormInput
+          style={tw`mt-4`}
+          inputMode="email"
+          placeholder="Email"
+          placeholderTextColor={"#a8cfff"}
+          onChangeText={(text) => setEmail(text.trim())}
+          editable={!isLoading}
+          rightItem={
+            <Feather
+              name="mail"
+              color={CustomColors.primary}
+              size={20}
+              style={tw`pr-2`}
+            />
+          }
+        />
 
         {/* PASSWORD */}
-        <View
-          style={tw`mt-4 py-1 px-2 flex-row rounded-full items-center bg-front shadow-sm`}
-        >
-          <TextInput
-            style={[
-              tw`flex-1 px-2 py-1 text-lg text-primary`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
-            secureTextEntry={true}
-            placeholder="Password"
-            placeholderTextColor={"#a8cfff"}
-            onChangeText={(text) => setPassword(text.trim())}
-            autoCapitalize="none"
-            editable={!isLoading}
-          />
-          <Feather
-            name="lock"
-            color={CustomColors.primary}
-            size={20}
-            style={tw`pr-2`}
-          />
-        </View>
+        <FormInput
+          style={tw`mt-4`}
+          secureTextEntry={true}
+          placeholder="Password"
+          placeholderTextColor={"#a8cfff"}
+          onChangeText={(text) => setPassword(text.trim())}
+          autoCapitalize="none"
+          editable={!isLoading}
+          rightItem={
+            <Feather
+              name="lock"
+              color={CustomColors.primary}
+              size={20}
+              style={tw`pr-2`}
+            />
+          }
+        />
 
         {/* CONFIRM PASSWORD */}
-        <View
-          style={tw`mt-4 py-1 px-2 flex-row rounded-full items-center bg-front shadow-sm`}
-        >
-          <TextInput
-            style={[
-              tw`flex-1 px-2 py-1 text-lg text-primary`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
-            secureTextEntry={true}
-            placeholder="Confirm Password"
-            placeholderTextColor={"#a8cfff"}
-            onChangeText={(text) => setConfirmPassword(text.trim())}
-            autoCapitalize="none"
-            editable={!isLoading}
-          />
-          <Feather
-            name="lock"
-            color={CustomColors.primary}
-            size={20}
-            style={tw`pr-2`}
-          />
-        </View>
+        <FormInput
+          style={tw`mt-4`}
+          secureTextEntry={true}
+          placeholder="Confirm Password"
+          placeholderTextColor={"#a8cfff"}
+          onChangeText={(text) => setConfirmPassword(text.trim())}
+          autoCapitalize="none"
+          editable={!isLoading}
+          rightItem={
+            <Feather
+              name="lock"
+              color={CustomColors.primary}
+              size={20}
+              style={tw`pr-2`}
+            />
+          }
+        />
 
         <TouchableOpacity onPress={signUp} disabled={isLoading}>
           <View

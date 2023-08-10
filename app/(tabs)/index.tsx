@@ -55,7 +55,6 @@ import { getCurFullDate } from "../../src/util/dates";
 import { FlashList } from "@shopify/flash-list";
 import Post from "../../src/components/postComponents/post";
 import { CreatePostSelectionType } from "../../src/types/createPostSelectionType";
-import CustomColors from "../../src/util/customColors";
 
 SplashScreen.preventAutoHideAsync();
 

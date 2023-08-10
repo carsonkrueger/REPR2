@@ -27,17 +27,17 @@ export const getIsFollowing = createAsyncThunk(
 
 export const toggleIsFollowing = createAsyncThunk(
   "toggleIsFollowing",
-  async (payload: { userId: string; user: User }) => {
-    if (payload.user.isFollowing) {
+  async (payload: { userId: string; followedUser: User }) => {
+    if (payload.followedUser.isFollowing) {
       const { error } = await supabase
         .from("following")
         .delete()
         .eq("user_id", payload.userId)
-        .eq("followed_user_id", payload.user.userId);
+        .eq("followed_user_id", payload.followedUser.userId);
       if (error) throw error;
     } else {
       const { error } = await supabase.from("following").upsert({
-        followed_user_id: payload.user.userId,
+        followed_user_id: payload.followedUser.userId,
         user_id: payload.userId,
       });
       if (error) throw error;
@@ -87,8 +87,8 @@ const usersSlice = createSlice({
       })
       .addCase(toggleIsFollowing.pending, (state, action) => {
         usersAdapter.updateOne(state, {
-          id: action.meta.arg.user.userId,
-          changes: { isFollowing: !action.meta.arg.user.isFollowing },
+          id: action.meta.arg.followedUser.userId,
+          changes: { isFollowing: !action.meta.arg.followedUser.isFollowing },
         });
       })
       .addCase(getNext10UserPosts.fulfilled, (state, action) => {

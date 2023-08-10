@@ -15,6 +15,7 @@ import SmallPost from "../../src/components/postComponents/smallPost";
 import { useEffect, useRef } from "react";
 import { getNext10UserPosts } from "../../src/redux/slices/postsSlice";
 import { selectUserByUserId } from "../../src/redux/slices/usersSlice";
+import ProfileIcon from "../../src/components/profileIcon";
 
 const POST_INCREMENT_AMOUNT = 10;
 
@@ -94,9 +95,7 @@ export default function Profile() {
         style={tw`flex-row pb-5 bg-front justify-evenly items-center px-2 shadow-md`}
       >
         {/* IMAGE */}
-        <View
-          style={tw`border-[1px] border-light-gray rounded-full h-22 w-22`}
-        />
+        <ProfileIcon radius={22}/>
 
         {/* NUM POSTS */}
         <View style={tw`flex-col min-w-10`}>
@@ -162,7 +161,7 @@ export default function Profile() {
 
       {/* POST IMAGES */}
       <FlashList
-        contentContainerStyle={tw`flex-row p-[0.5px]`}
+        contentContainerStyle={tw`p-[0.5px]`}
         data={user.postIds}
         renderItem={({ item }) => (
           <SmallPost postId={item} key={"smallPost" + item} />

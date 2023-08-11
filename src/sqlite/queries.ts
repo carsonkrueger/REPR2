@@ -358,20 +358,22 @@ export function sqlDropAllTables() {
   sqlDropWorkoutTemplatesTable();
 }
 
-export async function sqlSelectLikeExercisesByName(name: string) {
+export async function sqlSelectLikeExercisesByName(
+  name: string,
+  offset: number,
+  numToSelect = 10
+) {
   return new Promise<exercisesTableRow[]>((resolve, reject) => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        "SELECT exercise_id, exercise_name, best_weight, best_reps FROM exercises WHERE exercise_name LIKE ?;",
-        [`%${name}%`],
-        (_, res) => resolve(res.rows._array as exercisesTableRow[]),
-        (_, error) => {
-          console.log("Could not select exercise", error);
-          reject(error);
-          return true;
-        }
-      );
-    });
+    sqlQuery(
+      "SELECT exercise_id, exercise_name, best_weight, best_reps FROM exercises WHERE exercise_name LIKE ? LIMIT ? OFFSET ?;",
+      [`%${name}%`, numToSelect, offset],
+      (_, res) => resolve(res.rows._array),
+      (_, error) => {
+        console.log("Could not select exercise", error);
+        reject(error);
+        return true;
+      }
+    );
   });
 }
 

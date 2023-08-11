@@ -6,6 +6,7 @@ export type ProfileSettings = {
   isDarkMode: boolean;
   session: Session | null;
   initLoaded: boolean;
+  initTemplatesLoaded: boolean;
   isIos: boolean;
   user: User;
 };

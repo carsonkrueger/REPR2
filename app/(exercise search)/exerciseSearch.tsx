@@ -17,12 +17,15 @@ import { Feather } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 import CustomColors from "../../src/util/customColors";
 
+const SEARCH_AMOUNT = 15;
+
 export default function ExerciseSearch() {
   const dispatch = useDispatch();
   const router = useRouter();
 
   const { exerciseId } = useLocalSearchParams();
   const newExerciseName = useRef("");
+  const searchOffset = useRef(0);
 
   useEffect(() => {
     const backAction = () => {
@@ -48,11 +51,19 @@ export default function ExerciseSearch() {
   }
 
   async function searchAction(name: string) {
-    return await sqlSelectLikeExercisesByName(name).then(
-      (rows: exercisesTableRow[]) => {
-        return rows;
-      }
-    );
+    searchOffset.current = SEARCH_AMOUNT;
+    return await sqlSelectLikeExercisesByName(name, 0, SEARCH_AMOUNT);
+  }
+
+  async function endReachedSearchAction(name: string) {
+    return await sqlSelectLikeExercisesByName(
+      name,
+      searchOffset.current,
+      SEARCH_AMOUNT
+    ).then((rows: exercisesTableRow[]) => {
+      searchOffset.current += SEARCH_AMOUNT;
+      return rows;
+    });
   }
 
   function setNewExerciseName(newName: string) {
@@ -81,6 +92,8 @@ export default function ExerciseSearch() {
           />
         )}
         estimatedItemSize={36}
+        endReachedSearchAction={endReachedSearchAction}
+        onEndReachedThreshold={0.8}
       />
 
       {/* CREATE NEW EXERCISE */}

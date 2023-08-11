@@ -34,6 +34,7 @@ export default function premium() {
         <PremiumItem text="Share and copy workouts" />
         <PremiumItem text="Exercise history charts" />
         <PremiumItem text="Remove ads" />
+        <PremiumItem text="More coming soon" />
       </View>
 
       {/* Get premium / No thanks */}
@@ -44,11 +45,11 @@ export default function premium() {
         >
           <Text
             style={[
-              tw`text-white text-center`,
+              tw`text-white text-center text-base`,
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            GET PREMIUM
+            See Premium Pricing
           </Text>
         </TouchableOpacity>
 

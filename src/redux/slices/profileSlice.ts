@@ -30,6 +30,7 @@ const initialSettings: ProfileSettings = {
   isDarkMode: false,
   session: null,
   initLoaded: false,
+  initTemplatesLoaded: false,
   isIos: true,
   user: initialUser,
 };
@@ -73,6 +74,9 @@ export const profileSlice = createSlice({
     setInitLoadedTrue(state) {
       state.initLoaded = true;
     },
+    setInitTemplatesLoadedTrue(state) {
+      state.initTemplatesLoaded = true;
+    },
     getPlatform(state) {
       state.isIos = Platform.OS === "ios";
     },
@@ -101,8 +105,13 @@ export const profileSlice = createSlice({
 });
 
 export const profileReducer = profileSlice.reducer;
-export const { toggleDarkMode, setSession, setInitLoadedTrue, getPlatform } =
-  profileSlice.actions;
+export const {
+  toggleDarkMode,
+  setSession,
+  setInitLoadedTrue,
+  setInitTemplatesLoadedTrue,
+  getPlatform,
+} = profileSlice.actions;
 
 export const selectProfile = (state: RootState) => state.profile;
 export const selectIsPremium = createSelector(

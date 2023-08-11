@@ -15,7 +15,10 @@ import { WorkoutTemplate } from "../../src/types/workoutTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponents/WorkoutTemplateHeaderComponent";
 import { useEffect, useState } from "react";
-import { sqlSelectAllTemplatesByDateDESC } from "../../src/sqlite/queries";
+import {
+  sqlDropAllTables,
+  sqlSelectAllTemplatesByDateDESC,
+} from "../../src/sqlite/queries";
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
 import { addWorkoutTemplateToBack } from "../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromParseWorkoutTableRow } from "../../src/util/workoutUtils";
@@ -24,7 +27,11 @@ import SafeAlert from "../../src/components/MySafeAlert";
 import { useRouter } from "expo-router";
 import { selectAllTemplates } from "../../src/redux/slices/WorkoutTemplatesSlice";
 import nonPremiumConstraints from "../../src/util/premiumConstraints";
-import { selectIsPremium } from "../../src/redux/slices/profileSlice";
+import {
+  selectIsPremium,
+  selectProfile,
+  setInitTemplatesLoadedTrue,
+} from "../../src/redux/slices/profileSlice";
 
 export default function Workouts() {
   const router = useRouter();
@@ -32,14 +39,16 @@ export default function Workouts() {
   const templates: WorkoutTemplate[] = useSelector((state: RootState) =>
     selectAllTemplates(state)
   );
-  const isPremium = useSelector((state: RootState) => selectIsPremium(state));
+
+  const profile = useSelector((state: RootState) => selectProfile(state));
 
   const [showMaxTemplatesAlert, setShowMaxTemplatesAlert] = useState(false);
   const [distanceFromTop, setDistanceFromTop] = useState(0);
 
   useEffect(() => {
     // only get templates from sqlite db on first render (when temlates slice is empty)
-    if (templates.length <= 0)
+    // sqlDropAllTables();
+    if (!profile.initTemplatesLoaded) {
       sqlSelectAllTemplatesByDateDESC().then(
         (templates: parsedWorkoutsTableRow[]) => {
           templates.map((parsedTemplate) =>
@@ -51,6 +60,8 @@ export default function Workouts() {
           );
         }
       );
+      dispatch(setInitTemplatesLoadedTrue());
+    }
 
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -71,7 +82,10 @@ export default function Workouts() {
   }
 
   function canCreateCreateWorkout() {
-    if (!isPremium && templates.length >= nonPremiumConstraints.numTemplates) {
+    if (
+      !profile.user.isPremium &&
+      templates.length >= nonPremiumConstraints.numTemplates
+    ) {
       toggleMaxTemplateAlert();
       return false;
     }

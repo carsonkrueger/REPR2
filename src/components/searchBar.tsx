@@ -14,6 +14,7 @@ import { FlatList } from "react-native-gesture-handler";
 
 interface props<T> {
   searchAction: (text: string) => Promise<T[]>;
+  endReachedSearchAction?: (text: string) => Promise<T[]>;
   renderItem: ListRenderItem<T>;
   estimatedItemSize: number;
   placeholderText?: string;
@@ -22,10 +23,12 @@ interface props<T> {
   allowEmptySearch?: boolean;
   doInitEmptySearch?: boolean;
   isContainerOverlayOpen?: boolean;
+  onEndReachedThreshold?: number;
 }
 
 export default function SearchBar({
   searchAction,
+  endReachedSearchAction,
   renderItem,
   estimatedItemSize,
   placeholderText = "Search",
@@ -34,6 +37,7 @@ export default function SearchBar({
   allowEmptySearch = false,
   doInitEmptySearch = false,
   isContainerOverlayOpen = false,
+  onEndReachedThreshold,
 }: props<any>) {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const searchInput = useRef("");
@@ -52,10 +56,23 @@ export default function SearchBar({
     setSearchResults(await searchAction(text));
   }
 
+  async function endReachedSearch(text: string) {
+    if (!endReachedSearchAction) return;
+    endReachedSearchAction(text).then((res) => {
+      setSearchResults((prev) => prev.concat(res));
+    });
+  }
+
+  function onEndReached() {
+    if (!endReachedSearchAction) return;
+    if (!allowEmptySearch && searchInput.current === "") return;
+    endReachedSearch(searchInput.current);
+  }
+
   function onSearchTextChange(text: string) {
     searchInput.current = text.trim();
-    if (!allowEmptySearch && text.trim() === "") return;
-    search(text.trim());
+    if (!allowEmptySearch && searchInput.current === "") return;
+    search(searchInput.current);
   }
 
   function closeSearchResults() {
@@ -89,6 +106,8 @@ export default function SearchBar({
                 renderItem={renderItem}
                 // estimatedItemSize={estimatedItemSize}
                 keyboardShouldPersistTaps={"always"}
+                onEndReached={onEndReached}
+                onEndReachedThreshold={onEndReachedThreshold}
               />
             </View>
           )}
@@ -109,7 +128,9 @@ export default function SearchBar({
           <FlatList
             data={searchResults}
             renderItem={renderItem}
+            onEndReached={onEndReached}
             // estimatedItemSize={estimatedItemSize}
+            onEndReachedThreshold={onEndReachedThreshold}
           />
         </View>
       )}

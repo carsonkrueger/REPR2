@@ -56,7 +56,7 @@ export default function Profile() {
   // }, []);
 
   async function togglePostIsFollowing() {
-    dispatch(toggleIsFollowing({ user: user, userId: userId }));
+    dispatch(toggleIsFollowing({ followedUser: user, userId: userId }));
   }
 
   function onEndOfPageReached() {

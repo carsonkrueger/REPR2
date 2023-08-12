@@ -90,7 +90,8 @@ export default function Home() {
         dispatch(getPlatform());
 
         const session = await dispatch(getSession());
-        if (session) dispatch(getProfile((session.payload as Session).user.id));
+        if (session.payload)
+          dispatch(getProfile((session.payload as Session).user.id));
       } catch (error) {
         throw error;
       } finally {

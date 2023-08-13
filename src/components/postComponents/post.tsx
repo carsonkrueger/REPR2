@@ -5,6 +5,7 @@ import { AppDispatch, RootState } from "../../redux/store";
 import {
   getBase64Image,
   getDidLikePost,
+  getNumPostLikes,
   selectPostById,
   toggleLikePost,
 } from "../../redux/slices/postsSlice";
@@ -15,6 +16,7 @@ import { useDispatch } from "react-redux";
 import { selectUserId } from "../../redux/slices/profileSlice";
 import {
   getIsFollowing,
+  getUserStats,
   selectUserByUserId,
   toggleIsFollowing,
 } from "../../redux/slices/usersSlice";
@@ -52,6 +54,8 @@ export default function Post({ postId, useCommentIcon = true }: props) {
       if (userId === "") return;
       dispatch(getDidLikePost({ post: post, userId: userId }));
       dispatch(getIsFollowing({ user: postUser, userId: userId }));
+      dispatch(getNumPostLikes({ postId: post.postId }));
+      dispatch(getUserStats({ userId: post.userId }));
     }
     prepare().finally(() => setIsLoading(false));
   }, [userId]);
@@ -101,7 +105,7 @@ export default function Post({ postId, useCommentIcon = true }: props) {
       <View style={tw`flex-row justify-between px-3 py-2`}>
         <View style={tw`flex-row items-center`}>
           {/* User avatar */}
-          <ProfileIcon style={tw`mr-3`} radius={10} onPress={navigateToUser}/>
+          <ProfileIcon style={tw`mr-3`} radius={10} onPress={navigateToUser} />
 
           {/* Username */}
           <TouchableOpacity onPress={navigateToUser}>
@@ -167,13 +171,13 @@ export default function Post({ postId, useCommentIcon = true }: props) {
 
       <View style={tw`px-4 flex-row justify-between`}>
         <Text
-          style={[tw`text-xs text-primary`, { fontFamily: "RobotoCondensed" }]}
+          style={[tw`text-sm text-primary`, { fontFamily: "RobotoCondensed" }]}
         >
           {post?.numLikes} Likes
         </Text>
         <Text
           style={[
-            tw`text-xs text-light-gray`,
+            tw`text-sm text-light-gray`,
             { fontFamily: "RobotoCondensed" },
           ]}
         >

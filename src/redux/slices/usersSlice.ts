@@ -6,7 +6,7 @@ import {
 } from "@reduxjs/toolkit";
 import { User } from "../../types/userType";
 import { supabase } from "../../types/supabaseClient";
-import { getNext10UserPosts, getNextPost } from "./postsSlice";
+import { getNextPost, getNextUserPosts } from "./postsSlice";
 import { RootState } from "../store";
 import { userFromProfileTableRow } from "../../util/postsUtils";
 
@@ -22,6 +22,33 @@ export const getIsFollowing = createAsyncThunk(
     if (error) throw error;
     if (data) return true;
     else return false;
+  }
+);
+
+export const getUserStats = createAsyncThunk(
+  "getUserStats",
+  async (payload: { userId: string }) => {
+    const numFollowing = await supabase
+      .from("following")
+      .select("user_id", { count: "exact", head: true })
+      .eq("user_id", payload.userId);
+    if (numFollowing.error) console.error(numFollowing.error);
+    const numFollowers = await supabase
+      .from("following")
+      .select("followed_user_id", { count: "exact", head: true })
+      .eq("followed_user_id", payload.userId);
+    if (numFollowing.error) console.error(numFollowing.error);
+    const numPosts = await supabase
+      .from("posts")
+      .select("user_id", { count: "exact", head: true })
+      .eq("user_id", payload.userId);
+    if (numPosts.error) console.error(numPosts.error);
+
+    return {
+      numFollowers: numFollowers.count,
+      numFollowing: numFollowing.count,
+      numPosts: numPosts.count,
+    };
   }
 );
 
@@ -79,6 +106,16 @@ const usersSlice = createSlice({
           });
         }
       })
+      .addCase(getUserStats.fulfilled, (state, action) => {
+        usersAdapter.updateOne(state, {
+          id: action.meta.arg.userId,
+          changes: {
+            numFollowers: action.payload.numFollowers ?? 0,
+            numFollowing: action.payload.numFollowing ?? 0,
+            numPosts: action.payload.numPosts ?? 0,
+          },
+        });
+      })
       .addCase(getIsFollowing.fulfilled, (state, action) => {
         usersAdapter.updateOne(state, {
           id: action.meta.arg.user.userId,
@@ -91,7 +128,7 @@ const usersSlice = createSlice({
           changes: { isFollowing: !action.meta.arg.followedUser.isFollowing },
         });
       })
-      .addCase(getNext10UserPosts.fulfilled, (state, action) => {
+      .addCase(getNextUserPosts.fulfilled, (state, action) => {
         if (!action.payload || action.payload.length === 0) return;
 
         const next10PostIds = action.payload.map((post) => post.post_id);

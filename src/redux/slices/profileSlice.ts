@@ -49,13 +49,30 @@ export const getProfile = createAsyncThunk(
   async (userId: string) => {
     const { data, error } = await supabase
       .from("profiles")
-      .select(
-        "user_id, user_name, first_name, last_name, is_premium, num_posts, num_followers, num_following"
-      )
+      .select("user_id, user_name, first_name, last_name, is_premium")
       .eq("user_id", userId)
       .single();
     if (error) throw error;
-    return data as ProfileRow;
+    const num_followers = await supabase
+      .from("following")
+      .select("followed_user_id", { count: "exact", head: true })
+      .eq("followed_user_id", userId);
+    const num_following = await supabase
+      .from("following")
+      .select("user_id", { count: "exact", head: true })
+      .eq("user_id", userId);
+    const num_posts = await supabase
+      .from("posts")
+      .select("user_id", { count: "exact", head: true })
+      .eq("user_id", userId);
+
+    const profileRow: ProfileRow = {
+      ...data,
+      num_followers: num_followers.count ?? 0,
+      num_following: num_following.count ?? 0,
+      num_posts: num_posts.count ?? 0,
+    };
+    return profileRow;
   }
 );
 

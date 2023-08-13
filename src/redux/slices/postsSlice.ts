@@ -18,17 +18,29 @@ export const getNextPost = createAsyncThunk(
     const { data, error } = await supabase
       .from("posts")
       .select(
-        `post_id, created_at, image_id, user_id, shared_workout_id, num_likes, description, profiles (user_id, user_name, first_name, last_name, num_followers, num_following, num_posts, is_premium)`
+        `post_id, created_at, image_id, user_id, shared_workout_id, description, profiles (user_id, user_name, first_name, last_name, num_followers, num_following, num_posts, is_premium)`
       )
       .order("created_at", { ascending: false })
       .lt("created_at", payload.lastPostCreatedAt)
       .limit(1)
       .single();
-
     if (error?.code === "PGRST116") return undefined;
     if (error) console.error(error);
 
     return data;
+  }
+);
+
+export const getNumPostLikes = createAsyncThunk(
+  "getNumPost",
+  async (payload: { postId: string }) => {
+    const { count, error } = await supabase
+      .from("likes")
+      .select("post_id", { count: "exact", head: true })
+      .eq("post_id", payload.postId);
+    if (error) console.error(error);
+
+    return count;
   }
 );
 
@@ -64,18 +76,25 @@ export const getBase64Image = createAsyncThunk(
   }
 );
 
-export const getNext10UserPosts = createAsyncThunk(
+export const getNextUserPosts = createAsyncThunk(
   "getNext10UserPosts",
-  async (payload: { userId: string; indexStart: number }) => {
+  async (payload: {
+    userId: string;
+    numPostsToGet: number;
+    indexStart?: number;
+  }) => {
     const { data, error } = await supabase
       .from("posts")
       .select(
-        "post_id, created_at, image_id, user_id, shared_workout_id, num_likes, description, profiles (user_id, user_name, first_name, last_name, num_followers, num_following, num_posts, is_premium)"
+        "post_id, created_at, image_id, user_id, shared_workout_id, description, profiles (user_id, user_name, first_name, last_name, num_followers, num_following, num_posts, is_premium)"
       )
       .eq("user_id", payload.userId)
       .order("created_at", { ascending: false })
-      .range(payload.indexStart, payload.indexStart + 10)
-      .limit(10);
+      .range(
+        payload.indexStart ?? 0,
+        payload.indexStart ?? 0 + payload.numPostsToGet
+      )
+      .limit(payload.numPostsToGet);
 
     if (error) return undefined;
 
@@ -137,9 +156,20 @@ const postsSlice = createSlice({
     builder
       .addCase(getNextPost.fulfilled, (state, result) => {
         if (!result.payload) return;
-        if (state.entities[result.payload.post_id]) return; // if post already exists, return
-        postsAdapter.addOne(state, postFromPostTableRow(result.payload));
+        if (state.entities[result.payload.post_id!]) return; // if post already exists, return
+        postsAdapter.addOne(
+          state,
+          postFromPostTableRow(result.payload as PostRow)
+        );
         // const image = await supabase.storage.from("images").download(`${result.payload.user_id}/${result.payload.image_id}`)
+      })
+      .addCase(getNumPostLikes.fulfilled, (state, result) => {
+        if (!result.payload) return;
+        if (state.entities[result.meta.arg.postId])
+          postsAdapter.updateOne(state, {
+            id: result.meta.arg.postId,
+            changes: { numLikes: result.payload },
+          });
       })
       .addCase(toggleLikePost.pending, (state, action) => {
         postsAdapter.updateOne(state, {
@@ -160,7 +190,7 @@ const postsSlice = createSlice({
           changes: { base64Image: action.payload },
         });
       })
-      .addCase(getNext10UserPosts.fulfilled, (state, action) => {
+      .addCase(getNextUserPosts.fulfilled, (state, action) => {
         if (!action.payload || action.payload.length === 0) return;
         action.payload.map((post) => {
           if (!state.entities[post.post_id])

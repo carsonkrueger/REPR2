@@ -13,7 +13,7 @@ import PremiumIcon from "../../src/components/premiumIcon";
 import { FlashList } from "@shopify/flash-list";
 import SmallPost from "../../src/components/postComponents/smallPost";
 import { useEffect, useRef } from "react";
-import { getNext10UserPosts } from "../../src/redux/slices/postsSlice";
+import { getNextUserPosts } from "../../src/redux/slices/postsSlice";
 import { selectUserByUserId } from "../../src/redux/slices/usersSlice";
 import ProfileIcon from "../../src/components/profileIcon";
 
@@ -55,7 +55,8 @@ export default function Profile() {
 
   function onEndOfPageReached() {
     dispatch(
-      getNext10UserPosts({
+      getNextUserPosts({
+        numPostsToGet: POST_INCREMENT_AMOUNT,
         userId: profile.user.userId,
         indexStart: nextPostIndex.current,
       })
@@ -95,7 +96,7 @@ export default function Profile() {
         style={tw`flex-row pb-5 bg-front justify-evenly items-center px-2 shadow-md`}
       >
         {/* IMAGE */}
-        <ProfileIcon radius={22}/>
+        <ProfileIcon radius={22} />
 
         {/* NUM POSTS */}
         <View style={tw`flex-col min-w-10`}>

@@ -10,7 +10,7 @@ import { selectUserId } from "../../src/redux/slices/profileSlice";
 import { FlashList } from "@shopify/flash-list";
 import SmallPost from "../../src/components/postComponents/smallPost";
 import { useEffect, useRef } from "react";
-import { getNext10UserPosts } from "../../src/redux/slices/postsSlice";
+import { getNextUserPosts } from "../../src/redux/slices/postsSlice";
 import {
   selectUserByUserId,
   toggleIsFollowing,
@@ -61,8 +61,9 @@ export default function Profile() {
 
   function onEndOfPageReached() {
     dispatch(
-      getNext10UserPosts({
+      getNextUserPosts({
         userId: userIdParam as string,
+        numPostsToGet: POST_INCREMENT_AMOUNT,
         indexStart: nextPostIndex.current,
       })
     );
@@ -185,7 +186,7 @@ export default function Profile() {
 
       {/* POST IMAGES */}
       <FlashList
-        contentContainerStyle={tw`flex-row p-[0.5px]`}
+        contentContainerStyle={tw`p-[0.5px]`}
         data={user.postIds}
         renderItem={({ item }) => (
           <SmallPost postId={item} key={"smallPost" + item} />

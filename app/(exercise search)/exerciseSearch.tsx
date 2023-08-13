@@ -86,7 +86,7 @@ export default function ExerciseSearch() {
         searchAction={searchAction}
         renderItem={({ item }) => (
           <ExerciseNameSearchResult
-            row={item}
+            exerciseName={item.exercise_name}
             onPress={onExerciseNamePress}
             key={"ExerciseSearchResult" + item.exercise_id}
           />

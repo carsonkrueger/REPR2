@@ -1,24 +1,33 @@
 import { Text, TouchableOpacity } from "react-native";
 import { exercisesTableRow } from "../../types/localDBTables";
 import tw from "../../util/tailwind";
+import React from "react";
 
 interface props {
-  row: exercisesTableRow;
+  exerciseName: string;
   onPress: (name: string) => void;
 }
 
-export default function ExerciseNameSearchResult({ row, onPress }: props) {
-  function onPressTouchable() {
-    onPress(row.exercise_name);
-  }
+const ExerciseNameSearchResult = React.memo(
+  ({ exerciseName, onPress }: props) => {
+    console.log("updating", exerciseName);
+    function onPressTouchable() {
+      onPress(exerciseName);
+    }
 
-  return (
-    <TouchableOpacity style={tw`px-4 py-1`} onPress={onPressTouchable}>
-      <Text
-        style={[tw`text-lg text-dark-gray`, { fontFamily: "RobotoCondensed" }]}
-      >
-        {row.exercise_name}
-      </Text>
-    </TouchableOpacity>
-  );
-}
+    return (
+      <TouchableOpacity style={tw`px-4 py-1`} onPress={onPressTouchable}>
+        <Text
+          style={[
+            tw`text-lg text-dark-gray`,
+            { fontFamily: "RobotoCondensed" },
+          ]}
+        >
+          {exerciseName}
+        </Text>
+      </TouchableOpacity>
+    );
+  }
+);
+
+export default ExerciseNameSearchResult;

@@ -1,12 +1,29 @@
-import { ScrollView, View, Text, TouchableOpacity } from "react-native";
+import {
+  ScrollView,
+  View,
+  Text,
+  TouchableOpacity,
+  BackHandler,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import tw from "../../src/util/tailwind";
 import CustomColors from "../../src/util/customColors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
 
 export default function Purchase() {
+  const router = useRouter();
   const [selectedIndex, setSelectedIndex] = useState(0);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => true
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <SafeAreaView style={tw`flex-1 bg-primary`}>

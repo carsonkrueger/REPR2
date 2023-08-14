@@ -18,9 +18,13 @@ import { convertDateToHuman } from "../../util/dates";
 
 interface props {
   templateId: number;
+  toggleModal: (index: number) => void;
 }
 
-export default function WorkoutTemplateComponent({ templateId }: props) {
+export default function WorkoutTemplateComponent({
+  templateId,
+  toggleModal,
+}: props) {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const template: WorkoutTemplate = useSelector((state: RootState) =>
@@ -38,10 +42,13 @@ export default function WorkoutTemplateComponent({ templateId }: props) {
           params: { paramWorkoutId: t.workout_id },
         });
       })
-      .catch((reason) => console.log("error fetching workout", reason));
+      .catch((reason) => console.error("error fetching workout", reason));
   };
 
-  function onTemplateLongPress() {}
+  // function onTemplateLongPress() {
+  //   toggleModal(templateId);
+  //
+  // }
 
   return (
     <View style={tw`mt-3 mx-2 px-4 min-h-24 rounded-lg bg-front shadow-sm`}>
@@ -50,6 +57,7 @@ export default function WorkoutTemplateComponent({ templateId }: props) {
         <TouchableOpacity
           style={tw`flex-row justify-between min-h-24`}
           onPress={onTemplatePress}
+          onLongPress={() => toggleModal(templateId)}
         >
           {/* LEFT SIDE */}
           <View style={tw`flex-col justify-center`}>

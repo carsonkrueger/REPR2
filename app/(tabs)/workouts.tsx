@@ -14,7 +14,7 @@ import WorkoutTemplateComponent from "../../src/components/workoutComponents/Wor
 import { WorkoutTemplate } from "../../src/types/workoutTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponents/WorkoutTemplateHeaderComponent";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { sqlSelectAllTemplatesByDateDESC } from "../../src/sqlite/queries";
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
 import { addWorkoutTemplateToBack } from "../../src/redux/slices/WorkoutTemplatesSlice";
@@ -28,7 +28,7 @@ import {
   selectProfile,
   setInitTemplatesLoadedTrue,
 } from "../../src/redux/slices/profileSlice";
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 export default function Workouts() {
   const router = useRouter();
@@ -38,9 +38,11 @@ export default function Workouts() {
   );
 
   const profile = useSelector((state: RootState) => selectProfile(state));
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   const [showMaxTemplatesAlert, setShowMaxTemplatesAlert] = useState(false);
   const [distanceFromTop, setDistanceFromTop] = useState(0);
+  const [modalIndex, setModalIndex] = useState<number | null>(null);
 
   useEffect(() => {
     // only get templates from sqlite db on first render (when temlates slice is empty)
@@ -88,6 +90,12 @@ export default function Workouts() {
     }
     return true;
   }
+
+  const handleModalPress = useCallback((index: number) => {
+    if (modalIndex === index) bottomSheetRef.current?.close();
+    else bottomSheetRef.current?.expand();
+    setModalIndex(index);
+  }, []);
 
   return (
     <SafeAreaView style={tw`flex-1 bg-front `}>
@@ -139,30 +147,33 @@ export default function Workouts() {
         </SafeAlert>
       )}
 
-      <View style={tw`flex-1 px-2`}>
-        {/* WORKOUT TEMPLATES */}
-        <FlashList
-          data={templates}
-          ListHeaderComponent={
-            <WorkoutTemplateHeaderComponent
-              canCreateWorkout={canCreateCreateWorkout}
-            />
-          }
-          renderItem={({ item }) => (
-            <WorkoutTemplateComponent
-              key={"template" + item.workoutId}
-              templateId={item.workoutId}
-            />
-          )}
-          onScroll={onSetDistanceFromTop}
-          estimatedItemSize={110}
-          ListFooterComponent={<View style={tw`mb-52`} />}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-      <BottomSheet snapPoints={["%100"]}>
-        <Text>1</Text>
-      </BottomSheet>
+      <BottomSheetModalProvider>
+        <View style={tw`flex-1 px-2`}>
+          {/* WORKOUT TEMPLATES */}
+          <FlashList
+            data={templates}
+            ListHeaderComponent={
+              <WorkoutTemplateHeaderComponent
+                canCreateWorkout={canCreateCreateWorkout}
+              />
+            }
+            renderItem={({ item }) => (
+              <WorkoutTemplateComponent
+                key={"template" + item.workoutId}
+                templateId={item.workoutId}
+                toggleModal={handleModalPress}
+              />
+            )}
+            onScroll={onSetDistanceFromTop}
+            estimatedItemSize={110}
+            ListFooterComponent={<View style={tw`mb-52`} />}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
+        <BottomSheet ref={bottomSheetRef} snapPoints={["%100"]}>
+          <Text>1</Text>
+        </BottomSheet>
+      </BottomSheetModalProvider>
     </SafeAreaView>
   );
 }

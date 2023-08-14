@@ -41,6 +41,8 @@ export default function WorkoutTemplateComponent({ templateId }: props) {
       .catch((reason) => console.log("error fetching workout", reason));
   };
 
+  function onTemplateLongPress() {}
+
   return (
     <View style={tw`mt-3 mx-2 px-4 min-h-24 rounded-lg bg-front shadow-sm`}>
       {/* TEMPLATE CONTAINER */}

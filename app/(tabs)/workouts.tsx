@@ -15,10 +15,7 @@ import { WorkoutTemplate } from "../../src/types/workoutTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponents/WorkoutTemplateHeaderComponent";
 import { useEffect, useState } from "react";
-import {
-  sqlDropAllTables,
-  sqlSelectAllTemplatesByDateDESC,
-} from "../../src/sqlite/queries";
+import { sqlSelectAllTemplatesByDateDESC } from "../../src/sqlite/queries";
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
 import { addWorkoutTemplateToBack } from "../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromParseWorkoutTableRow } from "../../src/util/workoutUtils";
@@ -28,10 +25,10 @@ import { useRouter } from "expo-router";
 import { selectAllTemplates } from "../../src/redux/slices/WorkoutTemplatesSlice";
 import nonPremiumConstraints from "../../src/util/premiumConstraints";
 import {
-  selectIsPremium,
   selectProfile,
   setInitTemplatesLoadedTrue,
 } from "../../src/redux/slices/profileSlice";
+import BottomSheet from "@gorhom/bottom-sheet";
 
 export default function Workouts() {
   const router = useRouter();
@@ -163,6 +160,9 @@ export default function Workouts() {
           showsVerticalScrollIndicator={false}
         />
       </View>
+      <BottomSheet snapPoints={["%100"]}>
+        <Text>1</Text>
+      </BottomSheet>
     </SafeAreaView>
   );
 }

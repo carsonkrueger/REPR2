@@ -1,5 +1,4 @@
 import { Text, TouchableOpacity } from "react-native";
-import { exercisesTableRow } from "../../types/localDBTables";
 import tw from "../../util/tailwind";
 import React from "react";
 

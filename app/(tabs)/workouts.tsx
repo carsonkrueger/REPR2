@@ -97,6 +97,11 @@ export default function Workouts() {
     setModalIndex(index);
   }, []);
 
+  function onGetPremiumPress() {
+    toggleMaxTemplateAlert();
+    router.push("premium");
+  }
+
   return (
     <SafeAreaView style={tw`flex-1 bg-front `}>
       {/* HEADER */}
@@ -120,7 +125,7 @@ export default function Workouts() {
       {showMaxTemplatesAlert && (
         <SafeAlert
           safeText="Get Premium"
-          safeCommand={() => router.push("premium")}
+          safeCommand={onGetPremiumPress}
           onOutOfBoundsClick={toggleMaxTemplateAlert}
         >
           <View style={tw`flex-row`}>
@@ -137,12 +142,12 @@ export default function Workouts() {
 
           <Text
             style={[
-              tw`text-dark-gray px-8 pt-1 pb-2`,
+              tw`text-dark-gray px-5 pt-1 pb-2`,
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            Get premium to store more templates and take your fitness to the
-            next level
+            Get premium to store unlimited templates and take your fitness to
+            the next level
           </Text>
         </SafeAlert>
       )}

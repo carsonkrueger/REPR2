@@ -6,6 +6,7 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   BackHandler,
+  TouchableOpacity,
 } from "react-native";
 import tw from "../../src/util/tailwind";
 import { FlashList } from "@shopify/flash-list";
@@ -28,7 +29,10 @@ import {
   selectProfile,
   setInitTemplatesLoadedTrue,
 } from "../../src/redux/slices/profileSlice";
-import BottomSheet, { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
 
 export default function Workouts() {
   const router = useRouter();
@@ -38,7 +42,7 @@ export default function Workouts() {
   );
 
   const profile = useSelector((state: RootState) => selectProfile(state));
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   const [showMaxTemplatesAlert, setShowMaxTemplatesAlert] = useState(false);
   const [distanceFromTop, setDistanceFromTop] = useState(0);
@@ -93,7 +97,8 @@ export default function Workouts() {
 
   const handleModalPress = useCallback((index: number) => {
     if (modalIndex === index) bottomSheetRef.current?.close();
-    else bottomSheetRef.current?.expand();
+    else bottomSheetRef.current?.present();
+    // bottomSheetRef.current?.present();
     setModalIndex(index);
   }, []);
 
@@ -175,9 +180,35 @@ export default function Workouts() {
             showsVerticalScrollIndicator={false}
           />
         </View>
-        <BottomSheet ref={bottomSheetRef} snapPoints={["%100"]}>
-          <Text>1</Text>
-        </BottomSheet>
+
+        <BottomSheetModal
+          style={tw`bg-back`}
+          backgroundStyle={tw`bg-back`}
+          ref={bottomSheetRef}
+          snapPoints={["40%"]}
+          index={0}
+        >
+          <TouchableOpacity>
+            <Text
+              style={[
+                tw`mx-4 px-12 py-1 rounded-md bg-primary self-center text-white text-center text-lg`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              Share Workout
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text
+              style={[
+                tw`mx-4 px-12 py-1 rounded-md bg-danger self-center text-white text-center text-lg`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              Delete Workout
+            </Text>
+          </TouchableOpacity>
+        </BottomSheetModal>
       </BottomSheetModalProvider>
     </SafeAreaView>
   );

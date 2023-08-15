@@ -16,9 +16,15 @@ import { WorkoutTemplate } from "../../src/types/workoutTypes";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponents/WorkoutTemplateHeaderComponent";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { sqlSelectAllTemplatesByDateDESC } from "../../src/sqlite/queries";
+import {
+  sqlDeleteWorkoutTemplateById,
+  sqlSelectAllTemplatesByDateDESC,
+} from "../../src/sqlite/queries";
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
-import { addWorkoutTemplateToBack } from "../../src/redux/slices/WorkoutTemplatesSlice";
+import {
+  addWorkoutTemplateToBack,
+  delWorkoutTemplateById,
+} from "../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromParseWorkoutTableRow } from "../../src/util/workoutUtils";
 import PremiumIcon from "../../src/components/premiumIcon";
 import SafeAlert from "../../src/components/MySafeAlert";
@@ -46,7 +52,7 @@ export default function Workouts() {
 
   const [showMaxTemplatesAlert, setShowMaxTemplatesAlert] = useState(false);
   const [distanceFromTop, setDistanceFromTop] = useState(0);
-  const [modalIndex, setModalIndex] = useState<number | null>(null);
+  const [modalWorkoutId, setModalIndex] = useState<number | null>(null);
 
   useEffect(() => {
     // only get templates from sqlite db on first render (when temlates slice is empty)
@@ -95,16 +101,24 @@ export default function Workouts() {
     return true;
   }
 
-  const handleModalPress = useCallback((index: number) => {
-    if (modalIndex === index) bottomSheetRef.current?.close();
+  const handleModalPress = useCallback((workoutId: number) => {
+    if (modalWorkoutId === workoutId) bottomSheetRef.current?.close();
     else bottomSheetRef.current?.present();
     // bottomSheetRef.current?.present();
-    setModalIndex(index);
+    setModalIndex(workoutId);
   }, []);
 
   function onGetPremiumPress() {
     toggleMaxTemplateAlert();
     router.push("premium");
+  }
+
+  async function onDeleteWorkoutPress() {
+    if (!modalWorkoutId) return;
+    dispatch(delWorkoutTemplateById(modalWorkoutId));
+    sqlDeleteWorkoutTemplateById(modalWorkoutId);
+    setModalIndex(null);
+    bottomSheetRef.current?.close();
   }
 
   return (
@@ -182,26 +196,36 @@ export default function Workouts() {
         </View>
 
         <BottomSheetModal
-          style={tw`bg-back`}
-          backgroundStyle={tw`bg-back`}
+          style={tw``}
+          backgroundStyle={tw`bg-dark-back border-t-[1px] border-l-[1px] border-r-[1px] border-light-gray`}
           ref={bottomSheetRef}
-          snapPoints={["40%"]}
+          snapPoints={["45%"]}
           index={0}
         >
           <TouchableOpacity>
             <Text
               style={[
-                tw`mx-4 px-12 py-1 rounded-md bg-primary self-center text-white text-center text-lg`,
+                tw`w-[85%] mt-2 py-2 rounded-md shadow-md bg-dark-front self-center text-white text-center text-lg`,
                 { fontFamily: "RobotoCondensed" },
               ]}
             >
-              Share Workout
+              Post Workout to Profile
             </Text>
           </TouchableOpacity>
           <TouchableOpacity>
             <Text
               style={[
-                tw`mx-4 px-12 py-1 rounded-md bg-danger self-center text-white text-center text-lg`,
+                tw`w-[85%] mt-4 py-2 rounded-md shadow-md bg-dark-front self-center text-white text-center text-lg`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              Duplicate Workout
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onDeleteWorkoutPress}>
+            <Text
+              style={[
+                tw`w-[85%] mt-4 py-2 rounded-md shadow-md bg-danger self-center text-white text-center text-lg`,
                 { fontFamily: "RobotoCondensed" },
               ]}
             >

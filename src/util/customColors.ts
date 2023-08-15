@@ -8,7 +8,7 @@ const CustomColors = {
 
   // dark mode
   "dark-back": "#343538",
-  "dark-front": "#3e3f42",
+  "dark-front": "#434447",
 
   // Misc
   transparent: "rgba(167, 167, 167, 0.15)",

@@ -94,6 +94,23 @@ export async function sqlSelectWorkoutInfoById(id: number) {
   });
 }
 
+export async function sqlSelectUnparsedWorkoutInfoById(id: number) {
+  return new Promise<unparsedWorkoutsTableRow>((resolve, reject) => {
+    sqlQuery(
+      "SELECT workout_id, workout_state, exercises, sets, last_performed FROM workout_templates WHERE workout_id = ?;",
+      [id],
+      (_, result) => {
+        resolve(result.rows._array[0]);
+      },
+      (_, error) => {
+        console.log("Error selecting template: ", error);
+        reject(undefined);
+        return true;
+      }
+    );
+  });
+}
+
 export function sqlPrintAllTemplatesByDateDESC() {
   sqlQuery(
     "SELECT * FROM workout_templates ORDER BY last_performed DESC;",

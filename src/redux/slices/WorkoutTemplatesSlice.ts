@@ -1,7 +1,13 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 
 import { WorkoutTemplate } from "../../types/workoutTypes";
 import { RootState } from "../store";
+import { supabase } from "../../types/supabaseClient";
 
 const initialWorkoutTemplate: WorkoutTemplate = {
   workoutId: -1,
@@ -11,6 +17,17 @@ const initialWorkoutTemplate: WorkoutTemplate = {
 };
 
 const initialState: WorkoutTemplate[] = [];
+
+export const shareWorkoutTemplate = createAsyncThunk(
+  "shareWorkoutTemplate",
+  async (payload: { template: string; userId: string }) => {
+    const { data, error } = await supabase
+      .from("shared_workout_templates")
+      .upsert({ user_id: payload.userId, workout_template: payload.template });
+
+    if (error) console.error(error);
+  }
+);
 
 export const WorkoutTemplatesSlice = createSlice({
   name: "workoutTemplates",

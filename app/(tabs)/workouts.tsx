@@ -19,11 +19,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   sqlDeleteWorkoutTemplateById,
   sqlSelectAllTemplatesByDateDESC,
+  sqlSelectUnparsedWorkoutInfoById,
 } from "../../src/sqlite/queries";
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
 import {
   addWorkoutTemplateToBack,
   delWorkoutTemplateById,
+  shareWorkoutTemplate,
 } from "../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromParseWorkoutTableRow } from "../../src/util/workoutUtils";
 import PremiumIcon from "../../src/components/premiumIcon";
@@ -104,7 +106,6 @@ export default function Workouts() {
   const handleModalPress = useCallback((workoutId: number) => {
     if (modalWorkoutId === workoutId) bottomSheetRef.current?.close();
     else bottomSheetRef.current?.present();
-    // bottomSheetRef.current?.present();
     setModalIndex(workoutId);
   }, []);
 
@@ -118,6 +119,18 @@ export default function Workouts() {
     dispatch(delWorkoutTemplateById(modalWorkoutId));
     sqlDeleteWorkoutTemplateById(modalWorkoutId);
     setModalIndex(null);
+    bottomSheetRef.current?.close();
+  }
+
+  async function onShareWorkoutPress() {
+    if (!modalWorkoutId) return;
+    const template = await sqlSelectUnparsedWorkoutInfoById(modalWorkoutId);
+    dispatch(
+      shareWorkoutTemplate({
+        template: template,
+        userId: profile.user.userId,
+      })
+    );
     bottomSheetRef.current?.close();
   }
 
@@ -196,13 +209,13 @@ export default function Workouts() {
         </View>
 
         <BottomSheetModal
-          style={tw``}
-          backgroundStyle={tw`bg-dark-back border-t-[1px] border-l-[1px] border-r-[1px] border-light-gray`}
+          backgroundStyle={tw`bg-dark-back`}
           ref={bottomSheetRef}
           snapPoints={["45%"]}
           index={0}
+          handleIndicatorStyle={tw`bg-white`}
         >
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onShareWorkoutPress}>
             <Text
               style={[
                 tw`w-[85%] mt-2 py-2 rounded-md shadow-md bg-dark-front self-center text-white text-center text-lg`,

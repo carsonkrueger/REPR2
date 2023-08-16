@@ -19,11 +19,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   sqlDeleteWorkoutTemplateById,
   sqlSelectAllTemplatesByDateDESC,
+  sqlSelectWorkoutInfoById,
 } from "../../src/sqlite/queries";
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
 import {
   addWorkoutTemplateToBack,
   delWorkoutTemplateById,
+  shareWorkoutTemplate,
 } from "../../src/redux/slices/WorkoutTemplatesSlice";
 import { templateFromParseWorkoutTableRow } from "../../src/util/workoutUtils";
 import PremiumIcon from "../../src/components/premiumIcon";
@@ -118,6 +120,13 @@ export default function Workouts() {
     dispatch(delWorkoutTemplateById(modalWorkoutId));
     sqlDeleteWorkoutTemplateById(modalWorkoutId);
     setModalIndex(null);
+    bottomSheetRef.current?.close();
+  }
+
+  async function onShareWorkoutPress() {
+    if (!modalWorkoutId) return;
+    const template = await sqlSelectWorkoutInfoById(modalWorkoutId);
+    dispatch(shareWorkoutTemplate({template: template., userId: profile.user.userId}))
     bottomSheetRef.current?.close();
   }
 

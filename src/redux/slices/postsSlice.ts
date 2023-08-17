@@ -18,7 +18,7 @@ export const getNextPost = createAsyncThunk(
     const { data, error } = await supabase
       .from("posts")
       .select(
-        `post_id, created_at, image_id, user_id, shared_workout_id, description, profiles (user_id, user_name, first_name, last_name, num_followers, num_following, num_posts, is_premium)`
+        `post_id, created_at, user_id, content_id, content_type, description, profiles (user_id, user_name, first_name, last_name, num_followers, num_following, num_posts, is_premium)`
       )
       .order("created_at", { ascending: false })
       .lt("created_at", payload.lastPostCreatedAt)
@@ -47,10 +47,10 @@ export const getNumPostLikes = createAsyncThunk(
 export const getBase64Image = createAsyncThunk(
   "getBase64Image",
   async (post: Post) => {
-    if (post.imageId) {
+    if (post.contentId) {
       const { data, error } = await supabase.storage
         .from("images")
-        .download(`${post.userId}/${post.imageId}`);
+        .download(`${post.userId}/${post.contentId}`);
 
       if (error) {
         console.error("Error downloading image:", error);
@@ -76,6 +76,23 @@ export const getBase64Image = createAsyncThunk(
   }
 );
 
+export const getSharedTemplate = createAsyncThunk(
+  "getSharedTemplate",
+  async (post: Post) => {
+    if (!post.contentId) return;
+
+    const { data, error } = await supabase
+      .from("shared_workout_templates")
+      .select("*")
+      .eq("template_id", post.contentId)
+      .single();
+
+    if (error) console.error(error);
+    else if (!data) console.error("No data returned for shared template");
+    return data;
+  }
+);
+
 export const getNextUserPosts = createAsyncThunk(
   "getNext10UserPosts",
   async (payload: {
@@ -86,7 +103,7 @@ export const getNextUserPosts = createAsyncThunk(
     const { data, error } = await supabase
       .from("posts")
       .select(
-        "post_id, created_at, image_id, user_id, shared_workout_id, description, profiles (user_id, user_name, first_name, last_name, num_followers, num_following, num_posts, is_premium)"
+        "post_id, created_at, user_id, content_id, content_type, description, profiles (user_id, user_name, first_name, last_name, num_followers, num_following, num_posts, is_premium)"
       )
       .eq("user_id", payload.userId)
       .order("created_at", { ascending: false })
@@ -156,7 +173,7 @@ const postsSlice = createSlice({
     builder
       .addCase(getNextPost.fulfilled, (state, result) => {
         if (!result.payload) return;
-        if (state.entities[result.payload.post_id!]) return; // if post already exists, return
+        if (state.entities[result.payload.post_id]) return; // if post already exists, return
         postsAdapter.addOne(
           state,
           postFromPostTableRow(result.payload as PostRow)
@@ -189,6 +206,19 @@ const postsSlice = createSlice({
           id: action.meta.arg.postId,
           changes: { base64Image: action.payload },
         });
+      })
+      .addCase(getSharedTemplate.fulfilled, (state, action) => {
+        if (!action.payload) return;
+        // postsAdapter.updateOne(state, {
+        //   id: action.meta.arg.postId,
+        //   changes: {
+        //     sharedTemplate: {
+        //       workoutState: JSON.parse(action.payload.workout_state),
+        //       exercises: JSON.parse(action.payload.exercises),
+        //       sets: JSON.parse(action.payload.sets),
+        //     },
+        //   },
+        // });
       })
       .addCase(getNextUserPosts.fulfilled, (state, action) => {
         if (!action.payload || action.payload.length === 0) return;

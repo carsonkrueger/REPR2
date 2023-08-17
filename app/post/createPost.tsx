@@ -78,7 +78,8 @@ export default function CreatePost() {
     await supabase.from("posts").insert({
       user_id: userId,
       description: description !== "" ? description : null,
-      image_id: imageUuid,
+      content_id: imageUuid,
+      content_type: 1,
     });
     await uploadToSupabase(
       image.base64!,

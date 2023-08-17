@@ -24,22 +24,12 @@ export const shareWorkoutTemplate = createAsyncThunk(
   "shareWorkoutTemplate",
   async (payload: { template: unparsedWorkoutsTableRow; userId: string }) => {
     const templateUuid = uuid();
-    const { error } = await supabase
-      .from("shared_workout_templates")
-      .upsert({
-        user_id: payload.userId,
-        workout_state: JSON.stringify(payload.template.workout_state),
-        exercises: JSON.stringify(payload.template.exercises),
-        sets: JSON.stringify(payload.template.sets),
-      })
-      .select("template_id");
 
-    const postRes = await supabase.from("posts").upsert({
+    const postRes = await supabase.from("posts").insert({
       user_id: payload.userId,
-      shared_workout_id: templateUuid,
+      content_id: templateUuid,
+      content_type: 2,
     });
-
-    if (error) console.error(error);
     if (postRes.error) console.error(postRes.error);
   }
 );

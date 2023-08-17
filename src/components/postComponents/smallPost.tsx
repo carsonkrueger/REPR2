@@ -1,6 +1,4 @@
 import { useEffect } from "react";
-import { Text, TouchableOpacity } from "react-native";
-import tw from "../../util/tailwind";
 import { AppDispatch, RootState } from "../../redux/store";
 import { getBase64Image, selectPostById } from "../../redux/slices/postsSlice";
 import { useSelector } from "react-redux";
@@ -22,7 +20,7 @@ export default function SmallPost({ postId }: props) {
 
   useEffect(() => {
     // get image for post if image_id exists and base64Image does not exist
-    if (post.imageId && !post.base64Image) dispatch(getBase64Image(post));
+    if (post.contentId && !post.base64Image) dispatch(getBase64Image(post));
   }, []);
 
   function navigateToViewPost() {

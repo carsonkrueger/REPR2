@@ -7,11 +7,12 @@ interface props {
   postId: string;
 }
 
-export default function postTemplate({ postId }: props) {
+export default function PostTemplate({ postId }: props) {
   const post = useSelector((state: RootState) => selectPostById(state, postId));
+
   return (
     <View>
-      <Text>{post?.sharedWorkoutId}</Text>
+      <Text>{post?.contentId}</Text>
     </View>
   );
 }

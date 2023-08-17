@@ -8,6 +8,7 @@ import {
   getNumPostLikes,
   selectPostById,
   toggleLikePost,
+  getSharedTemplate,
 } from "../../redux/slices/postsSlice";
 import { useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
@@ -25,6 +26,7 @@ import { EntityId } from "@reduxjs/toolkit";
 import { daysAgo } from "../../util/dates";
 import { useRouter } from "expo-router";
 import ProfileIcon from "../profileIcon";
+import PostTemplate from "./postTemplate";
 
 interface props {
   postId: EntityId;
@@ -46,7 +48,10 @@ export default function Post({ postId, useCommentIcon = true }: props) {
 
   useEffect(() => {
     // get image for post if image_id exists and base64Image does not exist
-    if (post.imageId && !post.base64Image) dispatch(getBase64Image(post));
+    if (post.contentType === 1 && !post.base64Image)
+      dispatch(getBase64Image(post));
+    else if (post.contentType === 2 && !post.sharedTemplate)
+      dispatch(getSharedTemplate(post));
   }, []);
 
   useEffect(() => {
@@ -139,8 +144,9 @@ export default function Post({ postId, useCommentIcon = true }: props) {
         )}
       </View>
 
-      {/* Image content */}
-      <PostImage base64={post.base64Image} />
+      {/* post content */}
+      {post.contentType === 1 && <PostImage base64={post.base64Image} />}
+      {post.contentType === 2 && <PostTemplate postId={post.postId} />}
 
       {/* like/comment/flag */}
       <View style={tw`flex-row justify-between px-3 pt-2`}>

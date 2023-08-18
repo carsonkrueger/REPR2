@@ -1,5 +1,6 @@
 import {
   EntityId,
+  EntityState,
   PayloadAction,
   createAsyncThunk,
   createEntityAdapter,
@@ -10,6 +11,7 @@ import { Post } from "../../types/postTypes";
 import { RootState } from "../store";
 import { supabase } from "../../types/supabaseClient";
 import { postFromPostTableRow } from "../../util/postsUtils";
+import { Exercise } from "../../types/workoutTypes";
 
 export const getNextPost = createAsyncThunk(
   "getNextPost",
@@ -82,7 +84,7 @@ export const getSharedTemplate = createAsyncThunk(
     if (!post.contentId) return;
 
     const { data, error } = await supabase
-      .from("shared_workout_templates")
+      .from("workout_templates")
       .select("*")
       .eq("template_id", post.contentId)
       .single();
@@ -209,6 +211,7 @@ const postsSlice = createSlice({
       })
       .addCase(getSharedTemplate.fulfilled, (state, action) => {
         if (!action.payload) return;
+        console.log(action.payload.exercises);
         // postsAdapter.updateOne(state, {
         //   id: action.meta.arg.postId,
         //   changes: {

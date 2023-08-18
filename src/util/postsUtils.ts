@@ -7,8 +7,8 @@ export function postFromPostTableRow(row: PostRow): Post {
     createdAt: row.created_at,
     userId: row.user_id,
     numLikes: 0,
-    imageId: row.image_id ?? undefined,
-    sharedWorkoutId: row.shared_workout_id ?? undefined,
+    contentId: row.content_id ?? undefined,
+    contentType: row.content_type,
     isLiked: false,
     description: row.description ?? "",
   };

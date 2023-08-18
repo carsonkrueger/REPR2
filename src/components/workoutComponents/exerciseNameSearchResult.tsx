@@ -9,7 +9,6 @@ interface props {
 
 const ExerciseNameSearchResult = React.memo(
   ({ exerciseName, onPress }: props) => {
-    console.log("updating", exerciseName);
     function onPressTouchable() {
       onPress(exerciseName);
     }

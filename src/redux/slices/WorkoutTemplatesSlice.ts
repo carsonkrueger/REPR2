@@ -8,7 +8,10 @@ import {
 import { WorkoutTemplate } from "../../types/workoutTypes";
 import { RootState } from "../store";
 import { supabase } from "../../types/supabaseClient";
-import { unparsedWorkoutsTableRow } from "../../types/localDBTables";
+import {
+  parsedWorkoutsTableRow,
+  unparsedWorkoutsTableRow,
+} from "../../types/localDBTables";
 import { v4 as uuid } from "uuid";
 
 const initialWorkoutTemplate: WorkoutTemplate = {
@@ -24,13 +27,12 @@ export const shareWorkoutTemplate = createAsyncThunk(
   "shareWorkoutTemplate",
   async (payload: { template: unparsedWorkoutsTableRow; userId: string }) => {
     const templateUuid = uuid();
-
     const templateRes = await supabase.from("workout_templates").insert({
       template_id: templateUuid,
       user_id: payload.userId,
-      workout_state: payload.template.workout_state,
-      exercises: payload.template.exercises,
-      sets: payload.template.sets,
+      workout_state: JSON.parse(payload.template.workout_state),
+      exercises: JSON.parse(payload.template.exercises),
+      sets: JSON.parse(payload.template.sets),
     });
     if (templateRes.error) console.error(templateRes.error);
 

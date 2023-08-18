@@ -20,6 +20,7 @@ import {
   sqlDeleteWorkoutTemplateById,
   sqlSelectAllTemplatesByDateDESC,
   sqlSelectUnparsedWorkoutInfoById,
+  sqlSelectWorkoutInfoById,
 } from "../../src/sqlite/queries";
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
 import {
@@ -125,6 +126,7 @@ export default function Workouts() {
   async function onShareWorkoutPress() {
     if (!modalWorkoutId) return;
     const template = await sqlSelectUnparsedWorkoutInfoById(modalWorkoutId);
+    // const template = await sqlSelectWorkoutInfoById(modalWorkoutId);
     dispatch(
       shareWorkoutTemplate({
         template: template,

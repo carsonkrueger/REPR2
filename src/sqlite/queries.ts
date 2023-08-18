@@ -80,9 +80,7 @@ export async function sqlSelectWorkoutInfoById(id: number) {
       "SELECT workout_id, workout_state, exercises, sets, last_performed FROM workout_templates WHERE workout_id = ?;",
       [id],
       (_, result) => {
-        const template = parseWorkoutTableRow(
-          result.rows._array[0] as unparsedWorkoutsTableRow
-        );
+        const template = parseWorkoutTableRow(result.rows._array[0]);
         resolve(template);
       },
       (_, error) => {
@@ -100,7 +98,7 @@ export async function sqlSelectUnparsedWorkoutInfoById(id: number) {
       "SELECT workout_id, workout_state, exercises, sets, last_performed FROM workout_templates WHERE workout_id = ?;",
       [id],
       (_, result) => {
-        resolve(result.rows._array[0] as unparsedWorkoutsTableRow);
+        resolve(result.rows._array[0]);
       },
       (_, error) => {
         console.log("Error selecting template: ", error);

@@ -11,7 +11,7 @@ import { Post } from "../../types/postTypes";
 import { RootState } from "../store";
 import { supabase } from "../../types/supabaseClient";
 import { postFromPostTableRow } from "../../util/postsUtils";
-import { Exercise } from "../../types/workoutTypes";
+import { Exercise, WorkoutSet, WorkoutState } from "../../types/workoutTypes";
 
 export const getNextPost = createAsyncThunk(
   "getNextPost",
@@ -91,6 +91,7 @@ export const getSharedTemplate = createAsyncThunk(
 
     if (error) console.error(error);
     else if (!data) console.error("No data returned for shared template");
+
     return data;
   }
 );
@@ -211,17 +212,26 @@ const postsSlice = createSlice({
       })
       .addCase(getSharedTemplate.fulfilled, (state, action) => {
         if (!action.payload) return;
-        console.log(action.payload.exercises);
-        // postsAdapter.updateOne(state, {
-        //   id: action.meta.arg.postId,
-        //   changes: {
-        //     sharedTemplate: {
-        //       workoutState: JSON.parse(action.payload.workout_state),
-        //       exercises: JSON.parse(action.payload.exercises),
-        //       sets: JSON.parse(action.payload.sets),
-        //     },
-        //   },
-        // });
+
+        try {
+          postsAdapter.updateOne(state, {
+            id: action.meta.arg.postId,
+            changes: {
+              sharedTemplate: {
+                workoutState: action.payload
+                  .workout_state as unknown as WorkoutState,
+                exercises: action.payload
+                  .exercises as unknown as EntityState<Exercise>,
+                sets: action.payload.sets as unknown as EntityState<WorkoutSet>,
+              },
+            },
+          });
+        } catch (e) {
+          console.error(
+            "could not update template post with shared workout",
+            e
+          );
+        }
       })
       .addCase(getNextUserPosts.fulfilled, (state, action) => {
         if (!action.payload || action.payload.length === 0) return;

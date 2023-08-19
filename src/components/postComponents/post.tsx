@@ -176,7 +176,7 @@ export default function Post({ postId, useCommentIcon = true }: props) {
 
       {/* like/comment/flag */}
       <View style={tw`flex-row justify-between px-3 pt-2`}>
-        <View style={tw`flex-row justify-between w-26`}>
+        <View style={tw`flex-row justify-between w-18`}>
           <TouchableOpacity onPress={togglePostIsLiked} disabled={isLoading}>
             <Ionicons
               name={post?.isLiked ? "heart-sharp" : "heart-outline"}
@@ -185,7 +185,7 @@ export default function Post({ postId, useCommentIcon = true }: props) {
             />
           </TouchableOpacity>
           {/* Comments icon */}
-          {useCommentIcon && (
+          {useCommentIcon && post.contentType === 1 && (
             <TouchableOpacity onPress={navigateToViewPost}>
               <Ionicons
                 name="chatbubble-outline"

@@ -12,19 +12,31 @@ export default function PostTemplate({ postId }: props) {
   const post = useSelector((state: RootState) => selectPostById(state, postId));
 
   return (
-    <View style={tw`flex-row justify-between mx-1 p-2 rounded-md bg-primary`}>
-      <Text style={[tw`text-lg text-white`, { fontFamily: "RobotoCondensed" }]}>
+    <View style={tw`p-2 mx-2 border-[1px] border-primary rounded-md`}>
+      <Text
+        style={[
+          tw`text-center text-lg text-primary`,
+          { fontFamily: "RobotoCondensed" },
+        ]}
+      >
         {post?.sharedTemplate?.workoutState.name}
       </Text>
-      <View style={tw`flex-col items-center`}></View>
-      {post?.sharedTemplate?.exercises.ids.map((id) => (
-        <Text
-          key={`postTemplate-${post.postId}-${post.sharedTemplate?.exercises.entities[id]?.id}`}
-          style={[tw`text-sm text-white`, { fontFamily: "RobotoCondensed" }]}
-        >
-          {post.sharedTemplate?.exercises.entities[id]?.name}
-        </Text>
-      ))}
+
+      <View style={tw`flex-col`}>
+        {post?.sharedTemplate?.exercises.ids.map((id, idx) => {
+          return idx <= 5 ? (
+            <Text
+              key={`postTemplate-${post.postId}-${post.sharedTemplate?.exercises.entities[id]?.id}`}
+              style={[
+                tw`text-base text-primary`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              {post.sharedTemplate?.exercises.entities[id]?.name}
+            </Text>
+          ) : null;
+        })}
+      </View>
     </View>
   );
 }

@@ -49,31 +49,30 @@ export const getNumPostLikes = createAsyncThunk(
 export const getBase64Image = createAsyncThunk(
   "getBase64Image",
   async (post: Post) => {
-    if (post.contentId) {
-      const { data, error } = await supabase.storage
-        .from("images")
-        .download(`${post.userId}/${post.contentId}`);
+    if (post.contentType !== 1 || post.base64Image !== undefined) return;
+    const { data, error } = await supabase.storage
+      .from("images")
+      .download(`${post.userId}/${post.contentId}`);
 
-      if (error) {
-        console.error("Error downloading image:", error);
-      } else if (data) {
-        try {
-          return new Promise<string>((resolve, reject) => {
-            const fr = new FileReader();
-            fr.readAsDataURL(data);
-            fr.onload = function () {
-              resolve(fr.result as string);
-            };
-            fr.onerror = function () {
-              reject("error");
-            };
-          });
-        } catch (error) {
-          console.error("Error reading image:", error);
-        }
-      } else {
-        console.error("No data or error returned");
+    if (error) {
+      console.error("Error downloading image:", error);
+    } else if (data) {
+      try {
+        return new Promise<string>((resolve, reject) => {
+          const fr = new FileReader();
+          fr.readAsDataURL(data);
+          fr.onload = function () {
+            resolve(fr.result as string);
+          };
+          fr.onerror = function () {
+            reject("error");
+          };
+        });
+      } catch (error) {
+        console.error("Error reading image:", error);
       }
+    } else {
+      console.error("No data or error returned");
     }
   }
 );

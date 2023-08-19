@@ -20,7 +20,8 @@ export default function SmallPost({ postId }: props) {
 
   useEffect(() => {
     // get image for post if image_id exists and base64Image does not exist
-    if (post.contentId && !post.base64Image) dispatch(getBase64Image(post));
+    if (post.contentType === 1 && !post.base64Image)
+      dispatch(getBase64Image(post));
   }, []);
 
   function navigateToViewPost() {
@@ -29,6 +30,8 @@ export default function SmallPost({ postId }: props) {
       params: { postId: post.postId },
     });
   }
+
+  if (post.contentType !== 1) return null;
 
   return (
     <PostImage

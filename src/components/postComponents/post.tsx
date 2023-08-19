@@ -27,6 +27,9 @@ import { daysAgo } from "../../util/dates";
 import { useRouter } from "expo-router";
 import ProfileIcon from "../profileIcon";
 import PostTemplate from "./postTemplate";
+import { addWorkoutTemplateToFront } from "../../redux/slices/WorkoutTemplatesSlice";
+import { templateFromCurrentWorkout } from "../../util/workoutUtils";
+import { sqlInsertCurrentWorkoutTemplate } from "../../sqlite/queries";
 
 interface props {
   postId: EntityId;
@@ -45,6 +48,7 @@ export default function Post({ postId, useCommentIcon = true }: props) {
   const userId = useSelector((state: RootState) => selectUserId(state));
 
   const [isLoading, setIsLoading] = useState(true);
+  const [savedWorkout, setSavedWorkout] = useState(false);
 
   useEffect(() => {
     // get image for post if image_id exists and base64Image does not exist
@@ -81,6 +85,28 @@ export default function Post({ postId, useCommentIcon = true }: props) {
       pathname: `user/${post.userId}`,
       params: { userIdParam: post.userId },
     });
+  }
+
+  async function savePostWorkoutTemplate() {
+    if (!post.sharedTemplate || savedWorkout) return;
+
+    const insertedId = await sqlInsertCurrentWorkoutTemplate(
+      post.sharedTemplate.workoutState,
+      post.sharedTemplate.exercises,
+      post.sharedTemplate.sets
+    );
+
+    dispatch(
+      addWorkoutTemplateToFront(
+        templateFromCurrentWorkout(
+          insertedId,
+          post.sharedTemplate?.workoutState,
+          post.sharedTemplate?.exercises
+        )
+      )
+    );
+
+    setSavedWorkout(true);
   }
 
   async function togglePostIsLiked() {
@@ -150,7 +176,7 @@ export default function Post({ postId, useCommentIcon = true }: props) {
 
       {/* like/comment/flag */}
       <View style={tw`flex-row justify-between px-3 pt-2`}>
-        <View style={tw`flex-row justify-between w-20`}>
+        <View style={tw`flex-row justify-between w-26`}>
           <TouchableOpacity onPress={togglePostIsLiked} disabled={isLoading}>
             <Ionicons
               name={post?.isLiked ? "heart-sharp" : "heart-outline"}
@@ -165,6 +191,22 @@ export default function Post({ postId, useCommentIcon = true }: props) {
                 name="chatbubble-outline"
                 size={30}
                 color={CustomColors.primary}
+              />
+            </TouchableOpacity>
+          )}
+          {post.contentType === 2 && (
+            <TouchableOpacity
+              disabled={savedWorkout}
+              onPress={savePostWorkoutTemplate}
+            >
+              <Ionicons
+                name={savedWorkout ? "checkmark" : "cloud-download-outline"}
+                size={30}
+                color={
+                  savedWorkout
+                    ? CustomColors["extra-dark-green"]
+                    : CustomColors.primary
+                }
               />
             </TouchableOpacity>
           )}

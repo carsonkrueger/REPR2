@@ -190,12 +190,6 @@ export default function Home() {
         </Text>
 
         <View style={tw`flex-row`}>
-          {/* <TouchableOpacity
-            style={tw`items-center justify-center mr-2`}
-            onPress={onGalleryCreatePostPress}
-          >
-            <Feather name="plus" size={27} color={CustomColors.primary} />
-          </TouchableOpacity> */}
           <PremiumIcon />
         </View>
       </View>

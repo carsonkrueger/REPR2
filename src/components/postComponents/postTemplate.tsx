@@ -16,8 +16,10 @@ export default function PostTemplate({ postId }: props) {
       <Text style={[tw`text-lg text-white`, { fontFamily: "RobotoCondensed" }]}>
         {post?.sharedTemplate?.workoutState.name}
       </Text>
+      <View style={tw`flex-col items-center`}></View>
       {post?.sharedTemplate?.exercises.ids.map((id) => (
         <Text
+          key={`postTemplate ${post.postId}`}
           style={[tw`text-sm text-white`, { fontFamily: "RobotoCondensed" }]}
         >
           {post.sharedTemplate?.exercises.entities[id]?.name}

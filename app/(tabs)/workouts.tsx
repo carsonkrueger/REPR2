@@ -18,6 +18,7 @@ import WorkoutTemplateHeaderComponent from "../../src/components/workoutComponen
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   sqlDeleteWorkoutTemplateById,
+  sqlInsertCurrentWorkoutTemplate,
   sqlSelectAllTemplatesByDateDESC,
   sqlSelectUnparsedWorkoutInfoById,
   sqlSelectWorkoutInfoById,
@@ -25,10 +26,14 @@ import {
 import { parsedWorkoutsTableRow } from "../../src/types/localDBTables";
 import {
   addWorkoutTemplateToBack,
+  addWorkoutTemplateToFront,
   delWorkoutTemplateById,
   shareWorkoutTemplate,
 } from "../../src/redux/slices/WorkoutTemplatesSlice";
-import { templateFromParseWorkoutTableRow } from "../../src/util/workoutUtils";
+import {
+  templateFromCurrentWorkout,
+  templateFromParseWorkoutTableRow,
+} from "../../src/util/workoutUtils";
 import PremiumIcon from "../../src/components/premiumIcon";
 import SafeAlert from "../../src/components/MySafeAlert";
 import { useRouter } from "expo-router";
@@ -136,6 +141,28 @@ export default function Workouts() {
     bottomSheetRef.current?.close();
   }
 
+  async function onDuplicateWorkoutPress() {
+    if (!modalWorkoutId) return;
+
+    const template = await sqlSelectWorkoutInfoById(modalWorkoutId);
+    const insertId = await sqlInsertCurrentWorkoutTemplate(
+      template.workout_state,
+      template.exercises,
+      template.sets
+    );
+    dispatch(
+      addWorkoutTemplateToFront(
+        templateFromCurrentWorkout(
+          insertId,
+          template.workout_state,
+          template.exercises
+        )
+      )
+    );
+
+    bottomSheetRef.current?.close();
+  }
+
   return (
     <SafeAreaView style={tw`flex-1 bg-front `}>
       {/* HEADER */}
@@ -227,7 +254,7 @@ export default function Workouts() {
               Post Workout to Profile
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onDuplicateWorkoutPress}>
             <Text
               style={[
                 tw`w-[85%] mt-4 py-2 rounded-md shadow-md bg-dark-front self-center text-white text-center text-lg`,

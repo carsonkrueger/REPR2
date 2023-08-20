@@ -17,9 +17,14 @@ export default function Purchase() {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   useEffect(() => {
+    function onBackPress() {
+      router.back();
+      return true;
+    }
+
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
-      () => true
+      onBackPress
     );
 
     return () => backHandler.remove();

@@ -32,8 +32,8 @@ export default function premium() {
 
         <PremiumItem text="Unlimited templates" />
         <PremiumItem text="Share and copy workouts" />
-        <PremiumItem text="Exercise history charts" />
-        <PremiumItem text="Remove ads" />
+        {/* <PremiumItem text="Exercise history charts" /> */}
+        {/* <PremiumItem text="Remove ads" /> */}
         <PremiumItem text="More coming soon" />
       </View>
 

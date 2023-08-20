@@ -75,7 +75,7 @@ export default function Profile() {
     <SafeAreaView style={tw`flex-1 bg-front`}>
       {/* TOP HEADER */}
       <View>
-        <View style={tw`flex-row px-3 py-2 bg-front justify-between z-10`}>
+        <View style={tw`flex-row px-3 py-2 justify-between z-10`}>
           <Text
             style={[
               tw`text-xl text-center text-primary`,
@@ -100,9 +100,7 @@ export default function Profile() {
         </View>
 
         {/* PROFILE ICON AREA*/}
-        <View
-          style={tw`flex-row pb-5 bg-front justify-evenly items-center px-2`}
-        >
+        <View style={tw`flex-row pb-5 justify-evenly items-center px-2`}>
           {/* IMAGE */}
           <ProfileIcon radius={22} />
 
@@ -169,8 +167,10 @@ export default function Profile() {
         </View>
 
         {/* POST/TEMPLATE TAB */}
-        <View style={tw`bg-front shadow-md flex-row py-1`}>
-          <TouchableOpacity style={tw`flex-1`}>
+        <View style={tw`border-b-[1px] border-b-light-gray flex-row py-1`}>
+          <TouchableOpacity
+            style={tw`flex-1 border-r-[1px] border-r-light-gray`}
+          >
             <Text
               style={[
                 tw` text-lg text-center text-primary`,

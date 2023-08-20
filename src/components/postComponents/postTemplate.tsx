@@ -31,9 +31,7 @@ export default function PostTemplate({ postId }: props) {
           Workout Template
         </Text>
       </View>
-      <View
-        style={tw`px-2 py-1 mx-2 border-[1px] border-transparent rounded-md shadow-sm bg-white`}
-      >
+      <View style={tw`px-3 py-1 shadow-md bg-white`}>
         {/* <Text
           style={[
             tw`text-center text-lg text-primary`,

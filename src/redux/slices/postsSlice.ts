@@ -262,3 +262,9 @@ export const selectPostById = createSelector(
   [selectAllPosts, (_, postId: EntityId) => postId],
   (posts, postId) => posts.entities[postId]
 );
+
+export const selectAllPostsIdsByType = createSelector(
+  [selectAllPosts, (_, contentType: number) => contentType],
+  (posts, contentType) =>
+    posts.ids.filter((id) => posts.entities[id]?.contentType === contentType)
+);

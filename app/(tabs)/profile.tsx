@@ -13,7 +13,11 @@ import PremiumIcon from "../../src/components/premiumIcon";
 import { FlashList } from "@shopify/flash-list";
 import SmallPost from "../../src/components/postComponents/smallPost";
 import { useEffect, useRef } from "react";
-import { getNextUserPosts } from "../../src/redux/slices/postsSlice";
+import {
+  getNextUserPosts,
+  selectAllPosts,
+  selectAllPostsIdsByType,
+} from "../../src/redux/slices/postsSlice";
 import { selectUserByUserId } from "../../src/redux/slices/usersSlice";
 import ProfileIcon from "../../src/components/profileIcon";
 
@@ -27,6 +31,9 @@ export default function Profile() {
   const user = useSelector((state) =>
     selectUserByUserId(state, profile.user.userId)
   )!;
+  const imagePostIds = useSelector((state: RootState) =>
+    selectAllPostsIdsByType(state, 1)
+  );
 
   const nextPostIndex = useRef(0);
 
@@ -67,103 +74,129 @@ export default function Profile() {
   return (
     <SafeAreaView style={tw`flex-1 bg-front`}>
       {/* TOP HEADER */}
-      <View style={tw`flex-row px-3 py-2 bg-front justify-between z-10`}>
-        <Text
-          style={[
-            tw`text-xl text-center text-primary`,
-            { fontFamily: "RobotoCondensed" },
-          ]}
+      <View>
+        <View style={tw`flex-row px-3 py-2 bg-front justify-between z-10`}>
+          <Text
+            style={[
+              tw`text-xl text-center text-primary`,
+              { fontFamily: "RobotoCondensed" },
+            ]}
+          >
+            {profile.user.userName}
+          </Text>
+          <View style={tw`flex-row`}>
+            <TouchableOpacity
+              style={tw`flex-col justify-end items-center pb-1 pr-2`}
+              onPress={navigateToSettings}
+            >
+              <Ionicons
+                name={"settings-outline"}
+                color={CustomColors.primary}
+                size={27}
+              />
+            </TouchableOpacity>
+            <PremiumIcon />
+          </View>
+        </View>
+
+        {/* PROFILE ICON AREA*/}
+        <View
+          style={tw`flex-row pb-5 bg-front justify-evenly items-center px-2`}
         >
-          {profile.user.userName}
-        </Text>
-        <View style={tw`flex-row`}>
-          <TouchableOpacity
-            style={tw`flex-col justify-end items-center pb-1 pr-2`}
-            onPress={navigateToSettings}
-          >
-            <Ionicons
-              name={"settings-outline"}
-              color={CustomColors.primary}
-              size={27}
-            />
+          {/* IMAGE */}
+          <ProfileIcon radius={22} />
+
+          {/* NUM POSTS */}
+          <View style={tw`flex-col min-w-10`}>
+            <Text
+              style={[
+                tw`text-black text-center text-lg`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              {profile.user.numPosts}
+            </Text>
+
+            <Text
+              style={[
+                tw`text-dark-gray text-center`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              Posts
+            </Text>
+          </View>
+
+          {/* NUM FOLLOWERS */}
+          <View style={tw`flex-col min-w-10`}>
+            <Text
+              style={[
+                tw`text-black text-center text-lg`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              {profile.user.numFollowers}
+            </Text>
+            <Text
+              style={[
+                tw`text-dark-gray text-center`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              Followers
+            </Text>
+          </View>
+
+          {/* NUM FOLLOWING */}
+          <View style={tw`flex-col min-w-10`}>
+            <Text
+              style={[
+                tw`text-black text-center text-lg`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              {profile.user.numFollowing}
+            </Text>
+            <Text
+              style={[
+                tw`text-dark-gray text-center`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              Following
+            </Text>
+          </View>
+        </View>
+
+        {/* POST/TEMPLATE TAB */}
+        <View style={tw`bg-front shadow-md flex-row py-1`}>
+          <TouchableOpacity style={tw`flex-1`}>
+            <Text
+              style={[
+                tw` text-lg text-center text-primary`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              Posts
+            </Text>
           </TouchableOpacity>
-          <PremiumIcon />
-        </View>
-      </View>
-
-      {/* PROFILE ICON AREA*/}
-      <View
-        style={tw`flex-row pb-5 bg-front justify-evenly items-center px-2 shadow-md`}
-      >
-        {/* IMAGE */}
-        <ProfileIcon radius={22} />
-
-        {/* NUM POSTS */}
-        <View style={tw`flex-col min-w-10`}>
-          <Text
-            style={[
-              tw`text-black text-center text-lg`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
-          >
-            {profile.user.numPosts}
-          </Text>
-
-          <Text
-            style={[
-              tw`text-dark-gray text-center`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
-          >
-            Posts
-          </Text>
-        </View>
-
-        {/* NUM FOLLOWERS */}
-        <View style={tw`flex-col min-w-10`}>
-          <Text
-            style={[
-              tw`text-black text-center text-lg`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
-          >
-            {profile.user.numFollowers}
-          </Text>
-          <Text
-            style={[
-              tw`text-dark-gray text-center`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
-          >
-            Followers
-          </Text>
-        </View>
-
-        {/* NUM FOLLOWING */}
-        <View style={tw`flex-col min-w-10`}>
-          <Text
-            style={[
-              tw`text-black text-center text-lg`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
-          >
-            {profile.user.numFollowing}
-          </Text>
-          <Text
-            style={[
-              tw`text-dark-gray text-center`,
-              { fontFamily: "RobotoCondensed" },
-            ]}
-          >
-            Following
-          </Text>
+          <TouchableOpacity style={tw`flex-1`}>
+            <Text
+              style={[
+                tw` text-lg text-center text-primary`,
+                { fontFamily: "RobotoCondensed" },
+              ]}
+            >
+              Templates
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
 
       {/* POST IMAGES */}
       <FlashList
         contentContainerStyle={tw`p-[0.5px]`}
-        data={user.postIds}
+        data={imagePostIds}
         renderItem={({ item }) => (
           <SmallPost postId={item} key={"smallPost" + item} />
         )}

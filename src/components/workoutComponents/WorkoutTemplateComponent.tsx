@@ -51,7 +51,9 @@ export default function WorkoutTemplateComponent({
   // }
 
   return (
-    <View style={tw`mt-3 mx-2 px-4 min-h-24 rounded-lg bg-front shadow-sm`}>
+    <View
+      style={tw`mt-3 mx-2 px-4 min-h-24 rounded-lg bg-front shadow-sm border-[1px] border-transparent`}
+    >
       {/* TEMPLATE CONTAINER */}
       <View style={tw`rounded-md overflow-hidden`}>
         <TouchableOpacity

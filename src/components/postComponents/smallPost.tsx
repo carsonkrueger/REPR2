@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { AppDispatch, RootState } from "../../redux/store";
 import { getBase64Image, selectPostById } from "../../redux/slices/postsSlice";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PostImage from "./postImage";
 import { EntityId } from "@reduxjs/toolkit";
 import { useRouter } from "expo-router";
@@ -30,8 +29,6 @@ export default function SmallPost({ postId }: props) {
       params: { postId: post.postId },
     });
   }
-
-  if (post.contentType !== 1) return null;
 
   return (
     <PostImage

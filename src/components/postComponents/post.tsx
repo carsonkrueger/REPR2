@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import CustomColors from "../../util/customColors";
 import { useDispatch } from "react-redux";
-import { selectUserId } from "../../redux/slices/profileSlice";
+import { selectProfile, selectUserId } from "../../redux/slices/profileSlice";
 import {
   getIsFollowing,
   getUserStats,
@@ -45,7 +45,7 @@ export default function Post({ postId, useCommentIcon = true }: props) {
   const postUser = useSelector((state: RootState) =>
     selectUserByUserId(state, post.userId)
   )!;
-  const userId = useSelector((state: RootState) => selectUserId(state));
+  const profile = useSelector((state: RootState) => selectProfile(state));
 
   const [isLoading, setIsLoading] = useState(true);
   const [savedWorkout, setSavedWorkout] = useState(false);
@@ -60,14 +60,14 @@ export default function Post({ postId, useCommentIcon = true }: props) {
 
   useEffect(() => {
     async function prepare() {
-      if (userId === "") return;
-      dispatch(getDidLikePost({ post: post, userId: userId }));
-      dispatch(getIsFollowing({ user: postUser, userId: userId }));
+      if (profile.user.userId === "") return;
+      dispatch(getDidLikePost({ post: post, userId: profile.user.userId }));
+      dispatch(getIsFollowing({ user: postUser, userId: profile.user.userId }));
       dispatch(getNumPostLikes({ postId: post.postId }));
       dispatch(getUserStats({ userId: post.userId }));
     }
     prepare().finally(() => setIsLoading(false));
-  }, [userId]);
+  }, [profile.user.userId]);
 
   async function onDoubleTap() {
     togglePostIsLiked();
@@ -87,8 +87,17 @@ export default function Post({ postId, useCommentIcon = true }: props) {
     });
   }
 
+  function canSavePostWorkoutTemplate() {
+    if (profile.user.isPremium) return true;
+    else {
+      router.push("premium");
+      return false;
+    }
+  }
+
   async function savePostWorkoutTemplate() {
-    if (!post.sharedTemplate || savedWorkout) return;
+    if (!post.sharedTemplate || savedWorkout || !canSavePostWorkoutTemplate())
+      return;
 
     const insertedId = await sqlInsertCurrentWorkoutTemplate(
       post.sharedTemplate.workoutState,
@@ -110,11 +119,13 @@ export default function Post({ postId, useCommentIcon = true }: props) {
   }
 
   async function togglePostIsLiked() {
-    dispatch(toggleLikePost({ post: post, userId: userId }));
+    dispatch(toggleLikePost({ post: post, userId: profile.user.userId }));
   }
 
   async function togglePostIsFollowing() {
-    dispatch(toggleIsFollowing({ followedUser: postUser, userId: userId }));
+    dispatch(
+      toggleIsFollowing({ followedUser: postUser, userId: profile.user.userId })
+    );
   }
 
   function getDayWeeksAgo(): string {
@@ -152,7 +163,7 @@ export default function Post({ postId, useCommentIcon = true }: props) {
         </View>
 
         {/* Follow button */}
-        {postUser.userId !== userId && (
+        {postUser.userId !== profile.user.userId && (
           <TouchableOpacity
             style={tw`flex-row items-center`}
             onPress={togglePostIsFollowing}

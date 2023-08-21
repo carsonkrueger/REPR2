@@ -128,8 +128,16 @@ export default function Workouts() {
     bottomSheetRef.current?.close();
   }
 
+  function canShareWorkout() {
+    if (profile.user.isPremium) return true;
+    else {
+      toggleMaxTemplateAlert();
+      return false;
+    }
+  }
+
   async function onShareWorkoutPress() {
-    if (!modalWorkoutId) return;
+    if (!modalWorkoutId || !canShareWorkout()) return;
     const template = await sqlSelectUnparsedWorkoutInfoById(modalWorkoutId);
     // const template = await sqlSelectWorkoutInfoById(modalWorkoutId);
     dispatch(
@@ -142,7 +150,7 @@ export default function Workouts() {
   }
 
   async function onDuplicateWorkoutPress() {
-    if (!modalWorkoutId) return;
+    if (!modalWorkoutId || !canCreateCreateWorkout()) return;
 
     const template = await sqlSelectWorkoutInfoById(modalWorkoutId);
     const insertId = await sqlInsertCurrentWorkoutTemplate(
@@ -203,12 +211,12 @@ export default function Workouts() {
 
           <Text
             style={[
-              tw`text-dark-gray px-5 pt-1 pb-2`,
+              tw`text-dark-gray px-5 pt-1 pb-2 text-center`,
               { fontFamily: "RobotoCondensed" },
             ]}
           >
-            Get premium to store unlimited templates and take your fitness to
-            the next level
+            Get premium to store unlimited templates and share/copy workouts
+            with your friends to take your fitness to the next level
           </Text>
         </SafeAlert>
       )}

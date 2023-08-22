@@ -173,17 +173,17 @@ export default function Profile() {
           >
             <Text
               style={[
-                tw` text-lg text-center text-primary`,
+                tw`text-base text-center text-primary`,
                 { fontFamily: "RobotoCondensed" },
               ]}
             >
-              Posts
+              Images
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={tw`flex-1`}>
             <Text
               style={[
-                tw` text-lg text-center text-primary`,
+                tw`text-base text-center text-primary`,
                 { fontFamily: "RobotoCondensed" },
               ]}
             >

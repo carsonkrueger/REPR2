@@ -10,7 +10,10 @@ import { selectUserId } from "../../src/redux/slices/profileSlice";
 import { FlashList } from "@shopify/flash-list";
 import SmallPost from "../../src/components/postComponents/smallPost";
 import { useEffect, useRef } from "react";
-import { getNextUserPosts } from "../../src/redux/slices/postsSlice";
+import {
+  getNextUserPosts,
+  selectAllPostsIdsByType,
+} from "../../src/redux/slices/postsSlice";
 import {
   selectUserByUserId,
   toggleIsFollowing,
@@ -28,6 +31,9 @@ export default function Profile() {
   const user = useSelector((state) =>
     selectUserByUserId(state, userIdParam as string)
   )!;
+  const imagePostIds = useSelector((state: RootState) =>
+    selectAllPostsIdsByType(state, 1)
+  );
 
   const nextPostIndex = useRef(0);
 
@@ -44,16 +50,6 @@ export default function Profile() {
 
     return () => backHandler.remove();
   }, []);
-
-  // useEffect(() => {
-  //   dispatch(
-  //     getNext10UserPosts({
-  //       userId: profile.user.userId,
-  //       indexStart: nextPostIndex.current,
-  //     })
-  //   );
-  //   nextPostIndex.current = POST_INCREMENT_AMOUNT;
-  // }, []);
 
   async function togglePostIsFollowing() {
     dispatch(toggleIsFollowing({ followedUser: user, userId: userId }));
@@ -99,17 +95,6 @@ export default function Profile() {
               </Text>
             </TouchableOpacity>
           )}
-          {/* <TouchableOpacity
-            style={tw`flex-col justify-end items-center pb-1 pr-2`}
-            onPress={navigateToSettings}
-          >
-            <Ionicons
-              name={"settings-outline"}
-              color={CustomColors.primary}
-              size={27}
-            />
-          </TouchableOpacity>
-          <PremiumIcon /> */}
         </View>
       </View>
 
@@ -187,7 +172,7 @@ export default function Profile() {
       {/* POST IMAGES */}
       <FlashList
         contentContainerStyle={tw`p-[0.5px]`}
-        data={user.postIds}
+        data={imagePostIds}
         renderItem={({ item }) => (
           <SmallPost postId={item} key={"smallPost" + item} />
         )}

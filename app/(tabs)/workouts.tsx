@@ -137,7 +137,7 @@ export default function Workouts() {
   }
 
   async function onShareWorkoutPress() {
-    if (!modalWorkoutId || !canShareWorkout()) return;
+    if (!modalWorkoutId) return;
     const template = await sqlSelectUnparsedWorkoutInfoById(modalWorkoutId);
     // const template = await sqlSelectWorkoutInfoById(modalWorkoutId);
     dispatch(

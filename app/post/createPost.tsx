@@ -88,9 +88,6 @@ export default function CreatePost() {
       getFileExtensionType(image.uri)
     );
 
-    // const arrayBuffer = base64ToArrayBuffer(image.base64!)
-    // const {data} = supabase.storage.from("image_posts")
-
     setIsUploading(false);
     navigateBack();
   }

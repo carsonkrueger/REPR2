@@ -1,4 +1,3 @@
-import * as SQLite from "expo-sqlite";
 import { Exercise, WorkoutSet, WorkoutState } from "../types/workoutTypes";
 import { EntityState } from "@reduxjs/toolkit";
 import {
@@ -51,7 +50,41 @@ export const initWorkoutTemplatesTable = async () => {
       return true;
     }
   );
+
+  sqlUpdateTables();
 };
+
+async function sqlUpdateTables() {
+  switch (await sqlGetUserVersion()) {
+    case 0: {
+      break;
+    }
+    default: {
+      return;
+    }
+  }
+  // update tables until latest version (default case returns out)
+  //await sqlIncrementUserVersion();
+  // sqlUpdateTables();
+}
+
+async function sqlGetUserVersion() {
+  return new Promise<number>((resolve, reject) =>
+    sqlQuery("PRAGMA user_version;", [], (_, res) => {
+      resolve((res.rows.item(0) as { user_version: number }).user_version);
+    })
+  );
+}
+
+async function sqlIncrementUserVersion() {
+  sqlQuery(`PRAGMA user_version = ${(await sqlGetUserVersion()) + 1};`);
+}
+
+async function sqlSetUserVersion(versionNum: number) {
+  sqlQuery(
+    `PRAGMA user_version = ${(await sqlGetUserVersion()) + versionNum};`
+  );
+}
 
 export async function sqlSelectAllTemplatesByDateDESC() {
   return new Promise<parsedWorkoutsTableRow[]>((resolve, reject) => {

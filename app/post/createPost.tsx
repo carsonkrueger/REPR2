@@ -70,23 +70,26 @@ export default function CreatePost() {
     else if (result.canceled) navigateBack();
   }
 
-  async function uploadImage() {
+  function uploadImage() {
     if (!image) return;
     setIsUploading(true);
     const imageUuid = uuid();
 
-    await supabase.from("posts").insert({
-      user_id: userId,
-      description: description !== "" ? description : null,
-      content_id: imageUuid,
-      content_type: 1,
-    });
-    await uploadToSupabase(
-      image.base64!,
-      "images",
-      `${userId}/${imageUuid}`,
-      getFileExtensionType(image.uri)
-    );
+    async function doUpload() {
+      await supabase.from("posts").insert({
+        user_id: userId,
+        description: description !== "" ? description : null,
+        content_id: imageUuid,
+        content_type: 1,
+      });
+      await uploadToSupabase(
+        image!.base64!,
+        "images",
+        `${userId}/${imageUuid}`,
+        getFileExtensionType(image!.uri)
+      );
+    }
+    doUpload();
 
     setIsUploading(false);
     navigateBack();
@@ -129,7 +132,10 @@ export default function CreatePost() {
         </View>
 
         {/* Right side */}
-        <TouchableOpacity onPress={uploadImage} disabled={isUploading}>
+        <TouchableOpacity
+          onPress={uploadImage}
+          disabled={isUploading || !image}
+        >
           <Text
             style={[
               tw`text-lg  text-primary`,
@@ -142,7 +148,7 @@ export default function CreatePost() {
       </View>
 
       {/* Content Image */}
-      <PostImage base64={image?.base64 ?? undefined} />
+      <PostImage base64={image?.uri ?? undefined} />
 
       <View style={tw`flex-1`}>
         {/* Description */}

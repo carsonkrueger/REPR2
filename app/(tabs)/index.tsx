@@ -57,6 +57,7 @@ import Post from "../../src/components/postComponents/post";
 import { CreatePostSelectionType } from "../../src/types/createPostSelectionType";
 
 SplashScreen.preventAutoHideAsync();
+setTimeout(() => {}, 1000);
 
 export default function Home() {
   const dispatch = useDispatch<AppDispatch>();

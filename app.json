@@ -4,12 +4,12 @@
     "slug": "REPR",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icons/repr_icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/icons/repr_icon_full.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#3b83f5"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -17,10 +17,11 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/icons/repr_icon_full.png",
+        "backgroundColor": "#3b83f5"
       },
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "permissions": ["CAMERA", "VIBRATE"]
     },
     "scheme": "repr",
     "web": {

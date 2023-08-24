@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import CustomColors from "../../util/customColors";
 import { useDispatch } from "react-redux";
-import { selectProfile, selectUserId } from "../../redux/slices/profileSlice";
+import { selectProfile } from "../../redux/slices/profileSlice";
 import {
   getIsFollowing,
   getUserStats,
@@ -34,9 +34,16 @@ import { sqlInsertCurrentWorkoutTemplate } from "../../sqlite/queries";
 interface props {
   postId: EntityId;
   useCommentIcon?: boolean;
+  disabledTemplate?: boolean;
+  showOnlyFiveExercisesTemplate?: boolean;
 }
 
-export default function Post({ postId, useCommentIcon = true }: props) {
+export default function Post({
+  postId,
+  useCommentIcon = true,
+  disabledTemplate = false,
+  showOnlyFiveExercisesTemplate = true,
+}: props) {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const post = useSelector((state: RootState) =>
@@ -183,7 +190,13 @@ export default function Post({ postId, useCommentIcon = true }: props) {
 
       {/* post content */}
       {post.contentType === 1 && <PostImage base64={post.base64Image} />}
-      {post.contentType === 2 && <PostTemplate postId={post.postId} />}
+      {post.contentType === 2 && (
+        <PostTemplate
+          postId={post.postId}
+          showOnlyFiveExercises={showOnlyFiveExercisesTemplate}
+          disabled={disabledTemplate}
+        />
+      )}
 
       {/* like/comment/flag */}
       <View style={tw`flex-row justify-between px-3 pt-2`}>

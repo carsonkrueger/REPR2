@@ -6,8 +6,11 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomColors from "../../src/util/customColors";
 import PremiumItem from "../../src/components/premiumItem";
 import { SafeAreaView } from "react-native-safe-area-context";
+import useBackPress from "../../src/hooks/useBackPress";
 
 export default function premium() {
+  useBackPress(true);
+
   const router = useRouter();
 
   function navigateBack() {
@@ -56,7 +59,7 @@ export default function premium() {
         <TouchableOpacity onPress={navigateBack}>
           <Text
             style={[
-              tw`text-light-gray text-center py-2`,
+              tw`text-white text-center py-2`,
               { fontFamily: "RobotoCondensed" },
             ]}
           >

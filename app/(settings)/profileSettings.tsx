@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../src/redux/store";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
@@ -10,10 +10,12 @@ import SettingsGroup from "../../src/components/settingsComponents/SettingsGroup
 import { toggleDarkMode } from "../../src/redux/slices/profileSlice";
 import { supabase } from "../../src/types/supabaseClient";
 import React from "react";
-import { Ionicons } from "@expo/vector-icons";
 import NavigateBackButton from "../../src/components/navigateBackButton";
+import useBackPress from "../../src/hooks/useBackPress";
 
 export default function Settings() {
+  useBackPress(true);
+
   const router = useRouter();
   const profile = useSelector((state: RootState) => state.profile);
   const dispatch: AppDispatch = useDispatch();
@@ -55,7 +57,7 @@ export default function Settings() {
         <SettingsItem itemName="Logout" onTap={logout} lastItem={true} />
       </SettingsGroup>
 
-      <SettingsGroup headerName="Notifications">
+      {/* <SettingsGroup headerName="Notifications">
         <SettingsItem
           itemName="Recieve Friend Notifications"
           useToggle={true}
@@ -63,20 +65,8 @@ export default function Settings() {
           onTap={() => {}}
         />
       </SettingsGroup>
-
+        */}
       <SettingsGroup headerName="Appearance">
-        <SettingsItem
-          itemName="Dark Mode"
-          onTap={() => dispatch(toggleDarkMode())}
-          useToggle={true}
-          toggleState={profile.isDarkMode}
-        />
-        <SettingsItem
-          itemName="Dark Mode"
-          onTap={() => dispatch(toggleDarkMode())}
-          useToggle={true}
-          toggleState={profile.isDarkMode}
-        />
         <SettingsItem
           itemName="Dark Mode"
           onTap={() => dispatch(toggleDarkMode())}

@@ -167,23 +167,23 @@ export default function Profile() {
         </View>
 
         {/* POST/TEMPLATE TAB */}
-        <View style={tw`border-b-[1px] border-b-light-gray flex-row py-1`}>
-          <TouchableOpacity
-            style={tw`flex-1 border-r-[1px] border-r-light-gray`}
-          >
+        <View style={tw`flex-row py-1`}>
+          <TouchableOpacity style={tw`flex-1`}>
             <Text
               style={[
-                tw`text-base text-center text-primary`,
+                tw`text-base text-center text-dark-gray`,
                 { fontFamily: "RobotoCondensed" },
               ]}
             >
               Images
             </Text>
           </TouchableOpacity>
+          {/* Divider line */}
+          <View style={tw`border-r-[1px] border-r-light-gray`} />
           <TouchableOpacity style={tw`flex-1`}>
             <Text
               style={[
-                tw`text-base text-center text-primary`,
+                tw`text-base text-center text-dark-gray`,
                 { fontFamily: "RobotoCondensed" },
               ]}
             >

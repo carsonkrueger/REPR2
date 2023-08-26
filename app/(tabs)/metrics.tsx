@@ -1,4 +1,4 @@
-import { View, Text, BackHandler } from "react-native";
+import { View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import tw from "../../src/util/tailwind";
@@ -11,31 +11,31 @@ import Search from "../../src/components/searchBar";
 import { sqlSelectLikeExercisesByName } from "../../src/sqlite/queries";
 import { exercisesTableRow } from "../../src/types/localDBTables";
 import ExerciseNameSearchResult from "../../src/components/workoutComponents/exerciseNameSearchResult";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PremiumIcon from "../../src/components/premiumIcon";
+import useBackPress from "../../src/hooks/useBackPress";
+
+const SELECT_AMOUNT = 10;
 
 export default function Metrics() {
+  useBackPress(false);
+
   const metricsState = useSelector((state: RootState) =>
     selectMetricsState(state)
   );
   const [isContainerOverlayOpen, setIsContainerOverlayOpen] = useState(false);
-
-  useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      () => true
-    );
-
-    return () => backHandler.remove();
-  }, []);
+  const [exerciseOffset, setExerciseOffset] = useState(0);
 
   async function searchAction(name: string) {
     setIsContainerOverlayOpen(true);
-    return await sqlSelectLikeExercisesByName(name).then(
-      (rows: exercisesTableRow[]) => {
-        return rows;
-      }
-    );
+    return await sqlSelectLikeExercisesByName(
+      name,
+      exerciseOffset,
+      SELECT_AMOUNT
+    ).then((rows: exercisesTableRow[]) => {
+      setExerciseOffset((prev) => prev + SELECT_AMOUNT);
+      return rows;
+    });
   }
 
   function onExerciseNamePress() {
@@ -89,7 +89,7 @@ export default function Metrics() {
         searchAction={searchAction}
         renderItem={({ item }) => (
           <ExerciseNameSearchResult
-            row={item}
+            exerciseName={item}
             onPress={onExerciseNamePress}
             key={"ExerciseSearchResult" + item.exercise_id}
           />

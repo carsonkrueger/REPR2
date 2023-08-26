@@ -2,16 +2,20 @@ import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { BackHandler } from "react-native";
 
-export default function useBackPress(backPressDisabed: boolean) {
+export default function useBackPress(
+  navigateBackOnBackPress: boolean,
+  onBackPress?: () => void
+) {
   const router = useRouter();
 
-  function backPress() {
+  function navigateBack() {
     router.back();
   }
 
   useEffect(() => {
     const backAction = () => {
-      if (!backPressDisabed) backPress();
+      if (onBackPress) onBackPress();
+      if (navigateBackOnBackPress) navigateBack();
       return true;
     };
 

@@ -47,8 +47,11 @@ import {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
+import useBackPress from "../../src/hooks/useBackPress";
 
 export default function Workouts() {
+  useBackPress(false);
+
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const templates: WorkoutTemplate[] = useSelector((state: RootState) =>
@@ -79,13 +82,6 @@ export default function Workouts() {
       );
       dispatch(setInitTemplatesLoadedTrue());
     }
-
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      () => true
-    );
-
-    return () => backHandler.remove();
   }, []);
 
   function onSetDistanceFromTop(

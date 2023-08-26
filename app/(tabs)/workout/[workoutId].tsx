@@ -51,8 +51,11 @@ import {
 } from "../../../src/redux/slices/metricsSlice";
 import { ExerciseMetric, WorkoutMetric } from "../../../src/types/metricsTypes";
 import NavigateBackButton from "../../../src/components/navigateBackButton";
+import useBackPress from "../../../src/hooks/useBackPress";
 
 export default function WorkoutScreen() {
+  useBackPress(false, backPress);
+
   const { paramWorkoutId } = useLocalSearchParams();
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
@@ -72,18 +75,6 @@ export default function WorkoutScreen() {
       dispatch(setWorkoutId({ id: Number(paramWorkoutId) }));
       dispatch(startWorkout());
     }
-
-    const backAction = () => {
-      backPress();
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove();
   }, []);
 
   useEffect(() => {

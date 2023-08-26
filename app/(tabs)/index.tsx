@@ -55,6 +55,11 @@ import { getCurFullDate } from "../../src/util/dates";
 import { FlashList } from "@shopify/flash-list";
 import Post from "../../src/components/postComponents/post";
 import { CreatePostSelectionType } from "../../src/types/createPostSelectionType";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 
 SplashScreen.preventAutoHideAsync();
 setTimeout(() => {}, 1000);
@@ -76,6 +81,9 @@ export default function Home() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [distanceFromTop, setDistanceFromTop] = useState(0);
+
+  const [pressedCreateContent, setPressedCreatedContent] = useState(false);
+  const rotate = useSharedValue(0);
 
   useEffect(() => {
     // sqlDropAllTables();
@@ -155,6 +163,12 @@ export default function Home() {
     dispatch(getNextPost({ lastPostCreatedAt: lastPostDate }));
   }
 
+  function onCreatePostPress() {
+    setPressedCreatedContent((prev) => !prev);
+    if (pressedCreateContent) rotate.value = 0;
+    else rotate.value = 45;
+  }
+
   async function onCameraCreatePostPress() {
     router.push({
       pathname: "post/createPost",
@@ -174,6 +188,13 @@ export default function Home() {
   ) {
     setDistanceFromTop(event.nativeEvent.contentOffset.y);
   }
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${withSpring(rotate.value)}deg` }],
+  }));
+  // const animatedStyle = useAnimatedStyle(() => ({
+  //   transform: [{ rotateX: withSpring(rotate.value * 2) }],
+  // }));
 
   if (!appIsReady) return null;
 
@@ -210,9 +231,11 @@ export default function Home() {
 
       <TouchableOpacity
         style={tw`absolute bottom-19 right-4 items-center justify-center bg-primary rounded-full p-[.4rem]`}
-        onPress={onGalleryCreatePostPress}
+        onPress={onCreatePostPress}
       >
-        <Feather name="plus" size={30} color={"#fff"} />
+        <Animated.View style={animatedStyle}>
+          <Feather name="plus" size={30} color={"#fff"} />
+        </Animated.View>
       </TouchableOpacity>
     </SafeAreaView>
   );
